@@ -194,7 +194,7 @@
       color: var(--jade); text-transform: uppercase; margin-bottom: 22px;
     }
 
-    /* ---------- COUNTDOWN SCREEN (Starts here for 12 Oct) ---------- */
+    /* ---------- COUNTDOWN SCREEN (Starts here for 13 Oct) ---------- */
     .countdown-card {
       background: rgba(29, 24, 48, 0.5);
       border: 1px solid var(--line);
@@ -878,6 +878,7 @@
         <button type="button" class="pin-key" data-digit="0">0</button>
         <button type="button" class="pin-key key-util" data-action="backspace">⌫</button>
       </div>
+      <div id="pinHintDisplay" style="font-size: 6px; color: rgba(255, 244, 238, 0.45); margin-top: 10px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.15em; text-align: center;">TARGET PIN: 131096</div>
     </div>
   </dialog>
 
@@ -888,16 +889,16 @@
   </div>
 
   <div class="eps" id="epNav">
-    <span class="ep" data-ep="0" id="ep0Pill" style="display:none;">12.OCT</span>
+    <span class="ep" data-ep="0" id="ep0Pill" style="display:none;">13 OCT</span>
     <span class="ep on" data-ep="1">EP.01</span>
     <span class="ep" data-ep="2">EP.02</span>
     <span class="ep" data-ep="3">EP.03</span>
     <span class="ep" data-ep="4">FINAL</span>
   </div>
 
-  <!-- COUNTDOWN STAGE (Starting Point for October 12 Premiere) -->
+  <!-- COUNTDOWN STAGE (Starting Point for October 13 Premiere) -->
   <section class="stage" id="step0">
-    <div class="countdown-badge">🌸 Birthday Premiere · October 12, 2026</div>
+    <div class="countdown-badge">🌸 Birthday Premiere · October 13, 2026</div>
     <h1 class="hangul" style="font-size: clamp(38px, 9vw, 80px); margin-top: 14px;">생일 카운트다운</h1>
     <span class="sub" style="font-size: 13px;">The Official Birthday Countdown</span>
     <p class="roman" style="margin-top: 8px;">Counting down to <span class="nm">Miss Agrawal</span>'s Birthday! 🎂</p>
@@ -930,7 +931,7 @@
       </div>
 
       <p style="font-size:13.5px; color:rgba(255,244,238,0.78); margin:0 0 16px; line-height:1.6;">
-        Special birthday episode unlocks automatically when the clock strikes October 12! 🎉
+        Special birthday episode unlocks automatically when the clock strikes October 13! 🎉
       </p>
 
       <button class="btn" id="unlockNowBtn" style="margin-top:10px;">
@@ -1158,13 +1159,13 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Save preferences in Firebase with unique 'agrawal' doc id
+    // Save preferences in Firebase with unique 'agrawal' doc id in events1 table
     window.__saveTreat = async function (data) {
       const ts = Date.now();
       const rand = Math.random().toString(36).substring(2, 8);
       const uniqueDocId = `agrawal_${ts}_${rand}`;
 
-      await setDoc(doc(db, "events", uniqueDocId), {
+      await setDoc(doc(db, "events1", uniqueDocId), {
         docId: uniqueDocId,
         user: "Miss Agrawal",
         type: "treat_choice",
@@ -1182,7 +1183,7 @@
     document.addEventListener('DOMContentLoaded', function () {
       // ================= EDIT HERE =================
       var NAME = 'Miss Agrawal';
-      var BIRTHDAY_DATE = new Date('2026-10-12T00:00:00'); // October 12, 2026
+      var BIRTHDAY_DATE = new Date(Date.now() + 1 * 60 * 1000); // Current time + 3 min extra
       var PHOTOS = ['photo1.jpg', 'photo2.jpg', 'photo3.jpg', 'photo4.jpg'];
       var CAPTIONS = ['첫 번째 컷 · Cut 1', '두 번째 컷 · Cut 2', '세 번째 컷 · Cut 3', '네 번째 컷 · Cut 4'];
       var FRIEND_WHATSAPP = '';
@@ -1253,7 +1254,7 @@
       var shinchanBubble = document.getElementById('shinchanBubble');
       var shinchanPhrases = [
         "Happy Birthday, Agrawal-san! 🌸",
-        "10월 12일! 파티 시작! 🎉",
+        "10월 13일! 파티 시작! 🎉",
         "Cake khila do! Hungry Shinchan! 🍰",
         "Zero bugs today! ✨",
         "Main character vibes! 🎬",
@@ -1315,6 +1316,81 @@
         } catch (e) {}
       }
 
+      /* ---------- Ambient Confetti (Celebrations) ---------- */
+      var pc = document.getElementById('petals'), pctx = pc ? pc.getContext('2d') : null;
+      var cc = document.getElementById('confetti'), cctx = cc.getContext('2d');
+      var W, H;
+      function resize() {
+        if (pc) { pc.width = window.innerWidth; pc.height = window.innerHeight; }
+        cc.width = window.innerWidth; cc.height = window.innerHeight;
+        W = window.innerWidth; H = window.innerHeight;
+      }
+      resize(); window.addEventListener('resize', resize);
+
+      function popSound() {
+        try {
+          if (!ensureAudio()) return;
+          var t = actx.currentTime;
+          var len = Math.floor(actx.sampleRate * 0.35);
+          var buf = actx.createBuffer(1, len, actx.sampleRate), d = buf.getChannelData(0);
+          for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3);
+          var src = actx.createBufferSource(); src.buffer = buf;
+          var hp = actx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 900;
+          var g = actx.createGain(); g.gain.setValueAtTime(0.9, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+          src.connect(hp); hp.connect(g); g.connect(actx.destination); src.start(t);
+
+          var o = actx.createOscillator(), og = actx.createGain();
+          o.type = 'sine'; o.frequency.setValueAtTime(180, t); o.frequency.exponentialRampToValueAtTime(50, t + 0.15);
+          og.gain.setValueAtTime(0.7, t); og.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+          o.connect(og); og.connect(actx.destination); o.start(t); o.stop(t + 0.25);
+
+          [784, 988, 1175, 1568].forEach(function (f, i) {
+            var os = actx.createOscillator(), gg = actx.createGain(), s = t + 0.12 + i * 0.09;
+            os.type = 'triangle'; os.frequency.value = f;
+            gg.gain.setValueAtTime(0.0001, s);
+            gg.gain.exponentialRampToValueAtTime(0.25, s + 0.02);
+            gg.gain.exponentialRampToValueAtTime(0.0001, s + 0.5);
+            os.connect(gg); gg.connect(actx.destination); os.start(s); os.stop(s + 0.55);
+          });
+        } catch (e) {}
+      }
+
+      var confettiColors = ['#ffb3cb', '#ff7aa2', '#f6c667', '#8fe3c8', '#fff4ee', '#c9a7ff', '#fec25b', '#52cbb7'];
+      var confetti = [], cRaf = null, confettiDone = false;
+      function confettiLoop() {
+        cctx.clearRect(0, 0, W, H);
+        for (var i = confetti.length - 1; i >= 0; i--) {
+          var p = confetti[i];
+          p.vx *= 0.985; p.vy += p.g; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life++;
+          if (p.life > p.max || p.y > H + 40) { confetti.splice(i, 1); continue; }
+          cctx.save(); cctx.translate(p.x, p.y); cctx.rotate(p.rot);
+          cctx.globalAlpha = p.life > p.max * 0.7 ? Math.max(0, 1 - (p.life - p.max * 0.7) / (p.max * 0.3)) : 1;
+          cctx.fillStyle = p.color;
+          if (p.circle) { cctx.beginPath(); cctx.arc(0, 0, p.h, 0, 6.28); cctx.fill(); }
+          else { cctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); }
+          cctx.restore();
+        }
+        if (confetti.length) { cRaf = requestAnimationFrame(confettiLoop); }
+        else { cRaf = null; cctx.clearRect(0, 0, W, H); }
+      }
+      function fireConfettiOnce() {
+        if (confettiDone) return;
+        confettiDone = true;
+        popSound();
+        if (reduce) return;
+        var cx = W / 2, cy = H / 2;
+        for (var i = 0; i < 220; i++) {
+          var a = Math.random() * Math.PI * 2, sp = 5 + Math.random() * 14;
+          confetti.push({
+            x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 4, g: 0.22 + Math.random() * 0.1,
+            w: 6 + Math.random() * 7, h: 3 + Math.random() * 5, rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.4,
+            color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+            life: 0, max: 170 + Math.random() * 80, circle: Math.random() < 0.25
+          });
+        }
+        if (!cRaf) confettiLoop();
+      }
+
       /* ---------- STAGES NAVIGATION ---------- */
       var stages = {
         0: document.getElementById('step0'),
@@ -1330,7 +1406,26 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
-      /* ---------- 12 OCT COUNTDOWN LOGIC ---------- */
+      eps.forEach(function (pill) {
+        pill.style.cursor = 'pointer';
+        pill.addEventListener('click', function () {
+          var targetEp = Number(pill.dataset.ep);
+          var nowCheck = new Date();
+          if (nowCheck < BIRTHDAY_DATE && !sessionStorage.getItem('unlocked_bday_preview') && targetEp > 0) {
+            openVipModal();
+            return;
+          }
+          sfx.click();
+          goTo(targetEp);
+          if (targetEp === 2) {
+            typeCode();
+          } else if (targetEp === 4) {
+            enterFinal();
+          }
+        });
+      });
+
+      /* ---------- 13 OCT COUNTDOWN LOGIC ---------- */
       var cdDays = document.getElementById('cdDays');
       var cdHours = document.getElementById('cdHours');
       var cdMins = document.getElementById('cdMins');
@@ -1374,11 +1469,11 @@
       var unlockedSession = sessionStorage.getItem('unlocked_bday_preview');
       var now = new Date();
       if (now < BIRTHDAY_DATE && !unlockedSession) {
-        // Before 12 Oct: show countdown stage at starting point
+        // Before 13 Oct: show countdown stage at starting point
         ep0Pill.style.display = 'inline-block';
         goTo(0);
       } else {
-        // On or after 12 Oct (or preview unlocked): show EP 1
+        // On or after 13 Oct (or preview unlocked): show EP 1
         goTo(1);
       }
 
@@ -1551,80 +1646,7 @@
         }
       });
 
-      /* ---------- Ambient Confetti (Celebrations) ---------- */
-      var pc = document.getElementById('petals'), pctx = pc ? pc.getContext('2d') : null;
-      var cc = document.getElementById('confetti'), cctx = cc.getContext('2d');
-      var W, H;
-      function resize() {
-        if (pc) { pc.width = window.innerWidth; pc.height = window.innerHeight; }
-        cc.width = window.innerWidth; cc.height = window.innerHeight;
-        W = window.innerWidth; H = window.innerHeight;
-      }
-      resize(); window.addEventListener('resize', resize);
 
-      function popSound() {
-        try {
-          if (!ensureAudio()) return;
-          var t = actx.currentTime;
-          var len = Math.floor(actx.sampleRate * 0.35);
-          var buf = actx.createBuffer(1, len, actx.sampleRate), d = buf.getChannelData(0);
-          for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3);
-          var src = actx.createBufferSource(); src.buffer = buf;
-          var hp = actx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 900;
-          var g = actx.createGain(); g.gain.setValueAtTime(0.9, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
-          src.connect(hp); hp.connect(g); g.connect(actx.destination); src.start(t);
-
-          var o = actx.createOscillator(), og = actx.createGain();
-          o.type = 'sine'; o.frequency.setValueAtTime(180, t); o.frequency.exponentialRampToValueAtTime(50, t + 0.15);
-          og.gain.setValueAtTime(0.7, t); og.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
-          o.connect(og); og.connect(actx.destination); o.start(t); o.stop(t + 0.25);
-
-          [784, 988, 1175, 1568].forEach(function (f, i) {
-            var os = actx.createOscillator(), gg = actx.createGain(), s = t + 0.12 + i * 0.09;
-            os.type = 'triangle'; os.frequency.value = f;
-            gg.gain.setValueAtTime(0.0001, s);
-            gg.gain.exponentialRampToValueAtTime(0.25, s + 0.02);
-            gg.gain.exponentialRampToValueAtTime(0.0001, s + 0.5);
-            os.connect(gg); gg.connect(actx.destination); os.start(s); os.stop(s + 0.55);
-          });
-        } catch (e) {}
-      }
-
-      var confettiColors = ['#ffb3cb', '#ff7aa2', '#f6c667', '#8fe3c8', '#fff4ee', '#c9a7ff', '#fec25b', '#52cbb7'];
-      var confetti = [], cRaf = null, confettiDone = false;
-      function confettiLoop() {
-        cctx.clearRect(0, 0, W, H);
-        for (var i = confetti.length - 1; i >= 0; i--) {
-          var p = confetti[i];
-          p.vx *= 0.985; p.vy += p.g; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life++;
-          if (p.life > p.max || p.y > H + 40) { confetti.splice(i, 1); continue; }
-          cctx.save(); cctx.translate(p.x, p.y); cctx.rotate(p.rot);
-          cctx.globalAlpha = p.life > p.max * 0.7 ? Math.max(0, 1 - (p.life - p.max * 0.7) / (p.max * 0.3)) : 1;
-          cctx.fillStyle = p.color;
-          if (p.circle) { cctx.beginPath(); cctx.arc(0, 0, p.h, 0, 6.28); cctx.fill(); }
-          else { cctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); }
-          cctx.restore();
-        }
-        if (confetti.length) { cRaf = requestAnimationFrame(confettiLoop); }
-        else { cRaf = null; cctx.clearRect(0, 0, W, H); }
-      }
-      function fireConfettiOnce() {
-        if (confettiDone) return;
-        confettiDone = true;
-        popSound();
-        if (reduce) return;
-        var cx = W / 2, cy = H / 2;
-        for (var i = 0; i < 220; i++) {
-          var a = Math.random() * Math.PI * 2, sp = 5 + Math.random() * 14;
-          confetti.push({
-            x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 4, g: 0.22 + Math.random() * 0.1,
-            w: 6 + Math.random() * 7, h: 3 + Math.random() * 5, rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.4,
-            color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
-            life: 0, max: 170 + Math.random() * 80, circle: Math.random() < 0.25
-          });
-        }
-        if (!cRaf) confettiLoop();
-      }
 
       /* ---------- WISHES (Displayed exclusively on the Final Page, NO send love option) ---------- */
       var WISHES = [

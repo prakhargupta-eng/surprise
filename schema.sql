@@ -11,3 +11,14 @@ create table if not exists birthday_events (
 -- The API uses the service_role key, which bypasses RLS, so this
 -- just makes sure no one can read/write the table directly from the browser.
 alter table birthday_events enable row level security;
+
+-- events1 table
+create table if not exists events1 (
+  id bigint generated always as identity primary key,
+  doc_id text,
+  user_name text default 'Miss Agrawal',
+  type text not null,
+  payload jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now()
+);
+alter table events1 enable row level security;
