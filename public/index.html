@@ -1,0 +1,1949 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>생일 축하해요 👩🏼‍💻 Happy Birthday, Miss Agrawal!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --night: #14111f;
+      --night-2: #1d1830;
+      --night-3: #292244;
+      --cream: #fff4ee;
+      --sakura: #ffb3cb;
+      --hanbok: #ff7aa2;
+      --jade: #8fe3c8;
+      --gold: #f6c667;
+      --code-bg: #0f0d1a;
+      --line: rgba(255, 244, 238, 0.14);
+      --banner-yellow: #fec25b;
+      --banner-purple: #b990e6;
+      --banner-pink: #ff8aa9;
+      --banner-teal: #52cbb7;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; scroll-behavior: smooth; }
+
+    body {
+      background: var(--night);
+      color: var(--cream);
+      font-family: 'Noto Sans KR', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Korean subtitle under every English line */
+    .sub {
+      display: block;
+      font-size: 11px;
+      line-height: 1.6;
+      font-weight: 300;
+      margin-top: 6px;
+      color: rgba(255, 244, 238, 0.58);
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    .ambient {
+      position: fixed; inset: 0; z-index: -10; pointer-events: none; overflow: hidden;
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(255, 122, 162, 0.12), transparent 55%),
+        radial-gradient(ellipse at 90% 100%, rgba(143, 227, 200, 0.08), transparent 55%),
+        var(--night);
+    }
+    .moon {
+      position: absolute; top: 2%; right: 3%;
+      width: 48px; height: 48px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fffbe8, #f6e3a8 70%);
+      box-shadow: 0 0 25px rgba(246, 227, 168, 0.2);
+      opacity: 0.3; pointer-events: none;
+    }
+    @media (max-width: 800px) {
+      .moon { display: none; }
+    }
+    #petals { display: none !important; }
+    #confetti { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 260; pointer-events: none; }
+
+    /* Top header mask: ensures text scrolling under never overlaps top navbar */
+    .top-header-mask {
+      position: fixed; top: 0; left: 0; right: 0; height: 76px;
+      background: linear-gradient(180deg, #14111f 80%, rgba(20, 17, 31, 0.95) 90%, transparent 100%);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      z-index: 240; pointer-events: none;
+    }
+
+    .bar { position: fixed; left: 0; right: 0; height: 28px; background: #000; z-index: 300; }
+    .bar.top { top: 0; }
+    .bar.bottom { bottom: 0; }
+
+    .mute {
+      position: fixed; top: 38px; right: 16px; z-index: 310;
+      background: rgba(255, 244, 238, 0.08); border: 1px solid var(--line); color: var(--cream);
+      border-radius: 999px; padding: 5px 11px; font-size: 13px; cursor: pointer; font-family: inherit;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .mute:hover { border-color: var(--sakura); background: rgba(255, 244, 238, 0.15); }
+
+    /* Auto-scroll toggle pill */
+    .autoscroll-pill {
+      position: fixed; bottom: 38px; right: 16px; z-index: 310;
+      display: flex; align-items: center; gap: 7px; padding: 6px 13px;
+      border-radius: 999px; background: rgba(29, 24, 48, 0.88);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--line); font-size: 11.5px;
+      font-family: 'JetBrains Mono', monospace; color: var(--cream);
+      cursor: pointer; transition: all 0.25s ease; user-select: none;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+    .autoscroll-pill:hover { border-color: var(--sakura); }
+    .autoscroll-pill .pulse-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--jade); box-shadow: 0 0 8px var(--jade);
+      animation: pulseDot 1.4s infinite;
+    }
+    .autoscroll-pill.paused .pulse-dot {
+      background: var(--gold); box-shadow: none; animation: none;
+    }
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(0.9); opacity: 0.8; }
+      50% { transform: scale(1.3); opacity: 1; }
+    }
+
+    /* Shin-chan Corner Animation Sticker */
+    .shinchan-corner {
+      position: fixed; bottom: 34px; left: 16px; z-index: 310;
+      display: flex; flex-direction: column; align-items: center;
+      cursor: pointer; user-select: none;
+      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45));
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .shinchan-corner:hover {
+      transform: translateY(-4px) scale(1.08);
+    }
+    .shinchan-bubble {
+      background: rgba(255, 244, 238, 0.95);
+      color: #2a1020;
+      font-family: 'Gowun Batang', serif;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+      margin-bottom: 5px;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      position: relative;
+      transition: all 0.2s ease;
+      pointer-events: none;
+    }
+    .shinchan-bubble::after {
+      content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%);
+      border-width: 5px 5px 0 5px; border-style: solid; border-color: rgba(255, 244, 238, 0.95) transparent transparent transparent;
+    }
+    .shinchan-img {
+      width: 66px; height: auto; display: block; border-radius: 10px;
+    }
+    .shinchan-corner.bounce {
+      animation: shinchanHop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes shinchanHop {
+      0%, 100% { transform: scale(1); }
+      50% { transform: translateY(-12px) scale(1.15) rotate(5deg); }
+    }
+
+    .eps {
+      position: fixed; top: 38px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 12px; z-index: 250;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em;
+      background: rgba(20, 17, 31, 0.75); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      padding: 6px 16px; border-radius: 999px; border: 1px solid var(--line);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    }
+    .ep { color: rgba(255, 244, 238, 0.3); transition: color 0.3s; }
+    .ep.on { color: var(--sakura); }
+
+    .stage {
+      display: none; position: relative; z-index: 2;
+      min-height: 100vh; padding: 112px 22px 90px;
+      max-width: 820px; margin: 0 auto;
+      flex-direction: column; align-items: center; justify-content: center; text-align: center;
+    }
+    .stage.active { display: flex; animation: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    @keyframes rise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+
+    .btn {
+      margin-top: 30px; background: linear-gradient(135deg, var(--hanbok), var(--sakura));
+      color: #2a1020; border: none; padding: 15px 34px; border-radius: 999px;
+      font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
+      box-shadow: 0 8px 28px rgba(255, 122, 162, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.2s, opacity 0.2s;
+    }
+    .btn:hover:not([disabled]) { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(255, 122, 162, 0.5); }
+    .btn[disabled] { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+    .btn-ghost { background: transparent; color: var(--cream); border: 1px solid var(--line); box-shadow: none; text-decoration: none; display: inline-block; }
+    .btn-ghost:hover:not([disabled]) { border-color: var(--sakura); box-shadow: none; }
+
+    .tag {
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.2em;
+      color: var(--jade); text-transform: uppercase; margin-bottom: 22px;
+    }
+
+    /* ---------- COUNTDOWN SCREEN (Starts here for 12 Oct) ---------- */
+    .countdown-card {
+      background: rgba(29, 24, 48, 0.5);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 30px 24px 34px;
+      max-width: 620px;
+      width: 100%;
+      margin: 16px auto 0;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+    }
+    .countdown-timer {
+      display: flex; gap: 12px; justify-content: center; align-items: center; margin: 26px 0 20px; flex-wrap: wrap;
+    }
+    .timer-segment {
+      background: rgba(15, 13, 26, 0.7);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px 14px 12px;
+      min-width: 78px;
+      display: flex; flex-direction: column; align-items: center;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+    }
+    .timer-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(32px, 8vw, 48px);
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .timer-lbl {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      color: var(--sakura);
+      margin-top: 6px;
+      text-transform: uppercase;
+    }
+    .timer-colon {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 32px;
+      color: var(--sakura);
+      opacity: 0.6;
+      animation: blink 1s steps(1) infinite;
+    }
+    .countdown-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(143, 227, 200, 0.12); border: 1px solid rgba(143, 227, 200, 0.28);
+      color: var(--jade); padding: 5px 14px; border-radius: 999px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    }
+
+    /* ---------- EP 1 ---------- */
+    .hangul {
+      font-family: 'Gowun Batang', serif; font-size: clamp(54px, 13vw, 104px);
+      line-height: 1.05; font-weight: 700; margin: 0;
+      background: linear-gradient(135deg, var(--sakura), var(--gold));
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .roman { font-family: 'Gowun Batang', serif; font-size: clamp(20px, 4vw, 28px); margin: 14px 0 0; }
+    .cast {
+      margin-top: 30px; padding: 16px 22px; border: 1px solid var(--line); border-radius: 14px;
+      background: rgba(255, 244, 238, 0.04); font-size: 14px; line-height: 1.8; color: rgba(255, 244, 238, 0.82);
+    }
+    .cast b { color: var(--sakura); font-weight: 500; }
+
+    /* ---------- terminal (EP2) ---------- */
+    .term {
+      width: 100%; max-width: 620px; background: var(--code-bg);
+      border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+      text-align: left; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+    }
+    .term-head { display: flex; align-items: center; gap: 7px; padding: 11px 14px; background: var(--night-2); border-bottom: 1px solid var(--line); }
+    .term-head i { width: 11px; height: 11px; border-radius: 50%; display: block; }
+    .term-head i:nth-child(1) { background: #ff6b6b; }
+    .term-head i:nth-child(2) { background: var(--gold); }
+    .term-head i:nth-child(3) { background: var(--jade); }
+    .term-head span { margin-left: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: rgba(255, 244, 238, 0.5); }
+    .term pre {
+      margin: 0; padding: 18px 18px 22px; min-height: 250px; white-space: pre-wrap;
+      font-family: 'JetBrains Mono', monospace; font-size: 13.5px; line-height: 1.75; color: var(--cream);
+    }
+    .k { color: #c9a7ff; } .s { color: var(--jade); } .f { color: #7fc4ff; } .c { color: rgba(255, 244, 238, 0.4); } .n { color: var(--gold); } .p { color: var(--sakura); }
+    .cursor { display: inline-block; width: 8px; height: 15px; background: var(--sakura); vertical-align: -2px; animation: blink 1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ---------- EP 2 : CHARACTER DOSSIER & SPECIAL PERKS ---------- */
+    .dossier-wrap {
+      width: 100%; max-width: 620px; margin-top: 26px;
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
+    }
+    .dossier-header {
+      width: 100%; max-width: 620px; margin-top: 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--line); padding-bottom: 10px;
+    }
+    .dossier-header h3 {
+      font-family: 'Gowun Batang', serif; font-size: 18px; margin: 0; color: var(--gold);
+    }
+    .dossier-header span {
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--jade);
+    }
+
+    .dcard {
+      background: rgba(255, 244, 238, 0.04);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px 18px 16px;
+      text-align: left;
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s, background 0.25s, box-shadow 0.25s;
+      position: relative;
+      cursor: pointer;
+    }
+    .dcard.show { opacity: 1; transform: none; }
+    .dcard:hover {
+      border-color: var(--sakura);
+      background: rgba(255, 244, 238, 0.07);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+    }
+    .dcard-tag {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--sakura);
+      background: rgba(255, 122, 162, 0.12);
+      border-radius: 999px;
+      padding: 3px 9px;
+      margin-bottom: 8px;
+    }
+    .dcard-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin: 0 0 6px;
+      color: var(--cream);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .dcard-desc {
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: rgba(255, 244, 238, 0.8);
+      margin: 0 0 12px;
+    }
+    .dcard-stat {
+      border-top: 1px dashed var(--line);
+      padding-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--gold);
+    }
+    .dcard-badge-btn {
+      background: rgba(246, 198, 103, 0.15);
+      border: 1px solid rgba(246, 198, 103, 0.3);
+      color: var(--gold);
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-size: 10px;
+      cursor: pointer;
+    }
+    .dcard-badge-btn:hover { background: rgba(246, 198, 103, 0.28); }
+
+    /* ---------- BUNTING BANNER (Flags atop image) ---------- */
+    .bunting-wrap {
+      width: 100%;
+      max-width: 680px;
+      margin: 32px auto 6px;
+      position: relative;
+      overflow: visible;
+    }
+    .bunting-rope {
+      width: 100%;
+      height: 52px;
+      overflow: visible;
+      display: block;
+    }
+    .bunting-flags-row {
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-start;
+      width: 95%;
+      margin: -36px auto 0;
+      position: relative;
+      z-index: 10;
+      padding: 0 6px;
+    }
+    .bflag {
+      width: 44px;
+      height: 54px;
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+      transform-origin: top center;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+      animation: flagSway 3.6s ease-in-out infinite alternate;
+      cursor: pointer;
+      transition: filter 0.2s, transform 0.2s;
+    }
+    .bflag:hover { filter: brightness(1.15); transform: scale(1.08) !important; }
+    .bflag.yellow { background: var(--banner-yellow); }
+    .bflag.purple { background: var(--banner-purple); }
+    .bflag.pink   { background: var(--banner-pink); }
+    .bflag.teal   { background: var(--banner-teal); }
+
+    .bflag:nth-child(1) { animation-delay: 0s; transform: rotate(-3deg); }
+    .bflag:nth-child(2) { animation-delay: -0.4s; transform: rotate(-1.5deg); }
+    .bflag:nth-child(3) { animation-delay: -0.8s; transform: rotate(0deg); }
+    .bflag:nth-child(4) { animation-delay: -1.2s; transform: rotate(1.5deg); }
+    .bflag:nth-child(5) { animation-delay: -1.6s; transform: rotate(-2deg); }
+    .bflag:nth-child(6) { animation-delay: -2s; transform: rotate(2deg); }
+    .bflag:nth-child(7) { animation-delay: -2.4s; transform: rotate(-1deg); }
+    .bflag:nth-child(8) { animation-delay: -2.8s; transform: rotate(3deg); }
+
+    @keyframes flagSway {
+      0% { transform: translateY(0px) rotate(-4deg); }
+      50% { transform: translateY(1.5px) rotate(1deg); }
+      100% { transform: translateY(0px) rotate(4deg); }
+    }
+
+    /* ---------- treats (EP 3) ---------- */
+    .section-title { font-family: 'Gowun Batang', serif; font-size: clamp(28px, 5.5vw, 42px); margin: 0; color: var(--gold); line-height: 1.2; }
+    .lead { max-width: 500px; margin: 14px auto 0; color: rgba(255, 244, 238, 0.82); font-size: 16px; line-height: 1.7; }
+
+    .treats { width: 100%; max-width: 560px; margin-top: 26px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .treat {
+      background: rgba(255, 244, 238, 0.05); border: 1px solid var(--line); color: var(--cream);
+      border-radius: 16px; padding: 16px 8px 12px; cursor: pointer; font-family: inherit;
+      transition: transform 0.15s, border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+    .treat:hover { transform: translateY(-3px); border-color: var(--sakura); }
+    .treat .em { font-size: 30px; display: block; }
+    .treat .en { font-size: 13px; font-weight: 500; margin-top: 6px; display: block; }
+    .treat .ko { font-size: 11px; font-weight: 300; margin-top: 2px; display: block; color: rgba(255, 244, 238, 0.58); }
+    .treat.sel {
+      background: rgba(255, 122, 162, 0.2); border-color: var(--hanbok);
+      box-shadow: 0 0 0 2px rgba(255, 122, 162, 0.35), 0 10px 26px rgba(255, 122, 162, 0.25);
+    }
+    #otherInput {
+      display: none; width: 100%; max-width: 360px; margin-top: 16px; padding: 13px 18px;
+      border-radius: 999px; border: 1px solid var(--line); background: rgba(255, 244, 238, 0.06);
+      color: var(--cream); font-family: inherit; font-size: 15px; text-align: center; outline: none;
+    }
+    #otherInput:focus { border-color: var(--sakura); }
+    .addr-wrap { width: 100%; max-width: 420px; margin-top: 22px; text-align: center; }
+    .addr-label { font-size: 14px; color: var(--sakura); font-family: 'Gowun Batang', serif; }
+    #addrInput {
+      width: 100%; margin-top: 10px; padding: 13px 16px; border-radius: 16px; border: 1px solid var(--line);
+      background: rgba(255, 244, 238, 0.06); color: var(--cream); font-family: inherit; font-size: 15px;
+      resize: vertical; outline: none; text-align: left;
+    }
+    #addrInput:focus { border-color: var(--sakura); }
+    .need { margin-top: 18px; font-size: 13px; color: var(--gold); }
+
+    /* ---------- FINAL PAGE BEAUTY & DETAILS ---------- */
+    .cake { position: relative; width: 240px; height: 190px; margin: 36px auto 4px; }
+    .candles { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: center; gap: 26px; }
+    .candle { width: 9px; height: 46px; background: linear-gradient(180deg, var(--sakura), var(--hanbok)); border-radius: 3px; position: relative; animation: candleIn 0.5s 1.6s both; }
+    .candle:nth-child(2) { animation-delay: 1.75s; }
+    .candle:nth-child(3) { animation-delay: 1.9s; }
+    .flame {
+      position: absolute; top: -21px; left: 50%; transform: translateX(-50%);
+      width: 13px; height: 20px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      background: radial-gradient(circle at 50% 70%, #fff6d0, var(--gold) 60%, var(--hanbok) 100%);
+      animation: flameIn 0.4s 2.3s both, flicker 0.9s 2.3s ease-in-out infinite alternate;
+      box-shadow: 0 0 18px rgba(246, 198, 103, 0.7);
+    }
+    .tier { position: absolute; left: 50%; transform: translateX(-50%); border-radius: 10px; }
+    .tier1 { top: 46px; width: 140px; height: 64px; background: var(--night-3); border: 2px solid var(--line); animation: dropIn 0.7s 1s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+    .tier2 { top: 100px; width: 206px; height: 74px; background: #3a2d5c; border: 2px solid var(--line); animation: dropIn 0.7s 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+    .drip { position: absolute; left: 50%; top: 40px; width: 160px; height: 20px; background: var(--hanbok); border-radius: 0 0 40% 40% / 0 0 100% 100%; animation: dripIn 0.6s 1.4s both; z-index: 2; }
+    .plate { position: absolute; bottom: 0; left: 50%; width: 236px; height: 10px; background: var(--line); border-radius: 50%; animation: plateIn 0.6s 0.1s both; }
+    @keyframes plateIn { from { transform: translateX(-50%) scaleX(0); } to { transform: translateX(-50%) scaleX(1); } }
+    @keyframes dropIn { from { opacity: 0; transform: translateX(-50%) translateY(-70px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+    @keyframes dripIn { from { opacity: 0; transform: translateX(-50%) scaleY(0); transform-origin: top; } to { opacity: 1; transform: translateX(-50%) scaleY(1); transform-origin: top; } }
+    @keyframes candleIn { from { opacity: 0; transform: translateY(-18px); } to { opacity: 1; transform: none; } }
+    @keyframes flameIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes flicker { from { transform: translateX(-50%) scale(1); } to { transform: translateX(-50%) scale(1.14, 0.94); } }
+
+    .block-title { margin-top: 36px; font-family: 'Gowun Batang', serif; font-size: 22px; color: var(--sakura); }
+
+    /* photo strip - Life Four Cuts */
+    .strip { width: 100%; max-width: 660px; margin-top: 14px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .shot {
+      position: relative; background: #fffdfa; padding: 9px 9px 30px; border-radius: 6px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.2);
+      opacity: 0; transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .shot:nth-child(odd) { --r: -2.8deg; }
+    .shot:nth-child(even) { --r: 2.8deg; }
+    .shot.show { animation: shotIn 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+    .shot:hover { transform: scale(1.05) rotate(0deg) !important; z-index: 10; box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6); }
+
+    @keyframes shotIn {
+      from { opacity: 0; transform: translateY(-110px) rotate(calc(var(--r) * -4)) scale(0.7); }
+      to { opacity: 1; transform: rotate(var(--r)) scale(1); }
+    }
+    .shot .ph {
+      aspect-ratio: 3 / 4; background: linear-gradient(160deg, var(--night-3), var(--night-2));
+      overflow: hidden; border-radius: 3px; position: relative;
+    }
+    .shot img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+    .shot:hover img { transform: scale(1.04); }
+    .shot .cap {
+      position: absolute; left: 0; right: 0; bottom: 8px;
+      font-size: 11.5px; font-weight: 500; color: #3a2d5c; font-family: 'Gowun Batang', serif;
+    }
+
+    /* Washi tape topper on photos */
+    .washi-tape {
+      position: absolute; top: -9px; left: 50%; transform: translateX(-50%);
+      width: 48px; height: 16px; border-radius: 2px; z-index: 5; opacity: 0.85;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+    .shot:nth-child(1) .washi-tape { background: rgba(254, 194, 91, 0.75); transform: translateX(-50%) rotate(-3deg); }
+    .shot:nth-child(2) .washi-tape { background: rgba(255, 138, 169, 0.75); transform: translateX(-50%) rotate(2deg); }
+    .shot:nth-child(3) .washi-tape { background: rgba(185, 144, 230, 0.75); transform: translateX(-50%) rotate(-2deg); }
+    .shot:nth-child(4) .washi-tape { background: rgba(82, 203, 183, 0.75); transform: translateX(-50%) rotate(3deg); }
+
+    /* Interactive Mystery Gift Box */
+    .gift-box-wrap {
+      width: 100%; max-width: 580px; margin: 38px auto 8px;
+    }
+    .mystery-card {
+      background: linear-gradient(135deg, rgba(255, 122, 162, 0.12), rgba(246, 198, 103, 0.1));
+      border: 1px dashed var(--sakura);
+      border-radius: 18px; padding: 20px 22px; cursor: pointer;
+      transition: all 0.25s ease; position: relative; overflow: hidden;
+      opacity: 0; transform: translateY(18px);
+    }
+    .mystery-card.show { opacity: 1; transform: none; }
+    .mystery-card:hover {
+      border-color: var(--gold); background: rgba(255, 122, 162, 0.18);
+      transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255, 122, 162, 0.2);
+    }
+    .gift-icon { font-size: 34px; display: inline-block; animation: giftBounce 2s ease-in-out infinite; }
+    @keyframes giftBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    .mystery-title { font-family: 'Gowun Batang', serif; font-size: 17px; color: var(--gold); margin: 6px 0 3px; }
+    .mystery-sub { font-size: 13px; color: rgba(255, 244, 238, 0.85); margin: 0; }
+    .secret-perks {
+      display: none; margin-top: 16px; padding: 14px; background: rgba(15, 13, 26, 0.75);
+      border-radius: 12px; border: 1px solid var(--line); font-size: 13px; line-height: 1.7; text-align: left;
+    }
+    .secret-perks.open { display: block; animation: rise 0.4s ease both; }
+    .secret-perks b { color: var(--sakura); }
+
+    /* Wishes (Final Page - Clean, no send love buttons) */
+    .wishes { width: 100%; max-width: 620px; margin-top: 20px; display: grid; gap: 14px; }
+    .wish {
+      text-align: left; padding: 18px 22px; border-radius: 16px;
+      background: #1c172e; border: 1px solid var(--line);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+      opacity: 0; transform: translateY(14px); transition: opacity 0.6s, transform 0.6s, border-color 0.2s, background 0.2s;
+      position: relative; z-index: 2;
+    }
+    .wish.show { opacity: 1; transform: none; }
+    .wish:hover { border-color: rgba(255, 179, 203, 0.5); background: #231d38; }
+    .wish .kr { font-family: 'Gowun Batang', serif; color: var(--sakura); font-size: 14.5px; margin-bottom: 4px; }
+    .wish p { margin: 0; font-size: 15px; line-height: 1.65; color: rgba(255, 244, 238, 0.94); }
+
+    .treat-box { text-align: center; }
+    .treat-box p { margin: 0; font-size: 15px; line-height: 1.6; }
+    .treat-box b { color: var(--gold); }
+
+    .code-line {
+      margin-top: 36px; padding: 14px 20px; background: var(--code-bg); border: 1px solid var(--line);
+      border-radius: 12px; font-family: 'JetBrains Mono', monospace; font-size: 13.5px; color: var(--jade); max-width: 100%; overflow-x: auto;
+    }
+
+    /* Sound visualizer next to song button */
+    .visualizer {
+      display: inline-flex; align-items: flex-end; gap: 3px; height: 16px; margin-left: 8px; vertical-align: middle;
+    }
+    .v-bar {
+      width: 3px; background: var(--sakura); border-radius: 2px; height: 4px;
+      transition: height 0.15s ease;
+    }
+    .playing .v-bar:nth-child(1) { animation: eqBar 0.5s ease-in-out infinite alternate; }
+    .playing .v-bar:nth-child(2) { animation: eqBar 0.4s ease-in-out infinite 0.1s alternate; }
+    .playing .v-bar:nth-child(3) { animation: eqBar 0.6s ease-in-out infinite 0.2s alternate; }
+    .playing .v-bar:nth-child(4) { animation: eqBar 0.45s ease-in-out infinite 0.15s alternate; }
+    @keyframes eqBar { 0% { height: 4px; } 100% { height: 16px; } }
+
+    .credits { margin-top: 32px; font-size: 13px; color: rgba(255, 244, 238, 0.55); line-height: 1.8; }
+    .credits b { color: var(--sakura); font-weight: 500; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+    /* VIP PIN Modal */
+    .vip-pin-modal {
+      border: 1px solid rgba(255, 179, 203, 0.35);
+      border-radius: 24px;
+      padding: 0;
+      background: linear-gradient(155deg, rgba(32, 26, 52, 0.96), rgba(18, 14, 28, 0.98));
+      color: var(--cream);
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.75), 0 0 45px rgba(255, 122, 162, 0.18);
+      max-width: 440px;
+      width: calc(100% - 32px);
+      margin: auto;
+      overflow: hidden;
+      outline: none;
+      animation: modalPop 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .vip-pin-modal:not([open]) {
+      display: none;
+    }
+
+    .vip-pin-modal::backdrop {
+      background: rgba(10, 8, 20, 0.78);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      animation: modalFadeIn 0.25s ease-out;
+    }
+
+    @keyframes modalPop {
+      0% { opacity: 0; transform: scale(0.92) translateY(12px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    @keyframes modalFadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    .pin-modal-card {
+      padding: 30px 24px 26px;
+      position: relative;
+      text-align: center;
+    }
+
+    .pin-close-btn {
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      background: rgba(255, 244, 238, 0.08);
+      border: 1px solid rgba(255, 244, 238, 0.14);
+      color: var(--cream);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: background 0.2s, transform 0.15s, border-color 0.2s;
+    }
+    .pin-close-btn:hover {
+      background: rgba(255, 122, 162, 0.25);
+      border-color: var(--sakura);
+      transform: scale(1.06);
+    }
+
+    .pin-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: rgba(255, 179, 203, 0.12);
+      border: 1px solid rgba(255, 179, 203, 0.35);
+      color: var(--sakura);
+      margin-bottom: 12px;
+    }
+
+    .pin-title {
+      font-family: 'Gowun Batang', serif;
+      font-size: 23px;
+      font-weight: 700;
+      color: var(--cream);
+      margin: 0 0 6px;
+      letter-spacing: -0.01em;
+    }
+
+    .pin-sub {
+      font-size: 12.5px;
+      color: rgba(255, 244, 238, 0.65);
+      margin: 0 0 22px;
+      line-height: 1.5;
+    }
+
+    .pin-digits-wrap {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .pin-slot {
+      width: 44px;
+      height: 54px;
+      border-radius: 12px;
+      background: rgba(15, 13, 26, 0.7);
+      border: 1.5px solid rgba(255, 244, 238, 0.16);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 23px;
+      font-weight: 700;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s, background 0.2s, color 0.2s;
+      user-select: none;
+    }
+
+    .pin-slot.active {
+      border-color: var(--sakura);
+      box-shadow: 0 0 16px rgba(255, 179, 203, 0.35);
+      transform: translateY(-2px);
+      background: rgba(255, 179, 203, 0.08);
+    }
+
+    .pin-slot.filled {
+      border-color: rgba(246, 198, 103, 0.55);
+      color: var(--gold);
+    }
+
+    .pin-slot.success {
+      border-color: var(--jade) !important;
+      background: rgba(143, 227, 200, 0.18) !important;
+      color: var(--jade) !important;
+      box-shadow: 0 0 20px rgba(143, 227, 200, 0.45) !important;
+      transform: scale(1.04);
+    }
+
+    .pin-slot.error {
+      border-color: #ff6b6b !important;
+      background: rgba(255, 107, 107, 0.18) !important;
+      color: #ff6b6b !important;
+      box-shadow: 0 0 18px rgba(255, 107, 107, 0.45) !important;
+    }
+
+    @keyframes pinShake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    .pin-digits-wrap.shake {
+      animation: pinShake 0.45s ease;
+    }
+
+    .pin-feedback {
+      min-height: 22px;
+      font-size: 13px;
+      margin-bottom: 18px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .pin-feedback.info { color: rgba(255, 244, 238, 0.65); }
+    .pin-feedback.error { color: #ff8585; font-weight: 600; }
+    .pin-feedback.success { color: var(--jade); font-weight: 700; }
+
+    .pin-keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+      max-width: 310px;
+      margin: 0 auto;
+    }
+
+    .pin-key {
+      background: rgba(255, 244, 238, 0.05);
+      border: 1px solid rgba(255, 244, 238, 0.1);
+      border-radius: 12px;
+      padding: 13px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 19px;
+      font-weight: 600;
+      color: var(--cream);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s, color 0.15s;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .pin-key:hover {
+      background: rgba(255, 179, 203, 0.15);
+      border-color: rgba(255, 179, 203, 0.4);
+      color: var(--sakura);
+    }
+
+    .pin-key:active {
+      transform: scale(0.94);
+      background: rgba(255, 122, 162, 0.28);
+    }
+
+    .pin-key.key-util {
+      font-size: 13px;
+      color: rgba(255, 244, 238, 0.7);
+      letter-spacing: 0.05em;
+    }
+
+    @media (max-width: 600px) {
+      .dossier-wrap { grid-template-columns: 1fr; }
+      .strip { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .bflag { width: 34px; height: 44px; }
+      .treats { grid-template-columns: repeat(2, 1fr); }
+      .treat:last-child { grid-column: 1 / -1; }
+      .moon { width: 60px; height: 60px; }
+      .shinchan-img { width: 52px; }
+      .shinchan-bubble { font-size: 9.5px; padding: 3px 8px; }
+      .timer-segment { min-width: 64px; padding: 12px 8px 10px; }
+      .timer-val { font-size: 28px; }
+      .timer-colon { font-size: 24px; }
+      .pin-slot { width: 38px; height: 48px; font-size: 20px; border-radius: 10px; }
+      .pin-digits-wrap { gap: 6px; }
+      .pin-modal-card { padding: 26px 18px 22px; }
+      .pin-title { font-size: 20px; }
+      .pin-key { padding: 11px 0; font-size: 18px; }
+      .pin-keypad { max-width: 270px; gap: 8px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+      .wish, .shot, .dcard, .mystery-card { opacity: 1 !important; transform: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="ambient"><div class="moon"></div></div>
+  <canvas id="confetti"></canvas>
+  <div class="bar top"></div>
+  <div class="top-header-mask"></div>
+  <div class="bar bottom"></div>
+  
+  <button class="mute" id="muteBtn" aria-label="Toggle sound">🔊</button>
+  
+  <!-- Auto-scroll indicator & controller -->
+  <div class="autoscroll-pill" id="autoScrollPill" title="Smooth auto-scrolling is enabled. Scroll manually anytime to pause.">
+    <span class="pulse-dot"></span>
+    <span id="autoScrollTxt">Auto-scroll ON</span>
+  </div>
+
+  <!-- VIP PIN Access Modal -->
+  <dialog id="vipPinModal" class="vip-pin-modal" aria-labelledby="vipPinTitle">
+    <div class="pin-modal-card">
+      <button class="pin-close-btn" id="pinCloseBtn" type="button" aria-label="Close VIP PIN dialog">✕</button>
+      
+      <div class="pin-badge">🔐 VIP PASSCODE · 비밀번호</div>
+      <h2 class="pin-title" id="vipPinTitle">Enter VIP PIN to Unlock</h2>
+      <p class="pin-sub">생일 프리미어 조기 입장 · Enter the 6-digit VIP pass code</p>
+
+      <div class="pin-digits-wrap" id="pinDigitsWrap" aria-live="polite">
+        <div class="pin-slot active" data-idx="0"></div>
+        <div class="pin-slot" data-idx="1"></div>
+        <div class="pin-slot" data-idx="2"></div>
+        <div class="pin-slot" data-idx="3"></div>
+        <div class="pin-slot" data-idx="4"></div>
+        <div class="pin-slot" data-idx="5"></div>
+      </div>
+
+      <div class="pin-feedback info" id="pinFeedback">Enter the 6-digit passcode to proceed</div>
+
+      <div class="pin-keypad" id="pinKeypad">
+        <button type="button" class="pin-key" data-digit="1">1</button>
+        <button type="button" class="pin-key" data-digit="2">2</button>
+        <button type="button" class="pin-key" data-digit="3">3</button>
+        <button type="button" class="pin-key" data-digit="4">4</button>
+        <button type="button" class="pin-key" data-digit="5">5</button>
+        <button type="button" class="pin-key" data-digit="6">6</button>
+        <button type="button" class="pin-key" data-digit="7">7</button>
+        <button type="button" class="pin-key" data-digit="8">8</button>
+        <button type="button" class="pin-key" data-digit="9">9</button>
+        <button type="button" class="pin-key key-util" data-action="clear">Clear</button>
+        <button type="button" class="pin-key" data-digit="0">0</button>
+        <button type="button" class="pin-key key-util" data-action="backspace">⌫</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Shin-chan Animated Corner Widget -->
+  <div class="shinchan-corner" id="shinchanCorner" title="짱구 (Shin-chan) is here! Tap for birthday greetings">
+    <div class="shinchan-bubble" id="shinchanBubble">Happy Birthday! 🌸</div>
+    <img src="shinchan.gif" alt="Shin-chan dancing" class="shinchan-img" id="shinchanImg" />
+  </div>
+
+  <div class="eps" id="epNav">
+    <span class="ep" data-ep="0" id="ep0Pill" style="display:none;">12.OCT</span>
+    <span class="ep on" data-ep="1">EP.01</span>
+    <span class="ep" data-ep="2">EP.02</span>
+    <span class="ep" data-ep="3">EP.03</span>
+    <span class="ep" data-ep="4">FINAL</span>
+  </div>
+
+  <!-- COUNTDOWN STAGE (Starting Point for October 12 Premiere) -->
+  <section class="stage" id="step0">
+    <div class="countdown-badge">🌸 Birthday Premiere · October 12, 2026</div>
+    <h1 class="hangul" style="font-size: clamp(38px, 9vw, 80px); margin-top: 14px;">생일 카운트다운</h1>
+    <span class="sub" style="font-size: 13px;">The Official Birthday Countdown</span>
+    <p class="roman" style="margin-top: 8px;">Counting down to <span class="nm">Miss Agrawal</span>'s Birthday! 🎂</p>
+
+    <div class="countdown-card">
+      <div style="font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--sakura); letter-spacing:0.15em;">
+        PREMIERE UNLOCKS AT MIDNIGHT (13 OCT)
+      </div>
+
+      <div class="countdown-timer">
+        <div class="timer-segment">
+          <span class="timer-val" id="cdDays">00</span>
+          <span class="timer-lbl">Days</span>
+        </div>
+        <span class="timer-colon">:</span>
+        <div class="timer-segment">
+          <span class="timer-val" id="cdHours">00</span>
+          <span class="timer-lbl">Hours</span>
+        </div>
+        <span class="timer-colon">:</span>
+        <div class="timer-segment">
+          <span class="timer-val" id="cdMins">00</span>
+          <span class="timer-lbl">Mins</span>
+        </div>
+        <span class="timer-colon">:</span>
+        <div class="timer-segment">
+          <span class="timer-val" id="cdSecs">00</span>
+          <span class="timer-lbl">Secs</span>
+        </div>
+      </div>
+
+      <p style="font-size:13.5px; color:rgba(255,244,238,0.78); margin:0 0 16px; line-height:1.6;">
+        Special birthday episode unlocks automatically when the clock strikes October 12! 🎉
+      </p>
+
+      <button class="btn" id="unlockNowBtn" style="margin-top:10px;">
+        🎉 Unlock Now / VIP Early Access
+      </button>
+    </div>
+  </section>
+
+  <!-- EP 1 : poster -->
+  <section class="stage active" id="step1">
+    <div class="tag">Pune · Original Series · 2026</div>
+    <h1 class="hangul">생일 축하해요</h1>
+    <span class="sub">Happy Birthday!</span>
+    <p class="roman">Saengil Chukhahaeyo, <span class="nm">Miss Agrawal</span>! 🌸</p>
+    <span class="sub">생일 축하해요! 오늘은 당신의 날이에요.</span>
+    <div class="cast">
+      Starring: <b class="nm">Miss Agrawal</b> as the Amazing Web Developer<br>
+      Genre: Friendship · Comedy · Code · Cake<br>
+      Rated: 100% Fun
+      <span class="sub">주연: 멋진 웹 개발자 · 장르: 우정 · 코미디 · 코드 · 케이크 · 등급: 100% 재미</span>
+    </div>
+    <button class="btn" id="startBtn">▶ Play Episode 1</button>
+  </section>
+
+  <!-- EP 2 : terminal + Character Dossier / Diagnostics (Replaces wishes with something unique) -->
+  <section class="stage" id="step2">
+    <div class="tag">Episode 2 · "Compiling your birthday"</div>
+    <div class="term">
+      <div class="term-head"><i></i><i></i><i></i><span>birthday.js — Pune, India</span></div>
+      <pre id="codeOut"></pre>
+    </div>
+
+    <!-- Unique EP2 Content: Character Dossier & Diagnostics Grid -->
+    <div class="dossier-header" id="dossierHeader" style="opacity: 0; transition: opacity 0.5s;">
+      <h3>✨ Character Analysis & System Diagnostics</h3>
+      <span>LEVEL UP 2026</span>
+    </div>
+    <span class="sub" id="dossierSub" style="opacity: 0; transition: opacity 0.5s;">
+      생일 특별 스펙 분석표 · Certified Developer Profile
+    </span>
+
+    <div class="dossier-wrap" id="dossierGrid">
+      <div class="dcard">
+        <span class="dcard-tag">Core Spec #1</span>
+        <div class="dcard-title">💻 Elite Web Developer</div>
+        <p class="dcard-desc">Writes clean, elegant code that compiles like poetry. Solves tricky edge cases effortlessly while keeping aesthetics 10/10.</p>
+        <div class="dcard-stat">
+          <span>CLEAN CODE: 100%</span>
+          <button type="button" class="dcard-badge-btn" onclick="celebrateCard(this)">★ BOOST</button>
+        </div>
+      </div>
+
+      <div class="dcard">
+        <span class="dcard-tag">Core Spec #2</span>
+        <div class="dcard-title">🎬 K-Drama Main Character</div>
+        <p class="dcard-desc">Radiates pure main character aura (주인공 에너지). Walking into any room automatically cues an uplifting, catchy drama OST in the background.</p>
+        <div class="dcard-stat">
+          <span>CHARM LEVEL: MAX</span>
+          <button type="button" class="dcard-badge-btn" onclick="celebrateCard(this)">★ BOOST</button>
+        </div>
+      </div>
+
+      <div class="dcard">
+        <span class="dcard-tag">Diagnostics</span>
+        <div class="dcard-title">🔍 Zero Bugs Detected</div>
+        <p class="dcard-desc">System scan finished with 0 errors, 0 warnings. Aura running at steady 120 FPS. Certified sunshine dispenser in Pune.</p>
+        <div class="dcard-stat">
+          <span>PERFORMANCE: 120 FPS</span>
+          <button type="button" class="dcard-badge-btn" onclick="celebrateCard(this)">★ BOOST</button>
+        </div>
+      </div>
+
+      <div class="dcard">
+        <span class="dcard-tag">Special Title</span>
+        <div class="dcard-title">🏆 Certified Legendary Friend</div>
+        <p class="dcard-desc">Officially awarded Friend of the Year. Supportive, kind, hilarious, and always knows the best snack recommendations.</p>
+        <div class="dcard-stat">
+          <span>KINDNESS: INFINITE ∞</span>
+          <button type="button" class="dcard-badge-btn" onclick="celebrateCard(this)">★ BOOST</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn" id="toTreatBtn">Next Episode ▶</button>
+  </section>
+
+  <!-- EP 3 : treat picker (mandatory) -->
+  <section class="stage" id="step3">
+    <div class="tag">Episode 3 · "The Birthday Treat"</div>
+    <h2 class="section-title">Pick your birthday treat 🍰</h2>
+    <span class="sub">생일 간식을 골라보세요! · Choose your birthday treat!</span>
+    <p class="lead">Pick what you'd love to eat and tell me where to send it. I'll arrange the treat! 😄</p>
+    <span class="sub">먹고 싶은 걸 고르고 보낼 주소를 알려주세요. 제가 꼭 준비할게요!</span>
+
+    <div class="treats" id="treats" role="radiogroup" aria-label="Choose your birthday treat"></div>
+    <input type="text" id="otherInput" placeholder="Type what you'd like to eat" autocomplete="off" maxlength="60">
+
+    <div class="addr-wrap">
+      <label for="addrInput" class="addr-label">Where should I send it? 📍</label>
+      <span class="sub">보낼 주소를 적어주세요 · Your delivery address</span>
+      <textarea id="addrInput" rows="3" maxlength="300" placeholder="House / flat no., street, area, Pune, pincode"></textarea>
+    </div>
+
+    <div class="need" id="needMsg">
+      Pick a treat and add your address to continue
+      <span class="sub" style="color:rgba(246,198,103,0.75);">계속하려면 간식을 고르고 주소를 입력해주세요</span>
+    </div>
+    <button class="btn" id="treatBtn" disabled>Choose treat + address first</button>
+  </section>
+
+  <!-- FINAL EPISODE -->
+  <section class="stage" id="step4">
+    <div class="tag">Final Episode · "Make a wish"</div>
+
+    <!-- Festive Bunting Banner atop the Final page -->
+    <div class="bunting-wrap" aria-hidden="true">
+      <svg class="bunting-rope" viewBox="0 0 700 60" preserveAspectRatio="none">
+        <path d="M 0,16 Q 350,56 700,16" fill="none" stroke="rgba(255, 244, 238, 0.4)" stroke-width="2.5" stroke-dasharray="6,3" />
+      </svg>
+      <div class="bunting-flags-row">
+        <div class="bflag yellow" title="Banners"></div>
+        <div class="bflag purple" title="Banners"></div>
+        <div class="bflag pink" title="Banners"></div>
+        <div class="bflag teal" title="Banners"></div>
+        <div class="bflag yellow" title="Banners"></div>
+        <div class="bflag purple" title="Banners"></div>
+        <div class="bflag pink" title="Banners"></div>
+        <div class="bflag teal" title="Banners"></div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Happy Birthday,<br><span class="nm">Miss Agrawal</span>! 🎂</h2>
+    <span class="sub">생일 축하해요, <span class="nm">Miss Agrawal</span>! · Happy Birthday, <span class="nm">Miss Agrawal</span>!</span>
+    <p class="lead">Wishing you a day full of smiles, good food and your favourite drama playing in the background. You deserve every bit of it.</p>
+    <span class="sub">웃음 가득한 하루, 맛있는 음식, 그리고 배경에 흐르는 좋아하는 드라마. 당신은 그 모든 걸 누릴 자격이 있어요.</span>
+
+    <div class="cake">
+      <div class="candles">
+        <div class="candle"><div class="flame"></div></div>
+        <div class="candle"><div class="flame"></div></div>
+        <div class="candle"><div class="flame"></div></div>
+      </div>
+      <div class="drip"></div>
+      <div class="tier tier1"></div>
+      <div class="tier tier2"></div>
+      <div class="plate"></div>
+    </div>
+
+    <!-- BUNTING BANNER DIRECTLY ATOP PHOTO STRIP -->
+    <div class="bunting-wrap" style="margin-top: 40px;" aria-hidden="true">
+      <svg class="bunting-rope" viewBox="0 0 700 60" preserveAspectRatio="none">
+        <path d="M 0,14 Q 350,58 700,14" fill="none" stroke="rgba(255, 244, 238, 0.45)" stroke-width="2.5" stroke-dasharray="6,3" />
+      </svg>
+      <div class="bunting-flags-row">
+        <div class="bflag yellow" title="Party Banners"></div>
+        <div class="bflag purple" title="Party Banners"></div>
+        <div class="bflag pink" title="Party Banners"></div>
+        <div class="bflag teal" title="Party Banners"></div>
+        <div class="bflag yellow" title="Party Banners"></div>
+        <div class="bflag purple" title="Party Banners"></div>
+        <div class="bflag pink" title="Party Banners"></div>
+        <div class="bflag teal" title="Party Banners"></div>
+      </div>
+    </div>
+
+    <div class="block-title">인생네컷 · Life Four Cuts 📸</div>
+    <span class="sub">우리의 네 컷 사진 · Aesthetic celebratory photo reel</span>
+    <div class="strip" id="strip"></div>
+
+    <!-- INTERACTIVE BIRTHDAY MYSTERY BOX -->
+    <div class="gift-box-wrap">
+      <div class="mystery-card" id="mysteryBox" onclick="openMysteryBox()">
+        <span class="gift-icon">🎁</span>
+        <div class="mystery-title">Tap to Open Special Birthday Gift Box!</div>
+        <p class="mystery-sub">특별한 생일 깜짝 상자를 열어보세요 · Click for an extra surprise</p>
+        <div class="secret-perks" id="secretPerks">
+          <b>🎉 VIP Birthday Perk Unlocked:</b><br>
+          ✓ 365 Days of Unlimited Good Fortune 🍀<br>
+          ✓ Free Sweet Treats & Iced Boba Passes 🧋<br>
+          ✓ Zero Runtime Errors in All Future Projects 🚀<br>
+          <i>Issued with ♥ to Miss Agrawal · Valid across all seasons!</i>
+        </div>
+      </div>
+    </div>
+
+    <div class="block-title">All my wishes for you 💌</div>
+    <span class="sub">당신을 위한 모든 소원 · All the wishes for you</span>
+    <div class="wishes" id="finalWishes"></div>
+
+    <div class="row" style="margin-top:26px;">
+      <button class="btn btn-ghost" id="songBtn" style="margin-top:0;">
+        <span id="songBtnText">▶ Play the birthday song</span>
+        <span class="visualizer" id="audioVisualizer">
+          <span class="v-bar"></span>
+          <span class="v-bar"></span>
+          <span class="v-bar"></span>
+          <span class="v-bar"></span>
+        </span>
+      </button>
+      <a class="btn btn-ghost" id="waBtn" style="margin-top:0; display:none;" target="_blank" rel="noopener">📲 Send my pick</a>
+    </div>
+
+    <div class="credits">
+      — To be continued in the next season —<br>
+      Directed with <b>♥</b> by your friend, the frontend dev 😄
+      <span class="sub">프론트엔드 개발자 친구가 정성껏 만들었어요 — 다음 시즌에 계속!</span>
+    </div>
+  </section>
+
+  <!-- Firebase: saves the treat choice with UNIQUE 'agrawal' doc ID -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAUnJWIPnjkDKEd4J-B-L6gfAAQx4je74Y",
+      authDomain: "bithday-d2a79.firebaseapp.com",
+      projectId: "bithday-d2a79",
+      storageBucket: "bithday-d2a79.firebasestorage.app",
+      messagingSenderId: "193709716736",
+      appId: "1:193709716736:web:60afc615b824165b2e6fe5",
+      measurementId: "G-K3T9C7S0BL"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Save preferences in Firebase with unique 'agrawal' doc id
+    window.__saveTreat = async function (data) {
+      const ts = Date.now();
+      const rand = Math.random().toString(36).substring(2, 8);
+      const uniqueDocId = `agrawal_${ts}_${rand}`;
+
+      await setDoc(doc(db, "events", uniqueDocId), {
+        docId: uniqueDocId,
+        user: "Miss Agrawal",
+        type: "treat_choice",
+        payload: data,
+        createdAt: new Date().toISOString(),
+        timestamp: new Date()
+      });
+
+      console.log("✓ Saved in Firebase under unique doc ID:", uniqueDocId);
+      return uniqueDocId;
+    };
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // ================= EDIT HERE =================
+      var NAME = 'Miss Agrawal';
+      var BIRTHDAY_DATE = new Date('2026-10-12T00:00:00'); // October 12, 2026
+      var PHOTOS = ['photo1.jpg', 'photo2.jpg', 'photo3.jpg', 'photo4.jpg'];
+      var CAPTIONS = ['첫 번째 컷 · Cut 1', '두 번째 컷 · Cut 2', '세 번째 컷 · Cut 3', '네 번째 컷 · Cut 4'];
+      var FRIEND_WHATSAPP = '';
+      // =============================================
+
+      document.querySelectorAll('.nm').forEach(function (el) { el.textContent = NAME; });
+
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* ---------- Sound effects (synthesized in the browser) ---------- */
+      var actx = null, muted = false;
+      function ensureAudio() {
+        if (muted) return false;
+        try {
+          actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+          if (actx.state === 'suspended') actx.resume();
+          return true;
+        } catch (e) { return false; }
+      }
+      function tone(freq, dur, type, vol, delay) {
+        if (!ensureAudio()) return;
+        var t = actx.currentTime + (delay || 0);
+        var o = actx.createOscillator(), g = actx.createGain();
+        o.type = type || 'sine'; o.frequency.value = freq;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(vol || 0.15, t + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + dur + 0.02);
+      }
+      function noise(dur, vol, hpFreq) {
+        if (!ensureAudio()) return;
+        var len = Math.floor(actx.sampleRate * dur);
+        var buf = actx.createBuffer(1, len, actx.sampleRate), d = buf.getChannelData(0);
+        for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2);
+        var s = actx.createBufferSource(); s.buffer = buf;
+        var f = actx.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = hpFreq || 2000;
+        var g = actx.createGain(); g.gain.value = vol || 0.3;
+        s.connect(f); f.connect(g); g.connect(actx.destination); s.start();
+      }
+      var sfx = {
+        click: function () { tone(660, 0.08, 'triangle', 0.18); tone(990, 0.1, 'triangle', 0.12, 0.05); },
+        type: function () { tone(1800 + Math.random() * 400, 0.03, 'square', 0.04); },
+        select: function () { tone(520, 0.07, 'sine', 0.2); tone(780, 0.09, 'sine', 0.15, 0.05); },
+        wish: function () { tone(659, 0.35, 'sine', 0.16); tone(880, 0.5, 'sine', 0.14, 0.12); },
+        shutter: function () { noise(0.05, 0.4, 2500); setTimeout(function () { noise(0.07, 0.3, 1500); }, 90); },
+        thud: function () { tone(110, 0.18, 'sine', 0.3); },
+        candle: function () { tone(1400, 0.08, 'triangle', 0.12); },
+        light: function () { noise(0.25, 0.12, 3000); tone(1200, 0.15, 'sine', 0.1); },
+        cheer: function () { [523, 659, 784, 1046].forEach(function(f, i){ tone(f, 0.3, 'sine', 0.15, i*0.07); }); }
+      };
+
+      window.celebrateCard = function(btn) {
+        sfx.cheer();
+        btn.textContent = '★ ACTIVE!';
+        btn.style.background = 'rgba(143, 227, 200, 0.3)';
+        btn.style.color = '#8fe3c8';
+      };
+
+      var muteBtn = document.getElementById('muteBtn');
+      muteBtn.addEventListener('click', function () {
+        muted = !muted;
+        muteBtn.textContent = muted ? '🔇' : '🔊';
+        if (typeof audio !== 'undefined') { audio.muted = muted; }
+      });
+
+      /* ---------- SHIN-CHAN CORNER WIDGET INTERACTION ---------- */
+      var shinchanCorner = document.getElementById('shinchanCorner');
+      var shinchanBubble = document.getElementById('shinchanBubble');
+      var shinchanPhrases = [
+        "Happy Birthday, Agrawal-san! 🌸",
+        "10월 12일! 파티 시작! 🎉",
+        "Cake khila do! Hungry Shinchan! 🍰",
+        "Zero bugs today! ✨",
+        "Main character vibes! 🎬",
+        "Boba & Ramen treat time! 🧋"
+      ];
+      var shinchanIndex = 0;
+      shinchanCorner.addEventListener('click', function () {
+        sfx.cheer();
+        shinchanCorner.classList.add('bounce');
+        setTimeout(function () { shinchanCorner.classList.remove('bounce'); }, 400);
+        shinchanIndex = (shinchanIndex + 1) % shinchanPhrases.length;
+        shinchanBubble.textContent = shinchanPhrases[shinchanIndex];
+      });
+
+      /* ---------- AUTO-SCROLLING ENGINE ---------- */
+      var autoScrollEnabled = true;
+      var lastManualScroll = 0;
+      var autoScrollPill = document.getElementById('autoScrollPill');
+      var autoScrollTxt = document.getElementById('autoScrollTxt');
+      var scrollTimeout = null;
+
+      function onManualScroll() {
+        lastManualScroll = Date.now();
+        autoScrollPill.classList.add('paused');
+        autoScrollTxt.textContent = 'Auto-scroll: Paused';
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(function () {
+          if (autoScrollEnabled) {
+            autoScrollPill.classList.remove('paused');
+            autoScrollTxt.textContent = 'Auto-scroll ON';
+          }
+        }, 2200);
+      }
+
+      ['wheel', 'touchmove', 'keydown'].forEach(function (ev) {
+        window.addEventListener(ev, onManualScroll, { passive: true });
+      });
+
+      autoScrollPill.addEventListener('click', function () {
+        autoScrollEnabled = !autoScrollEnabled;
+        if (autoScrollEnabled) {
+          autoScrollPill.classList.remove('paused');
+          autoScrollTxt.textContent = 'Auto-scroll ON';
+        } else {
+          autoScrollPill.classList.add('paused');
+          autoScrollTxt.textContent = 'Auto-scroll OFF';
+        }
+      });
+
+      function autoScrollTo(el, alignCenter) {
+        if (!autoScrollEnabled) return;
+        if (Date.now() - lastManualScroll < 2200) return;
+        if (!el) return;
+        try {
+          var rect = el.getBoundingClientRect();
+          var offset = alignCenter ? (window.innerHeight - rect.height) / 2 : window.innerHeight * 0.35;
+          var targetY = window.pageYOffset + rect.top - Math.max(20, offset);
+          window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+        } catch (e) {}
+      }
+
+      /* ---------- STAGES NAVIGATION ---------- */
+      var stages = {
+        0: document.getElementById('step0'),
+        1: document.getElementById('step1'),
+        2: document.getElementById('step2'),
+        3: document.getElementById('step3'),
+        4: document.getElementById('step4')
+      };
+      var eps = document.querySelectorAll('.ep');
+      function goTo(n) {
+        Object.keys(stages).forEach(function (k) { stages[k].classList.toggle('active', Number(k) === n); });
+        eps.forEach(function (e) { e.classList.toggle('on', Number(e.dataset.ep) === n); });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      /* ---------- 12 OCT COUNTDOWN LOGIC ---------- */
+      var cdDays = document.getElementById('cdDays');
+      var cdHours = document.getElementById('cdHours');
+      var cdMins = document.getElementById('cdMins');
+      var cdSecs = document.getElementById('cdSecs');
+      var ep0Pill = document.getElementById('ep0Pill');
+      var countdownFinished = false;
+
+      function updateCountdown() {
+        var now = new Date();
+        var diff = BIRTHDAY_DATE - now;
+
+        if (diff <= 0) {
+          if (!countdownFinished) {
+            countdownFinished = true;
+            onCountdownComplete();
+          }
+          return;
+        }
+
+        var d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        var h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        var m = Math.floor((diff / (1000 * 60)) % 60);
+        var s = Math.floor((diff / 1000) % 60);
+
+        cdDays.textContent = d < 10 ? '0' + d : d;
+        cdHours.textContent = h < 10 ? '0' + h : h;
+        cdMins.textContent = m < 10 ? '0' + m : m;
+        cdSecs.textContent = s < 10 ? '0' + s : s;
+      }
+
+      function onCountdownComplete() {
+        fireConfettiOnce();
+        sfx.cheer();
+        goTo(1);
+      }
+
+      var timerInterval = setInterval(updateCountdown, 1000);
+      updateCountdown();
+
+      // Check whether to show countdown stage or start at step 1
+      var unlockedSession = sessionStorage.getItem('unlocked_bday_preview');
+      var now = new Date();
+      if (now < BIRTHDAY_DATE && !unlockedSession) {
+        // Before 12 Oct: show countdown stage at starting point
+        ep0Pill.style.display = 'inline-block';
+        goTo(0);
+      } else {
+        // On or after 12 Oct (or preview unlocked): show EP 1
+        goTo(1);
+      }
+
+      /* ---------- VIP PIN MODAL LOGIC ---------- */
+      var TARGET_PIN = '131096';
+      var currentPin = '';
+      var vipModal = document.getElementById('vipPinModal');
+      var pinSlots = document.querySelectorAll('.pin-slot');
+      var pinWrap = document.getElementById('pinDigitsWrap');
+      var pinFeedback = document.getElementById('pinFeedback');
+      var isVerifying = false;
+
+      function renderPin() {
+        pinSlots.forEach(function (slot, idx) {
+          slot.className = 'pin-slot';
+          if (idx < currentPin.length) {
+            slot.textContent = currentPin[idx];
+            slot.classList.add('filled');
+          } else {
+            slot.textContent = '';
+          }
+          if (idx === currentPin.length && !isVerifying) {
+            slot.classList.add('active');
+          }
+        });
+      }
+
+      function openVipModal() {
+        currentPin = '';
+        isVerifying = false;
+        pinFeedback.className = 'pin-feedback info';
+        pinFeedback.textContent = 'Enter the 6-digit passcode to proceed';
+        renderPin();
+        if (typeof vipModal.showModal === 'function') {
+          vipModal.showModal();
+        } else {
+          vipModal.setAttribute('open', '');
+        }
+        sfx.click();
+      }
+
+      function closeVipModal() {
+        if (typeof vipModal.close === 'function') {
+          vipModal.close();
+        } else {
+          vipModal.removeAttribute('open');
+        }
+        currentPin = '';
+        isVerifying = false;
+        renderPin();
+      }
+
+      function handleDigit(digit) {
+        if (isVerifying || currentPin.length >= 6) return;
+        currentPin += digit;
+        sfx.type();
+        renderPin();
+        if (currentPin.length === 6) {
+          verifyPin();
+        }
+      }
+
+      function handleBackspace() {
+        if (isVerifying || currentPin.length === 0) return;
+        currentPin = currentPin.slice(0, -1);
+        sfx.click();
+        renderPin();
+        pinFeedback.className = 'pin-feedback info';
+        pinFeedback.textContent = 'Enter the 6-digit passcode to proceed';
+      }
+
+      function handleClear() {
+        if (isVerifying) return;
+        currentPin = '';
+        sfx.click();
+        renderPin();
+        pinFeedback.className = 'pin-feedback info';
+        pinFeedback.textContent = 'Enter the 6-digit passcode to proceed';
+      }
+
+      function verifyPin() {
+        isVerifying = true;
+        if (currentPin === TARGET_PIN) {
+          pinSlots.forEach(function (slot) { slot.className = 'pin-slot success'; });
+          pinFeedback.className = 'pin-feedback success';
+          pinFeedback.textContent = '🎉 VIP Access Granted! Welcome! 🌸';
+          sfx.cheer();
+          fireConfettiOnce();
+          setTimeout(function () {
+            sessionStorage.setItem('unlocked_bday_preview', 'true');
+            closeVipModal();
+            goTo(1);
+          }, 650);
+        } else {
+          pinSlots.forEach(function (slot) { slot.className = 'pin-slot error'; });
+          pinWrap.classList.add('shake');
+          pinFeedback.className = 'pin-feedback error';
+          pinFeedback.textContent = '❌ Incorrect PIN. Please try again.';
+          tone(220, 0.22, 'sawtooth', 0.25);
+          setTimeout(function () {
+            pinWrap.classList.remove('shake');
+            currentPin = '';
+            isVerifying = false;
+            pinFeedback.className = 'pin-feedback info';
+            pinFeedback.textContent = 'Enter the 6-digit passcode to proceed';
+            renderPin();
+          }, 700);
+        }
+      }
+
+      document.getElementById('unlockNowBtn').addEventListener('click', function () {
+        openVipModal();
+      });
+
+      document.getElementById('pinCloseBtn').addEventListener('click', closeVipModal);
+
+      vipModal.addEventListener('click', function (e) {
+        var rect = vipModal.getBoundingClientRect();
+        var inDialog = (rect.top <= e.clientY && e.clientY <= rect.top + rect.height &&
+          rect.left <= e.clientX && e.clientX <= rect.left + rect.width);
+        if (!inDialog) {
+          closeVipModal();
+        }
+      });
+
+      document.getElementById('pinKeypad').addEventListener('click', function (e) {
+        var btn = e.target.closest('button');
+        if (!btn) return;
+        var digit = btn.dataset.digit;
+        var action = btn.dataset.action;
+        if (digit !== undefined) {
+          handleDigit(digit);
+        } else if (action === 'backspace') {
+          handleBackspace();
+        } else if (action === 'clear') {
+          handleClear();
+        }
+      });
+
+      window.addEventListener('keydown', function (e) {
+        if (!vipModal.hasAttribute('open')) return;
+        if (e.key >= '0' && e.key <= '9') {
+          e.preventDefault();
+          handleDigit(e.key);
+        } else if (e.key === 'Backspace') {
+          e.preventDefault();
+          handleBackspace();
+        } else if (e.key === 'Escape') {
+          closeVipModal();
+        }
+      });
+
+      window.addEventListener('paste', function (e) {
+        if (!vipModal.hasAttribute('open')) return;
+        var text = (e.clipboardData || window.clipboardData).getData('text');
+        if (text) {
+          var cleaned = text.replace(/\D/g, '').slice(0, 6);
+          if (cleaned) {
+            e.preventDefault();
+            currentPin = '';
+            for (var i = 0; i < cleaned.length; i++) {
+              currentPin += cleaned[i];
+            }
+            sfx.type();
+            renderPin();
+            if (currentPin.length === 6) {
+              verifyPin();
+            }
+          }
+        }
+      });
+
+      /* ---------- Ambient Confetti (Celebrations) ---------- */
+      var pc = document.getElementById('petals'), pctx = pc ? pc.getContext('2d') : null;
+      var cc = document.getElementById('confetti'), cctx = cc.getContext('2d');
+      var W, H;
+      function resize() {
+        if (pc) { pc.width = window.innerWidth; pc.height = window.innerHeight; }
+        cc.width = window.innerWidth; cc.height = window.innerHeight;
+        W = window.innerWidth; H = window.innerHeight;
+      }
+      resize(); window.addEventListener('resize', resize);
+
+      function popSound() {
+        try {
+          if (!ensureAudio()) return;
+          var t = actx.currentTime;
+          var len = Math.floor(actx.sampleRate * 0.35);
+          var buf = actx.createBuffer(1, len, actx.sampleRate), d = buf.getChannelData(0);
+          for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3);
+          var src = actx.createBufferSource(); src.buffer = buf;
+          var hp = actx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 900;
+          var g = actx.createGain(); g.gain.setValueAtTime(0.9, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+          src.connect(hp); hp.connect(g); g.connect(actx.destination); src.start(t);
+
+          var o = actx.createOscillator(), og = actx.createGain();
+          o.type = 'sine'; o.frequency.setValueAtTime(180, t); o.frequency.exponentialRampToValueAtTime(50, t + 0.15);
+          og.gain.setValueAtTime(0.7, t); og.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+          o.connect(og); og.connect(actx.destination); o.start(t); o.stop(t + 0.25);
+
+          [784, 988, 1175, 1568].forEach(function (f, i) {
+            var os = actx.createOscillator(), gg = actx.createGain(), s = t + 0.12 + i * 0.09;
+            os.type = 'triangle'; os.frequency.value = f;
+            gg.gain.setValueAtTime(0.0001, s);
+            gg.gain.exponentialRampToValueAtTime(0.25, s + 0.02);
+            gg.gain.exponentialRampToValueAtTime(0.0001, s + 0.5);
+            os.connect(gg); gg.connect(actx.destination); os.start(s); os.stop(s + 0.55);
+          });
+        } catch (e) {}
+      }
+
+      var confettiColors = ['#ffb3cb', '#ff7aa2', '#f6c667', '#8fe3c8', '#fff4ee', '#c9a7ff', '#fec25b', '#52cbb7'];
+      var confetti = [], cRaf = null, confettiDone = false;
+      function confettiLoop() {
+        cctx.clearRect(0, 0, W, H);
+        for (var i = confetti.length - 1; i >= 0; i--) {
+          var p = confetti[i];
+          p.vx *= 0.985; p.vy += p.g; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life++;
+          if (p.life > p.max || p.y > H + 40) { confetti.splice(i, 1); continue; }
+          cctx.save(); cctx.translate(p.x, p.y); cctx.rotate(p.rot);
+          cctx.globalAlpha = p.life > p.max * 0.7 ? Math.max(0, 1 - (p.life - p.max * 0.7) / (p.max * 0.3)) : 1;
+          cctx.fillStyle = p.color;
+          if (p.circle) { cctx.beginPath(); cctx.arc(0, 0, p.h, 0, 6.28); cctx.fill(); }
+          else { cctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); }
+          cctx.restore();
+        }
+        if (confetti.length) { cRaf = requestAnimationFrame(confettiLoop); }
+        else { cRaf = null; cctx.clearRect(0, 0, W, H); }
+      }
+      function fireConfettiOnce() {
+        if (confettiDone) return;
+        confettiDone = true;
+        popSound();
+        if (reduce) return;
+        var cx = W / 2, cy = H / 2;
+        for (var i = 0; i < 220; i++) {
+          var a = Math.random() * Math.PI * 2, sp = 5 + Math.random() * 14;
+          confetti.push({
+            x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 4, g: 0.22 + Math.random() * 0.1,
+            w: 6 + Math.random() * 7, h: 3 + Math.random() * 5, rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.4,
+            color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+            life: 0, max: 170 + Math.random() * 80, circle: Math.random() < 0.25
+          });
+        }
+        if (!cRaf) confettiLoop();
+      }
+
+      /* ---------- WISHES (Displayed exclusively on the Final Page, NO send love option) ---------- */
+      var WISHES = [
+        { kr: '첫 번째 소원 · Wish #1', en: 'May your code compile on the first try, every deploy go green, and every bug turn out to be a missing semicolon. 🐛✨', ko: '코드가 한 번에 컴파일되고, 배포는 항상 성공하고, 모든 버그가 세미콜론 하나 때문이길 바라요.' },
+        { kr: '두 번째 소원 · Wish #2', en: 'May your life have a happy-ending K-drama plot: great friends, great food, zero filler episodes, and a perfect OST on repeat. 🎶', ko: '좋은 친구와 맛있는 음식, 지루한 에피소드 없이, 최고의 OST가 흐르는 해피엔딩 드라마 같은 삶이 되길 바라요.' },
+        { kr: '세 번째 소원 · Wish #3', en: 'Thank you for being such a kind, supportive and fun friend. May this year bring you growth, big wins and all the peace you deserve. 💛', ko: '다정하고 든든하고 재미있는 친구가 되어줘서 고마워요. 올해는 성장과 큰 성과, 그리고 마음의 평화가 가득하길 바라요.' },
+        { kr: '네 번째 소원 · Wish #4', en: '화이팅! (Fighting!) Keep building cool things in Pune. The best season of your story is just starting. 🚀', ko: '푸네에서 멋진 것들을 계속 만들어가세요. 당신 이야기의 가장 좋은 시즌이 이제 시작이에요.' }
+      ];
+
+      function renderFinalWishes() {
+        var box = document.getElementById('finalWishes');
+        box.innerHTML = '';
+        WISHES.forEach(function (w) {
+          var card = document.createElement('div'); card.className = 'wish';
+          var kr = document.createElement('div'); kr.className = 'kr'; kr.textContent = w.kr;
+          var p = document.createElement('p'); p.textContent = w.en;
+          var s = document.createElement('span'); s.className = 'sub'; s.textContent = w.ko;
+          card.appendChild(kr); card.appendChild(p); card.appendChild(s);
+          box.appendChild(card);
+        });
+
+        // Treat summary card container
+        var treatCard = document.createElement('div');
+        treatCard.className = 'wish treat-box';
+        treatCard.id = 'treatCard';
+        treatCard.innerHTML = '<div class="kr">🎁 Your Birthday Treat · 생일 간식</div><p><b></b></p><span class="sub"></span>';
+        box.appendChild(treatCard);
+      }
+      renderFinalWishes();
+
+      /* Auto-reveal helper with automatic gentle scrolling */
+      function revealAll(selector, startDelay, gap, sound, autoScroll) {
+        var items = document.querySelectorAll(selector);
+        items.forEach(function (el, idx) {
+          setTimeout(function () {
+            el.classList.add('show');
+            if (sound) sound();
+            if (autoScroll !== false) {
+              autoScrollTo(el, false);
+            }
+          }, reduce ? 0 : startDelay + idx * gap);
+        });
+      }
+
+      /* ---------- EP 2 : Typewriter Terminal ---------- */
+      var codeLines = [
+        '<span class="c">// birthday.js</span>',
+        '<span class="k">const</span> <span class="f">birthday</span> = {',
+        '  name: <span class="s">"' + NAME + '"</span>,',
+        '  role: <span class="s">"Web Developer"</span>,',
+        '  city: <span class="s">"Pune"</span>,',
+        '  loves: [<span class="s">"K-Drama"</span>, <span class="s">"Good Food"</span>, <span class="s">"Clean Code"</span>],',
+        '  age: <span class="n">age</span> + <span class="n">1</span>,',
+        '  status: <span class="s">"Level Up 🎮"</span>',
+        '};',
+        '',
+        '<span class="f">celebrate</span>(birthday); <span class="c">// 생일 축하해요! (Happy Birthday!)</span>',
+        '<span class="p">&gt; Compiled successfully. 0 errors, 1 amazing friend.</span>'
+      ];
+      var codeEl = document.getElementById('codeOut');
+      var typed = false;
+      function typeCode(done) {
+        if (typed) return;
+        typed = true;
+        var i = 0, out = [];
+        (function next() {
+          if (i >= codeLines.length) {
+            codeEl.innerHTML = out.join('\n');
+            if (done) done();
+            return;
+          }
+          sfx.type();
+          out.push(codeLines[i]);
+          i++;
+          codeEl.innerHTML = out.join('\n') + '\n<span class="cursor"></span>';
+          if (i % 3 === 0) {
+            autoScrollTo(codeEl, false);
+          }
+          setTimeout(next, reduce ? 0 : 280);
+        })();
+      }
+
+      /* ---------- Treat Picker (EP 3) ---------- */
+      var TREATS = [
+        { id: 'cake', emoji: '🎂', en: 'Chocolate Cake', ko: '초콜릿 케이크' },
+        { id: 'dessert', emoji: '🧁', en: 'Dessert Box', ko: '디저트 박스' },
+        { id: 'ramen', emoji: '🍜', en: 'Veg Ramen', ko: '채식 라면' },
+        { id: 'icecream', emoji: '🍦', en: 'Ice Cream', ko: '아이스크림' },
+        { id: 'boba', emoji: '🧋', en: 'Bubble Tea', ko: '버블티' },
+        { id: 'pizza', emoji: '🍕', en: 'Veg Pizza', ko: '채식 피자' },
+        { id: 'other', emoji: '✍️', en: 'Something else', ko: '다른 것' }
+      ];
+      var selected = null;
+      var treatsBox = document.getElementById('treats');
+      var otherInput = document.getElementById('otherInput');
+      var treatBtn = document.getElementById('treatBtn');
+      var needMsg = document.getElementById('needMsg');
+      var addrInput = document.getElementById('addrInput');
+
+      TREATS.forEach(function (t) {
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'treat'; b.setAttribute('role', 'radio'); b.setAttribute('aria-checked', 'false');
+        b.innerHTML = '<span class="em"></span><span class="en"></span><span class="ko"></span>';
+        b.querySelector('.em').textContent = t.emoji;
+        b.querySelector('.en').textContent = t.en;
+        b.querySelector('.ko').textContent = t.ko;
+        b.addEventListener('click', function () {
+          selected = t; sfx.select();
+          treatsBox.querySelectorAll('.treat').forEach(function (x) { x.classList.remove('sel'); x.setAttribute('aria-checked', 'false'); });
+          b.classList.add('sel'); b.setAttribute('aria-checked', 'true');
+          otherInput.style.display = t.id === 'other' ? 'block' : 'none';
+          if (t.id === 'other') otherInput.focus();
+          validateTreat();
+          autoScrollTo(addrInput, false);
+        });
+        treatsBox.appendChild(b);
+      });
+
+      function treatLabel() {
+        if (!selected) return '';
+        if (selected.id === 'other') return otherInput.value.trim();
+        return selected.en;
+      }
+      function validateTreat() {
+        var ok = !!selected && (selected.id !== 'other' || otherInput.value.trim().length > 0) && addrInput.value.trim().length >= 8;
+        treatBtn.disabled = !ok;
+        treatBtn.textContent = ok ? 'Continue to Final Episode ▶' : 'Choose treat + address first';
+        needMsg.style.visibility = ok ? 'hidden' : 'visible';
+      }
+      otherInput.addEventListener('input', validateTreat);
+      addrInput.addEventListener('input', validateTreat);
+      otherInput.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !treatBtn.disabled) submitTreat(); });
+
+      function saveLocal(data, docId) {
+        try {
+          var key = 'birthday_events';
+          var existing = JSON.parse(localStorage.getItem(key) || '[]');
+          existing.push({ type: 'treat_choice', docId: docId, payload: data, ts: Date.now() });
+          localStorage.setItem(key, JSON.stringify(existing));
+        } catch (e) {}
+      }
+
+      var savedDocId = '';
+      function saveTreat(data) {
+        try {
+          if (window.__saveTreat) {
+            window.__saveTreat(data).then(function (id) {
+              savedDocId = id;
+              saveLocal(data, id);
+              updateDocIdBadge(id);
+            }).catch(function (err) {
+              console.warn("Firebase save fallback to local:", err);
+              savedDocId = 'agrawal_' + Date.now();
+              saveLocal(data, savedDocId);
+              updateDocIdBadge(savedDocId);
+            });
+          } else {
+            savedDocId = 'agrawal_' + Date.now();
+            saveLocal(data, savedDocId);
+            updateDocIdBadge(savedDocId);
+          }
+        } catch (e) {
+          savedDocId = 'agrawal_' + Date.now();
+          saveLocal(data, savedDocId);
+          updateDocIdBadge(savedDocId);
+        }
+      }
+
+      function updateDocIdBadge(id) {}
+
+      var chosenText = '';
+      function submitTreat() {
+        if (treatBtn.disabled) return;
+        sfx.click();
+        chosenText = treatLabel();
+        saveTreat({
+          name: NAME,
+          treat: chosenText,
+          korean: selected.ko,
+          custom: selected.id === 'other',
+          address: addrInput.value.trim()
+        });
+        buildTreatSummary();
+        goTo(4);
+        enterFinal();
+      }
+      treatBtn.addEventListener('click', submitTreat);
+      validateTreat();
+
+      function buildTreatSummary() {
+        var box = document.getElementById('treatCard');
+        if (!box) return;
+        box.querySelector('b').textContent = (selected.id === 'other' ? '✍️ ' : selected.emoji + ' ') + chosenText;
+        box.querySelector('.sub').textContent = '선택한 간식: ' + (selected.id === 'other' ? chosenText : selected.ko) + ' · 배달 주소: ' + addrInput.value.trim();
+        if (FRIEND_WHATSAPP) {
+          var wa = document.getElementById('waBtn');
+          wa.href = 'https://wa.me/' + FRIEND_WHATSAPP + '?text=' + encodeURIComponent('Hi! My birthday treat pick is: ' + chosenText + ' 🎂\nAddress: ' + addrInput.value.trim());
+          wa.style.display = 'inline-block';
+        }
+      }
+
+      /* ---------- Photo Strip (Life Four Cuts) with washi tape ---------- */
+      var strip = document.getElementById('strip');
+      strip.innerHTML = '';
+      PHOTOS.forEach(function (src, i) {
+        var shot = document.createElement('div'); shot.className = 'shot';
+        
+        var tape = document.createElement('div'); tape.className = 'washi-tape';
+        shot.appendChild(tape);
+
+        var ph = document.createElement('div'); ph.className = 'ph';
+        var img = document.createElement('img'); img.alt = 'Miss Agrawal celebration cut ' + (i + 1); img.src = src;
+        img.addEventListener('error', function () {
+          ph.innerHTML = '<div style="padding:20px; color:var(--sakura); font-size:12px;">📷 Cut ' + (i + 1) + '</div>';
+        });
+        ph.appendChild(img);
+
+        var cap = document.createElement('div'); cap.className = 'cap'; cap.textContent = CAPTIONS[i] || ('Cut ' + (i + 1));
+        shot.appendChild(ph); shot.appendChild(cap);
+        strip.appendChild(shot);
+      });
+
+      /* ---------- Mystery Gift Box (Final Page) ---------- */
+      window.openMysteryBox = function() {
+        var perks = document.getElementById('secretPerks');
+        if (perks) {
+          perks.classList.toggle('open');
+          sfx.cheer();
+          fireConfettiOnce();
+          autoScrollTo(perks, false);
+        }
+      };
+
+      /* ---------- Birthday Song & Equalizer ---------- */
+      var audio = new Audio('happy_birthday.mp3');
+      var songBtn = document.getElementById('songBtn');
+      var songBtnText = document.getElementById('songBtnText');
+      var visualizer = document.getElementById('audioVisualizer');
+      var playing = false;
+
+      function updateSongUI() {
+        songBtnText.textContent = playing ? '⏸ Pause song' : '▶ Play the birthday song';
+        if (playing) {
+          visualizer.classList.add('playing');
+        } else {
+          visualizer.classList.remove('playing');
+        }
+      }
+      audio.addEventListener('ended', function () { playing = false; updateSongUI(); });
+      function startSong() {
+        audio.play().then(function () { playing = true; updateSongUI(); }).catch(function (e) {
+          console.log('Audio autoplay prevented by browser');
+        });
+      }
+      songBtn.addEventListener('click', function () {
+        if (playing) { audio.pause(); playing = false; updateSongUI(); }
+        else { startSong(); }
+      });
+
+      /* ---------- Final Page Sequencing & Auto-Scrolling ---------- */
+      var finalStarted = false;
+      function enterFinal() {
+        if (finalStarted) return;
+        finalStarted = true;
+        fireConfettiOnce();
+
+        if (!reduce) {
+          [600, 1100, 1500].forEach(function (ms) { setTimeout(sfx.thud, ms); });
+          [1700, 1850, 2000].forEach(function (ms) { setTimeout(sfx.candle, ms); });
+          setTimeout(sfx.light, 2400);
+        }
+
+        setTimeout(startSong, reduce ? 0 : 1300);
+
+        // Sequence reveals with smooth auto-scroll:
+        // 1. Photos land one by one
+        revealAll('.shot', 2500, 900, sfx.shutter, true);
+
+        // 2. Mystery Gift Box appears
+        setTimeout(function() {
+          var mb = document.getElementById('mysteryBox');
+          if (mb) {
+            mb.classList.add('show');
+            sfx.wish();
+            autoScrollTo(mb, false);
+          }
+        }, 6200);
+
+        // 3. Final wishes appear one by one
+        revealAll('#finalWishes .wish', 7000, 750, sfx.wish, true);
+      }
+
+      /* ---------- EP 1 -> EP 2 Navigation ---------- */
+      document.getElementById('startBtn').addEventListener('click', function () {
+        sfx.click();
+        goTo(2);
+        typeCode(function () {
+          // Reveal EP2 header & Dossier cards (replacing wishes)
+          var header = document.getElementById('dossierHeader');
+          var sub = document.getElementById('dossierSub');
+          if (header) header.style.opacity = '1';
+          if (sub) sub.style.opacity = '1';
+
+          revealAll('#dossierGrid .dcard', 200, 650, sfx.wish, true);
+
+          // Scroll to next episode button after cards
+          setTimeout(function() {
+            autoScrollTo(document.getElementById('toTreatBtn'), false);
+          }, 3200);
+        });
+      });
+
+      /* ---------- EP 2 -> EP 3 Navigation ---------- */
+      document.getElementById('toTreatBtn').addEventListener('click', function () {
+        sfx.click();
+        goTo(3);
+      });
+    });
+  </script>
+</body>
+
+</html>
