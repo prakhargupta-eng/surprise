@@ -862,6 +862,11 @@
     }
 
     .treat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
       background: rgba(255, 244, 238, 0.05);
       border: 1px solid var(--line);
       color: var(--cream);
@@ -895,6 +900,30 @@
       margin-top: 2px;
       display: block;
       color: rgba(255, 244, 238, 0.58);
+    }
+
+    .treat:last-child {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      gap: 10px;
+      padding: 12px 18px;
+    }
+
+    .treat:last-child .em {
+      font-size: 22px;
+      display: inline-block;
+    }
+
+    .treat:last-child .en {
+      margin-top: 0;
+      font-size: 13px;
+      display: inline-block;
+    }
+
+    .treat:last-child .ko {
+      margin-top: 0;
+      font-size: 11px;
+      display: inline-block;
     }
 
     .treat.sel {
@@ -1717,6 +1746,13 @@
       letter-spacing: 0.05em;
     }
 
+    .pin-key[data-action="backspace"] {
+      font-size: 26px;
+      line-height: 1;
+      letter-spacing: normal;
+      font-family: system-ui, -apple-system, 'SF Pro Display', sans-serif;
+    }
+
     @media (max-width: 600px) {
       .dossier-wrap {
         grid-template-columns: 1fr;
@@ -1789,6 +1825,10 @@
       .pin-key {
         padding: 11px 0;
         font-size: 18px;
+      }
+
+      .pin-key[data-action="backspace"] {
+        font-size: 24px;
       }
 
       .pin-keypad {
@@ -1867,8 +1907,8 @@
         <button type="button" class="pin-key key-util" data-action="backspace">⌫</button>
       </div>
       <div id="pinHintDisplay"
-        style="font-size: 6px; color: rgba(255, 244, 238, 0.45); margin-top: 10px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.15em; text-align: center;">
-        TARGET PIN: 131096</div>
+        style="font-size: 6px; color: rgba(255, 244, 238, 0.45); margin-top: 8px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.15em; text-align: center;">
+        TARGET PIN:  D'day ***96</div>
     </div>
   </dialog>
 
@@ -2735,13 +2775,13 @@
 
       /* ---------- Treat Picker (EP 3) ---------- */
       var TREATS = [
-        { id: 'cake', emoji: '🎂', en: 'Chocolate Cake', ko: '초콜릿 케이크' },
-        { id: 'dessert', emoji: '🧁', en: 'Dessert Box', ko: '디저트 박스' },
-        { id: 'ramen', emoji: '🍜', en: 'Veg Ramen', ko: '채식 라면' },
-        { id: 'icecream', emoji: '🍦', en: 'Ice Cream', ko: '아이스크림' },
-        { id: 'boba', emoji: '🧋', en: 'Bubble Tea', ko: '버블티' },
-        { id: 'pizza', emoji: '🍕', en: 'Veg Pizza', ko: '채식 피자' },
-        { id: 'other', emoji: '✍️', en: 'Something else', ko: '다른 것' }
+        { id: 'cake',     emoji: '🎂', en: 'Chocolate Cake', ko: '초콜릿 케이크' },
+        { id: 'waffle',   emoji: '🧇', en: 'Waffles',        ko: '와플' },
+        { id: 'dessert',  emoji: '🧁', en: 'Dessert Box',    ko: '디저트 박스' },
+        { id: 'icecream', emoji: '🍦', en: 'Ice Cream',      ko: '아이스크림' },
+        { id: 'boba',     emoji: '🧋', en: 'Bubble Tea',     ko: '버블티' },
+        { id: 'pizza',    emoji: '🍕', en: 'Veg Pizza',      ko: '채식 피자' },
+        { id: 'other',    emoji: '✍️', en: 'Something else', ko: '다른 것' }
       ];
       var selected = null;
       var treatsBox = document.getElementById('treats');
