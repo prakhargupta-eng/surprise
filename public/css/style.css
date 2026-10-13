@@ -272,7 +272,8 @@ body {
   display: flex;
   gap: 8px;
   z-index: 350;
-  pointer-events: auto;
+  pointer-events: none;
+  user-select: none;
   font-family: 'JetBrains Mono', monospace;
   font-size: 11.5px;
   letter-spacing: 0.1em;
@@ -287,18 +288,13 @@ body {
 
 .ep {
   color: rgba(255, 244, 238, 0.4);
-  transition: color 0.2s, background 0.2s, transform 0.15s;
-  cursor: pointer;
+  transition: color 0.25s, background 0.25s;
+  cursor: default;
+  pointer-events: none;
   user-select: none;
   padding: 4px 10px;
   border-radius: 999px;
   display: inline-block;
-}
-
-.ep:hover {
-  color: var(--cream);
-  background: rgba(255, 122, 162, 0.15);
-  transform: translateY(-1px);
 }
 
 .ep.on {

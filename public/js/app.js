@@ -164,20 +164,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  eps.forEach(function (pill) {
-    pill.addEventListener('click', function () {
-      var targetEp = pill.dataset.ep;
-      if (targetEp === undefined) return;
-      if (sfx.click) sfx.click();
-      var num = Number(targetEp);
-      goTo(isNaN(num) ? targetEp : num);
-      if (num === 2) {
-        typeCode();
-      } else if (num === 4) {
-        enterFinal();
-      }
-    });
-  });
+  // Top episode indicator is display-only (shows current episode progression)
 
   /* ---------- DATE LOGIC & ROUTING ---------- */
   var urlParams = new URLSearchParams(window.location.search);
