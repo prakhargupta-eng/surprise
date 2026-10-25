@@ -1,0 +1,106 @@
+  <!-- Interactive Question Box -->
+  <div class="treat-decision-box" id="treatDecisionBox">
+    <p class="treat-question">
+      Would you like to claim your special birthday treat today? 🎁✨
+    </p>
+    <div class="treat-btns-wrap" id="treatBtnsWrap">
+      <button class="btn-nav btn-yes" id="treatYesBtn">YES, Absolutely! 😋</button>
+      <button class="btn-nav btn-no" id="treatNoBtn">No thanks</button>
+    </div>
+  </div>
+
+  <!-- Treat Selection Form (Revealed on Yes) -->
+  <div class="treat-form-container" id="treatFormContainer">
+    <p style="font-size: 14.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">
+      Step 1: Pick your favorite treat: <span style="color: #ef4444;">*</span>
+    </p>
+    
+    <!-- Treat Selection Cards -->
+    <div class="treat-grid" id="treatGrid">
+      <div class="treat-option-card selected" data-treat="Gourmet Birthday Cake" data-is-other="false">
+        <span class="treat-icon">🎂</span>
+        <div class="treat-info">
+          <span class="treat-name">Gourmet Cake</span>
+          <span class="treat-tag">Birthday Special</span>
+        </div>
+      </div>
+      <div class="treat-option-card" data-treat="Iced Cold Coffee" data-is-other="false">
+        <span class="treat-icon">🧋</span>
+        <div class="treat-info">
+          <span class="treat-name">Cold Coffee</span>
+          <span class="treat-tag">Chilled & Creamy</span>
+        </div>
+      </div>
+      <div class="treat-option-card" data-treat="Artisan Dessert & Pastry" data-is-other="false">
+        <span class="treat-icon">🍨</span>
+        <div class="treat-info">
+          <span class="treat-name">Dessert</span>
+          <span class="treat-tag">Sweet Indulgence</span>
+        </div>
+      </div>
+      <div class="treat-option-card" data-treat="Special Butter Pav Bhaji" data-is-other="false">
+        <span class="treat-icon">🍛</span>
+        <div class="treat-info">
+          <span class="treat-name">Pav Bhaji</span>
+          <span class="treat-tag">Hot & Savory</span>
+        </div>
+      </div>
+      <div class="treat-option-card" data-treat="Cheesy Oven-Fresh Pizza" data-is-other="false">
+        <span class="treat-icon">🍕</span>
+        <div class="treat-info">
+          <span class="treat-name">Cheesy Pizza</span>
+          <span class="treat-tag">Fresh & Crispy</span>
+        </div>
+      </div>
+      <div class="treat-option-card" data-treat="Belgian Chocolate Waffles" data-is-other="false">
+        <span class="treat-icon">🧇</span>
+        <div class="treat-info">
+          <span class="treat-name">Waffles</span>
+          <span class="treat-tag">Warm & Choco</span>
+        </div>
+      </div>
+      <div class="treat-option-card" data-treat="Luxury Handcrafted Chocolates" data-is-other="false">
+        <span class="treat-icon">🍫</span>
+        <div class="treat-info">
+          <span class="treat-name">Chocolates</span>
+          <span class="treat-tag">Premium Box</span>
+        </div>
+      </div>
+      <div class="treat-option-card" data-treat="Other" data-is-other="true">
+        <span class="treat-icon">✍️</span>
+        <div class="treat-info">
+          <span class="treat-name">Other</span>
+          <span class="treat-tag">Custom Craving</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom Item Description (Mandatory ONLY if 'Other' is selected) -->
+    <div class="treat-input-wrap" id="treatCustomWrap" style="display: none;">
+      <label class="treat-label" for="treatCustomNote">
+        ✍️ What would you like instead? (Describe your custom treat) <span style="color: #ef4444;">*</span>
+      </label>
+      <input type="text" id="treatCustomNote" class="treat-input"
+        placeholder="e.g. Pasta, Garlic Bread, Churros, Boba Tea, or your choice..." />
+    </div>
+
+    <!-- Delivery Address (Mandatory in all cases) -->
+    <div class="treat-input-wrap" id="treatAddressWrap">
+      <label class="treat-label" for="treatAddress">
+        📍 Where should we deliver this treat? (Address / Office / Home) <span style="color: #ef4444;">*</span>
+      </label>
+      <textarea id="treatAddress" class="treat-textarea"
+        placeholder="Enter complete delivery address, office desk, or preferred delivery timing..."></textarea>
+    </div>
+
+    <!-- Validation Error Message Alert -->
+    <div class="treat-error-msg" id="treatErrorMsg" style="display: none;"></div>
+
+    <!-- Order Button -->
+    <div style="text-align: center; margin-top: 18px;">
+      <button class="btn-nav btn-nav-next" id="saveTreatBtn" type="button"
+        style="padding: 15px 36px; font-size: 16px; background: linear-gradient(135deg, #10b981, #059669);">
+        Order Treats 🛍️✨
+      </button>
+    </div>
+  </div>

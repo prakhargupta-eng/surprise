@@ -1,0 +1,38 @@
+<!-- Photo Fullscreen Zoom Modal (With Flip to Secret Note) -->
+<div class="photo-modal" id="photoModal">
+  <div class="photo-modal-card">
+    <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close photo view">✕</button>
+    <div class="modal-view-switcher">
+      <button class="modal-tab-btn active" id="modalTabPhoto" type="button">🖼️ Photo View</button>
+      <button class="modal-tab-btn" id="modalTabNote" type="button">💌 Handwritten Secret Note</button>
+    </div>
+    <div class="modal-img-wrap" id="modalImgWrap">
+      <img src="" alt="Enlarged Photo" id="modalImg" />
+    </div>
+    <!-- Magnified Handwritten Note Card -->
+    <div class="modal-note-wrap" id="modalNoteWrap" style="display: none;">
+      <div class="modal-note-paper">
+        <div class="modal-note-tape"></div>
+        <div class="modal-note-stamp">📮 AIRMAIL · CERTIFIED MEMORY</div>
+        <h3 class="modal-note-header" id="modalNoteHeader">Dear Mahima ✨</h3>
+        <div class="modal-note-section">
+          <span class="modal-note-label">📍 Where:</span>
+          <p class="modal-note-text" id="modalNoteWhere"></p>
+        </div>
+        <div class="modal-note-section">
+          <span class="modal-note-label">⭐ What's Awesome About Your Smile:</span>
+          <p class="modal-note-text" id="modalNoteSmile"></p>
+        </div>
+        <div class="modal-note-section">
+          <span class="modal-note-label">✨ Why this memory makes me smile:</span>
+          <p class="modal-note-text" id="modalNoteWhy"></p>
+        </div>
+        <div class="modal-note-sig">— To an amazing friend & favorite market superstar 🌟</div>
+      </div>
+    </div>
+    <div class="modal-caption" id="modalCaption">Memory</div>
+    <button class="modal-reaction-btn" id="modalReactBtn">
+      🌸 Send Best Wishes (<span id="reactCount">1</span>)
+    </button>
+  </div>
+</div>

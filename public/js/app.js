@@ -2,13 +2,13 @@
  * app.js - Main Application Controller for Miss Agrawal's Birthday Surprise
  * Stock Market Theme × Cute Pastel Bubu & Dudu Aesthetic
  */
-document.addEventListener('DOMContentLoaded', function () {
+function initMahimaApp() {
   'use strict';
 
   // ================= CONFIGURATION =================
   var NAME = 'Mahima';
   var NICKNAME = 'Expert';
-  var TOTAL_STAGES = 5;
+  var TOTAL_STAGES = 6;
   var currentStage = 1;
   window.__currentStage = 1;
   // =================================================
@@ -18,19 +18,19 @@ document.addEventListener('DOMContentLoaded', function () {
   var audioCtrl = window.BdayAudio;
   var fireConfetti = window.fireConfetti || function () { };
 
-  // Ambient floating hearts background generator
+  // Ambient floating stars and celebration sparkles generator
   var ambientBg = document.getElementById('ambientBg');
   if (ambientBg) {
-    var heartSymbols = ['💖', ' ', '✨', '🎂', '📈', '🧁', '⭐'];
+    var starSymbols = ['⭐', '✨', '🌟', '💫', '📈', '🎂', '🎉', '💎'];
     for (var h = 0; h < 24; h++) {
-      var heart = document.createElement('div');
-      heart.className = 'floating-heart';
-      heart.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
-      heart.style.left = (Math.random() * 95) + 'vw';
-      heart.style.animationDelay = (Math.random() * 12) + 's';
-      heart.style.animationDuration = (8 + Math.random() * 8) + 's';
-      heart.style.fontSize = (16 + Math.random() * 16) + 'px';
-      ambientBg.appendChild(heart);
+      var star = document.createElement('div');
+      star.className = 'floating-star';
+      star.textContent = starSymbols[Math.floor(Math.random() * starSymbols.length)];
+      star.style.left = (Math.random() * 95) + 'vw';
+      star.style.animationDelay = (Math.random() * 12) + 's';
+      star.style.animationDuration = (8 + Math.random() * 8) + 's';
+      star.style.fontSize = (16 + Math.random() * 16) + 'px';
+      ambientBg.appendChild(star);
     }
   }
 
@@ -39,8 +39,108 @@ document.addEventListener('DOMContentLoaded', function () {
   // =================================================
   var progressLineFill = document.getElementById('progressLineFill');
 
+  function areAllCardsScratched() {
+    var revealed = document.querySelectorAll('.scratch-card-box[data-revealed="true"]').length;
+    var totalCards = document.querySelectorAll('.scratch-card-box').length || 3;
+    return revealed >= totalCards;
+  }
+
+  function requireScratchNotice() {
+    var scratchRequiredMsg = document.getElementById('scratchRequiredMsg');
+    var lotterySection = document.getElementById('dividendLotterySection');
+    var revealed = document.querySelectorAll('.scratch-card-box[data-revealed="true"]').length;
+    var totalCards = document.querySelectorAll('.scratch-card-box').length || 3;
+
+    if (scratchRequiredMsg) {
+      scratchRequiredMsg.textContent = '⚠️ Please scratch and unlock all ' + totalCards + ' Birthday Dividend Cards above before moving to the next page! 🪙✨ (Unlocked: ' + revealed + ' of ' + totalCards + ')';
+      scratchRequiredMsg.style.display = 'block';
+      scratchRequiredMsg.style.animation = 'none';
+      void scratchRequiredMsg.offsetWidth;
+      scratchRequiredMsg.style.animation = 'shake 0.45s ease-in-out';
+    }
+
+    if (lotterySection) {
+      lotterySection.classList.add('needs-scratch');
+      lotterySection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(function () {
+        lotterySection.classList.remove('needs-scratch');
+      }, 1500);
+    }
+
+    if (sfx.pop) sfx.pop();
+  }
+
+  function isTreatAddressRequiredAndMissing() {
+    var formEl = document.getElementById('treatFormContainer');
+    var isYesActive = (window.__treatYesChosen === true) || (formEl && formEl.classList.contains('active'));
+    
+    // If YES was not chosen, address is not mandatory
+    if (!isYesActive) {
+      return false;
+    }
+
+    // If order was already successfully placed in this session
+    if (window.__treatOrderPlaced) {
+      return false;
+    }
+
+    // Check if previously saved with a valid address
+    try {
+      var saved = localStorage.getItem('bday_treat_order');
+      if (saved) {
+        var parsed = JSON.parse(saved);
+        if (parsed && parsed.address && parsed.address.trim()) {
+          return false;
+        }
+      }
+    } catch (e) {}
+
+    // Otherwise, user picked YES but hasn't filled/ordered their address yet
+    return true;
+  }
+
+  function requireTreatAddressNotice() {
+    var treatRequiredMsg = document.getElementById('treatRequiredMsg');
+    var treatAddress = document.getElementById('treatAddress');
+    var treatErrorMsg = document.getElementById('treatErrorMsg');
+
+    if (treatRequiredMsg) {
+      treatRequiredMsg.style.display = 'block';
+      treatRequiredMsg.style.animation = 'none';
+      void treatRequiredMsg.offsetWidth;
+      treatRequiredMsg.style.animation = 'shake 0.45s ease-in-out';
+    }
+
+    if (treatErrorMsg) {
+      treatErrorMsg.textContent = '⚠️ You picked YES for the Birthday Treat! Please enter your delivery address and tap "Order Treats 🛍️✨" before proceeding to memories!';
+      treatErrorMsg.style.display = 'block';
+    }
+
+    if (treatAddress) {
+      treatAddress.classList.add('input-error');
+      treatAddress.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(function () {
+        treatAddress.focus();
+      }, 350);
+    }
+
+    if (sfx.pop) sfx.pop();
+  }
+
   function goToStage(stepNumber) {
     if (stepNumber < 1 || stepNumber > TOTAL_STAGES) return;
+
+    // Mandatory Treat Address Check: If YES is selected, must fill address and complete order before advancing
+    if (currentStage === 3 && stepNumber > 3 && isTreatAddressRequiredAndMissing()) {
+      requireTreatAddressNotice();
+      return;
+    }
+
+    // Mandatory Scratch Check: Do not allow moving past Stage 3 without scratching all dividend cards
+    if (currentStage === 3 && stepNumber > 3 && !areAllCardsScratched()) {
+      requireScratchNotice();
+      return;
+    }
 
     var previousStage = currentStage;
     currentStage = stepNumber;
@@ -90,11 +190,28 @@ document.addEventListener('DOMContentLoaded', function () {
       // Stock market stage: trigger pop sound
       if (sfx.pop) sfx.pop();
     } else if (currentStage === 5) {
-      // Grand Finale: trigger confetti & auto-play song
+      // Grand Finale: initially show glowing candles unless already blown this session
+      if (!window.__candlesBlown) {
+        var flameEl = document.getElementById('cakeFlame');
+        var smokeEl = document.getElementById('smokePuff');
+        var bannerEl = document.getElementById('cakeCutBanner');
+        var queenBannerEl = document.getElementById('marketQueenBanner');
+        var blowBtnEl = document.getElementById('blowCakeBtn');
+        if (flameEl) flameEl.classList.remove('blown-out');
+        if (smokeEl) smokeEl.classList.remove('active');
+        if (bannerEl) bannerEl.classList.remove('active');
+        if (queenBannerEl) queenBannerEl.classList.remove('active');
+        if (blowBtnEl) {
+          blowBtnEl.textContent = '💨 Make a Wish & Blow the Candles!';
+          blowBtnEl.disabled = false;
+        }
+      }
       fireConfetti(true);
       if (audioCtrl && audioCtrl.playSong) {
         audioCtrl.playSong();
       }
+    } else if (currentStage === 6) {
+      updateThankYouDeliveryCardVisibility();
     }
   }
 
@@ -163,6 +280,9 @@ document.addEventListener('DOMContentLoaded', function () {
   // Treat Yes Click
   if (treatYesBtn) {
     treatYesBtn.addEventListener('click', function () {
+      window.__treatYesChosen = true;
+      var treatRequiredMsg = document.getElementById('treatRequiredMsg');
+      if (treatRequiredMsg) treatRequiredMsg.style.display = 'none';
       if (sfx.cheer) sfx.cheer();
       fireConfetti();
       if (treatFormContainer) {
@@ -203,116 +323,154 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Treat Option Selection Cards
+  // Treat Option Selection Cards & Dynamic Field Handling
   var treatCards = document.querySelectorAll('.treat-option-card');
+  var treatCustomWrap = document.getElementById('treatCustomWrap');
+  var treatCustomNote = document.getElementById('treatCustomNote');
+  var treatAddress = document.getElementById('treatAddress');
+  var treatErrorMsg = document.getElementById('treatErrorMsg');
+
+  var selectedTreatName = 'Gourmet Birthday Cake';
+  var isOtherSelected = false;
+
   treatCards.forEach(function (card) {
     card.addEventListener('click', function () {
       if (sfx.select) sfx.select();
       treatCards.forEach(function (c) { c.classList.remove('selected'); });
       card.classList.add('selected');
+      
       selectedTreatName = card.getAttribute('data-treat') || 'Gourmet Birthday Cake';
+      isOtherSelected = card.getAttribute('data-is-other') === 'true';
+
+      // Clear any prior validation error styling
+      if (treatErrorMsg) treatErrorMsg.style.display = 'none';
+      if (treatCustomNote) treatCustomNote.classList.remove('input-error');
+      if (treatAddress) treatAddress.classList.remove('input-error');
+
+      // Dynamically toggle the custom treat description field
+      if (treatCustomWrap) {
+        if (isOtherSelected) {
+          treatCustomWrap.style.display = 'block';
+          if (treatCustomNote) treatCustomNote.focus();
+        } else {
+          treatCustomWrap.style.display = 'none';
+        }
+      }
     });
   });
 
-  // Save & Download Treat Order (.txt)
+  // Order Treats Action (No download, strict validation, instant confirmation)
   if (saveTreatBtn) {
     saveTreatBtn.addEventListener('click', function () {
-      var customNote = (document.getElementById('treatCustomNote') && document.getElementById('treatCustomNote').value.trim()) || 'None specified (Surprise me!)';
-      var address = (document.getElementById('treatAddress') && document.getElementById('treatAddress').value.trim()) || 'To be shared or coordinated directly!';
-      var now = new Date();
-      var timestampStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
-      var orderId = 'EXPERT-DIVIDEND-' + Math.floor(100000 + Math.random() * 900000);
+      // Clear previous error states
+      if (treatErrorMsg) treatErrorMsg.style.display = 'none';
+      if (treatCustomNote) treatCustomNote.classList.remove('input-error');
+      if (treatAddress) treatAddress.classList.remove('input-error');
 
-      if (sfx.cheer) sfx.cheer();
-      fireConfetti(true);
+      var customVal = treatCustomNote ? treatCustomNote.value.trim() : '';
+      var addressVal = treatAddress ? treatAddress.value.trim() : '';
 
-      // Generate Clean Text File Content
-      var textContent = [
-        '====================================================',
-        '       OFFICIAL BIRTHDAY TREAT ORDER TICKET         ',
-        '       Issued for Mahima - The Market Expert        ',
-        '====================================================',
-        '',
-        'Order Reference: ' + orderId,
-        'Date & Time:     ' + timestampStr,
-        'Recipient:       ' + NAME + ' (The Expert)',
-        'Account Status:  100% Bullish (Upper Circuit 🔒)',
-        '',
-        '----------------------------------------------------',
-        'SELECTED BIRTHDAY TREAT:',
-        '----------------------------------------------------',
-        'Item:            ' + selectedTreatName,
-        'Special Cravings:' + customNote,
-        '',
-        '----------------------------------------------------',
-        'DELIVERY INSTRUCTIONS / ADDRESS:',
-        '----------------------------------------------------',
-        address,
-        '',
-        '----------------------------------------------------',
-        'SPECIAL BIRTHDAY CLAUSE:',
-        '----------------------------------------------------',
-        'This dividend is fully approved with zero deductions!',
-        'Guaranteed to be delivered with extra sweetness & joy.',
-        '',
-        'Happy Birthday Mahima! Wishing you an All-Time High year, Expert! 🎂📈',
-        '===================================================='
-      ].join('\r\n');
-
-      // Trigger .txt File Download
-      try {
-        var blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
-        var downloadUrl = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = downloadUrl;
-        a.download = 'mahima_birthday_treat_request.txt';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(downloadUrl);
-      } catch (err) {
-        console.error('Download error:', err);
+      // 1. Mandatory validation for custom treat if 'Other' is selected
+      if (isOtherSelected && !customVal) {
+        if (treatCustomNote) treatCustomNote.classList.add('input-error');
+        if (treatErrorMsg) {
+          treatErrorMsg.textContent = '⚠️ Please describe what custom treat or craving you would like!';
+          treatErrorMsg.style.display = 'block';
+        }
+        if (treatCustomNote) treatCustomNote.focus();
+        return;
       }
 
-      // Save to Firebase with 'mahima' prefix
+      // 2. Mandatory validation for delivery address (required in all cases)
+      if (!addressVal) {
+        if (treatAddress) treatAddress.classList.add('input-error');
+        if (treatErrorMsg) {
+          treatErrorMsg.textContent = '⚠️ Please enter your delivery address so we can deliver your treat!';
+          treatErrorMsg.style.display = 'block';
+        }
+        if (treatAddress) treatAddress.focus();
+        return;
+      }
+
+      // Successful Order Placement
+      if (audioCtrl && audioCtrl.sfx && audioCtrl.sfx.cheer) {
+        audioCtrl.sfx.cheer();
+      } else if (sfx.cheer) {
+        sfx.cheer();
+      }
+      fireConfetti(true);
+
+      var orderItemDisplay = isOtherSelected ? ('Custom Craving: ' + customVal) : selectedTreatName;
+      var now = new Date();
+      var timestampStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+      var orderId = 'EXPERT-TREAT-' + Math.floor(100000 + Math.random() * 900000);
+
+      // Save to Firebase & LocalStorage without prompting any file download
       var treatData = {
         recipient: NAME + ' (The Expert)',
         orderId: orderId,
         treat: selectedTreatName,
-        customNote: customNote,
-        address: address,
-        date: timestampStr,
-        fileName: 'mahima_birthday_treat_' + Date.now() + '.txt',
-        fileContent: textContent
+        customNote: customVal || 'Standard Selected',
+        address: addressVal,
+        date: timestampStr
       };
 
       if (window.__saveTreat) {
-        window.__saveTreat(treatData, textContent).catch(function (e) {
-          console.log('Firebase save log:', e);
+        window.__saveTreat(treatData, JSON.stringify(treatData)).catch(function (e) {
+          console.log('Firebase log:', e);
         });
       }
 
-      // Save to LocalStorage
       try {
         localStorage.setItem('bday_treat_order', JSON.stringify(treatData));
       } catch (e) { }
 
-      // Update and Show On-Screen Stamped Receipt
+      // Update On-Screen Confirmation Card
       var rItem = document.getElementById('receiptItem');
       var rNote = document.getElementById('receiptNote');
+      var rNoteRow = document.getElementById('receiptNoteRow');
       var rAddr = document.getElementById('receiptAddress');
 
-      if (rItem) rItem.textContent = selectedTreatName;
-      if (rNote) rNote.textContent = customNote;
-      if (rAddr) rAddr.textContent = address;
+      if (rItem) rItem.textContent = orderItemDisplay;
+      if (rAddr) rAddr.textContent = addressVal;
+
+      if (rNote && rNoteRow) {
+        if (isOtherSelected) {
+          rNote.textContent = customVal;
+          rNoteRow.style.display = 'flex';
+        } else {
+          rNoteRow.style.display = 'none';
+        }
+      }
 
       if (treatReceiptCard) {
         treatReceiptCard.classList.add('active');
         treatReceiptCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
 
-      saveTreatBtn.textContent = '✓ Order Saved & Downloaded! 🎉';
+      saveTreatBtn.textContent = '✓ Order Placed & Reserved! 🛵🎉';
       saveTreatBtn.disabled = true;
+      window.__treatOrderPlaced = true;
+      var treatRequiredMsg = document.getElementById('treatRequiredMsg');
+      if (treatRequiredMsg) treatRequiredMsg.style.display = 'none';
+      if (typeof updateThankYouDeliveryCardVisibility === 'function') {
+        updateThankYouDeliveryCardVisibility();
+      }
+    });
+  }
+
+  if (treatAddress) {
+    treatAddress.addEventListener('input', function () {
+      treatAddress.classList.remove('input-error');
+      var treatRequiredMsg = document.getElementById('treatRequiredMsg');
+      if (treatRequiredMsg) treatRequiredMsg.style.display = 'none';
+      if (treatErrorMsg) treatErrorMsg.style.display = 'none';
+    });
+  }
+  if (treatCustomNote) {
+    treatCustomNote.addEventListener('input', function () {
+      treatCustomNote.classList.remove('input-error');
+      if (treatErrorMsg) treatErrorMsg.style.display = 'none';
     });
   }
 
@@ -324,34 +482,453 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   if (stage3NextBtn) {
     stage3NextBtn.addEventListener('click', function () {
+      if (isTreatAddressRequiredAndMissing()) {
+        requireTreatAddressNotice();
+        return;
+      }
+      var treatRequiredMsg = document.getElementById('treatRequiredMsg');
+      if (treatRequiredMsg) treatRequiredMsg.style.display = 'none';
+
+      if (!areAllCardsScratched()) {
+        requireScratchNotice();
+        return;
+      }
+      var scratchRequiredMsg = document.getElementById('scratchRequiredMsg');
+      if (scratchRequiredMsg) scratchRequiredMsg.style.display = 'none';
       if (sfx.select) sfx.select();
       goToStage(4);
     });
   }
 
   // =================================================
-  // STAGE 4: PHOTO MEMORY COLLECTION (POLAROIDS & MODAL)
+  // FEATURE 2: 🎁 "SCRATCH-OFF" BIRTHDAY DIVIDEND CARDS (LOTTERY STYLE)
+  // =================================================
+  var scratchCardBoxes = document.querySelectorAll('.scratch-card-box');
+  var scratchedCountEl = document.getElementById('scratchedCount');
+  var scratchAllBtn = document.getElementById('scratchAllBtn');
+  var lastScratchSfxTime = 0;
+
+  function initScratchCard(box) {
+    var canvas = box.querySelector('.scratch-card-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var isDrawing = false;
+    var lastX = 0, lastY = 0;
+    var moveCount = 0;
+
+    // Set real resolution to avoid blur
+    var width = 280;
+    var height = 350;
+    canvas.width = width;
+    canvas.height = height;
+
+    // Draw rich glittering golden foil
+    function drawFoil() {
+      // Golden gradient base
+      var grad = ctx.createLinearGradient(0, 0, width, height);
+      grad.addColorStop(0, '#fef08a');
+      grad.addColorStop(0.25, '#f59e0b');
+      grad.addColorStop(0.5, '#fef08a');
+      grad.addColorStop(0.75, '#d97706');
+      grad.addColorStop(1, '#fde047');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, width, height);
+
+      // Metallic sheen overlay
+      var sheen = ctx.createRadialGradient(width * 0.35, height * 0.35, 10, width * 0.5, height * 0.5, width * 0.7);
+      sheen.addColorStop(0, 'rgba(255, 255, 255, 0.45)');
+      sheen.addColorStop(0.5, 'rgba(245, 166, 35, 0.15)');
+      sheen.addColorStop(1, 'rgba(180, 83, 9, 0.35)');
+      ctx.fillStyle = sheen;
+      ctx.fillRect(0, 0, width, height);
+
+      // Gold Sparkle Stars pattern
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      for (var s = 0; s < 40; s++) {
+        var sx = (s * 47) % width;
+        var sy = (s * 79) % height;
+        var r = (s % 3 === 0) ? 2.5 : 1.5;
+        ctx.beginPath();
+        ctx.arc(sx, sy, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Elegant inner border
+      ctx.strokeStyle = '#b45309';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(12, 12, width - 24, height - 24);
+
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 4]);
+      ctx.strokeRect(16, 16, width - 32, height - 32);
+      ctx.setLineDash([]);
+
+      // Badge & Text
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#78350f';
+      ctx.font = 'bold 12px Fredoka, sans-serif';
+      ctx.fillText('★ 100-BAGGER LOTTERY ★', width / 2, 55);
+
+      ctx.font = '36px sans-serif';
+      ctx.fillText('🪙', width / 2, 115);
+
+      ctx.fillStyle = '#451a03';
+      ctx.font = 'bold 16px Outfit, sans-serif';
+      ctx.fillText('GOLDEN DIVIDEND', width / 2, 170);
+
+      ctx.fillStyle = '#78350f';
+      ctx.font = '12px Fredoka, sans-serif';
+      ctx.fillText('Rub with Finger or Mouse ✨', width / 2, 205);
+
+      // Decorative stars bottom
+      ctx.font = '14px sans-serif';
+      ctx.fillText('✨ 🎁 💎 🎁 ✨', width / 2, 290);
+    }
+
+    drawFoil();
+
+    function getCoords(e) {
+      var r = canvas.getBoundingClientRect();
+      var clientX = e.clientX;
+      var clientY = e.clientY;
+      if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      }
+      return {
+        x: (clientX - r.left) * (canvas.width / r.width),
+        y: (clientY - r.top) * (canvas.height / r.height),
+        screenX: clientX,
+        screenY: clientY
+      };
+    }
+
+    function spawnScratchSparkle(x, y) {
+      if (Math.random() > 0.45) return;
+      var dot = document.createElement('div');
+      dot.className = 'scratch-sparkle-dot';
+      var colors = ['#fbbf24', '#f59e0b', '#fef08a', '#ffffff', '#ff8fb1'];
+      dot.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      var sz = Math.floor(Math.random() * 6) + 4;
+      dot.style.width = sz + 'px';
+      dot.style.height = sz + 'px';
+      dot.style.left = (x - sz / 2) + 'px';
+      dot.style.top = (y - sz / 2) + 'px';
+      var angle = Math.random() * Math.PI * 2;
+      var dist = Math.random() * 40 + 15;
+      dot.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+      dot.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+      document.body.appendChild(dot);
+      setTimeout(function () {
+        if (dot.parentNode) dot.parentNode.removeChild(dot);
+      }, 600);
+    }
+
+    function checkScratchPercentage() {
+      if (box.getAttribute('data-revealed') === 'true') return;
+      var samplePoints = 20;
+      var transparentCount = 0;
+      var stepX = Math.floor(canvas.width / samplePoints);
+      var stepY = Math.floor(canvas.height / samplePoints);
+      try {
+        var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        var data = imgData.data;
+        for (var py = 0; py < canvas.height; py += stepY) {
+          for (var px = 0; px < canvas.width; px += stepX) {
+            var index = (py * canvas.width + px) * 4 + 3;
+            if (data[index] < 128) {
+              transparentCount++;
+            }
+          }
+        }
+        var totalSamples = (canvas.width / stepX) * (canvas.height / stepY);
+        var ratio = transparentCount / totalSamples;
+        if (ratio > 0.42) {
+          revealCard(box);
+        }
+      } catch (err) {}
+    }
+
+    function scratch(e) {
+      if (!isDrawing) return;
+      if (box.getAttribute('data-revealed') === 'true') return;
+      var coords = getCoords(e);
+
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.lineWidth = 44;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(coords.x, coords.y);
+      ctx.stroke();
+
+      lastX = coords.x;
+      lastY = coords.y;
+
+      spawnScratchSparkle(coords.screenX, coords.screenY);
+
+      var now = Date.now();
+      if (now - lastScratchSfxTime > 90) {
+        lastScratchSfxTime = now;
+        if (audioCtrl && audioCtrl.sfx && audioCtrl.sfx.scratch) {
+          audioCtrl.sfx.scratch();
+        }
+      }
+
+      moveCount++;
+      if (moveCount % 12 === 0) {
+        checkScratchPercentage();
+      }
+    }
+
+    function startScratch(e) {
+      if (box.getAttribute('data-revealed') === 'true') return;
+      isDrawing = true;
+      var coords = getCoords(e);
+      lastX = coords.x;
+      lastY = coords.y;
+      scratch(e);
+    }
+
+    function stopScratch() {
+      if (isDrawing) {
+        isDrawing = false;
+        checkScratchPercentage();
+      }
+    }
+
+    // Mouse listeners
+    canvas.addEventListener('mousedown', startScratch);
+    window.addEventListener('mousemove', scratch);
+    window.addEventListener('mouseup', stopScratch);
+
+    // Touch listeners
+    canvas.addEventListener('touchstart', function (e) {
+      startScratch(e);
+      e.preventDefault();
+    }, { passive: false });
+    canvas.addEventListener('touchmove', function (e) {
+      scratch(e);
+      e.preventDefault();
+    }, { passive: false });
+    window.addEventListener('touchend', stopScratch);
+  }
+
+  function revealCard(box) {
+    if (box.getAttribute('data-revealed') === 'true') return;
+    box.setAttribute('data-revealed', 'true');
+    box.classList.add('scratched');
+    var canvas = box.querySelector('.scratch-card-canvas');
+    if (canvas) {
+      canvas.style.transition = 'opacity 0.6s ease';
+      canvas.style.opacity = '0';
+      setTimeout(function () {
+        canvas.style.display = 'none';
+      }, 650);
+    }
+
+    if (audioCtrl && audioCtrl.sfx && audioCtrl.sfx.voucherWin) {
+      audioCtrl.sfx.voucherWin();
+    }
+    fireConfetti(false);
+
+    // Update revealed count
+    updateScratchedCount();
+  }
+
+  function updateScratchedCount() {
+    var revealed = document.querySelectorAll('.scratch-card-box[data-revealed="true"]').length;
+    if (scratchedCountEl) scratchedCountEl.textContent = revealed;
+    if (revealed >= 3) {
+      if (scratchAllBtn) {
+        scratchAllBtn.textContent = '🎉 All 3 Dividends Unlocked & Active!';
+        scratchAllBtn.disabled = true;
+      }
+      var scratchRequiredMsg = document.getElementById('scratchRequiredMsg');
+      if (scratchRequiredMsg) scratchRequiredMsg.style.display = 'none';
+      if (stage3NextBtn) {
+        stage3NextBtn.classList.add('ready-to-advance');
+      }
+    }
+  }
+
+  scratchCardBoxes.forEach(function (box) {
+    initScratchCard(box);
+  });
+
+  if (scratchAllBtn) {
+    scratchAllBtn.addEventListener('click', function () {
+      if (sfx.cheer) sfx.cheer();
+      scratchCardBoxes.forEach(function (box, idx) {
+        setTimeout(function () {
+          revealCard(box);
+        }, idx * 220);
+      });
+    });
+  }
+
+  // Redeem Voucher Buttons
+  var redeemVoucherBtns = document.querySelectorAll('.btn-redeem-coupon');
+  redeemVoucherBtns.forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var cardIndex = btn.getAttribute('data-card');
+      btn.textContent = '✓ CLAIMED FOR MAHIMA ⭐';
+      btn.classList.add('redeemed');
+      btn.disabled = true;
+      if (audioCtrl && audioCtrl.sfx && audioCtrl.sfx.cheer) {
+        audioCtrl.sfx.cheer();
+      }
+      fireConfetti(true);
+
+      // Floating celebratory notification toast
+      var banner = document.createElement('div');
+      banner.textContent = '🎉 Dividend Voucher #' + cardIndex + ' Stamped & Booked for Mahima!';
+      banner.style.position = 'fixed';
+      banner.style.bottom = '30px';
+      banner.style.left = '50%';
+      banner.style.transform = 'translateX(-50%) translateY(50px)';
+      banner.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+      banner.style.color = '#fff';
+      banner.style.fontFamily = 'var(--font-cute)';
+      banner.style.fontSize = '14px';
+      banner.style.fontWeight = '700';
+      banner.style.padding = '12px 24px';
+      banner.style.borderRadius = '99px';
+      banner.style.boxShadow = '0 8px 24px rgba(16, 185, 129, 0.4)';
+      banner.style.zIndex = '2000';
+      banner.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      document.body.appendChild(banner);
+
+      setTimeout(function () {
+        banner.style.transform = 'translateX(-50%) translateY(0)';
+      }, 20);
+
+      setTimeout(function () {
+        banner.style.transform = 'translateX(-50%) translateY(80px)';
+        banner.style.opacity = '0';
+        setTimeout(function () {
+          if (banner.parentNode) banner.parentNode.removeChild(banner);
+        }, 400);
+      }, 3500);
+    });
+  });
+
+  // =================================================
+  // FEATURE 1: 💌 "FLIP THE POLAROID" — 3D FLIP & SECRET NOTES
   // =================================================
   var polaroidCards = document.querySelectorAll('.polaroid-card');
   var photoModal = document.getElementById('photoModal');
   var modalCloseBtn = document.getElementById('modalCloseBtn');
   var modalImg = document.getElementById('modalImg');
+  var modalImgWrap = document.getElementById('modalImgWrap');
   var modalCaption = document.getElementById('modalCaption');
   var modalReactBtn = document.getElementById('modalReactBtn');
   var reactCountEl = document.getElementById('reactCount');
+  var modalTabPhoto = document.getElementById('modalTabPhoto');
+  var modalTabNote = document.getElementById('modalTabNote');
+  var modalNoteWrap = document.getElementById('modalNoteWrap');
+  var modalNoteWhere = document.getElementById('modalNoteWhere');
+  var modalNoteSmile = document.getElementById('modalNoteSmile');
+  var modalNoteWhy = document.getElementById('modalNoteWhy');
+  var modalNoteHeader = document.getElementById('modalNoteHeader');
   var likes = 1;
 
+  function flipCard(card) {
+    if (audioCtrl && audioCtrl.sfx && audioCtrl.sfx.paperWhoosh) {
+      audioCtrl.sfx.paperWhoosh();
+    }
+    card.classList.toggle('is-flipped');
+  }
+
   polaroidCards.forEach(function (card) {
-    card.addEventListener('click', function () {
+    // Flip buttons
+    var flipBtn = card.querySelector('.btn-flip-polaroid');
+    var flipBackBtn = card.querySelector('.btn-flip-back');
+
+    if (flipBtn) {
+      flipBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        flipCard(card);
+      });
+    }
+
+    if (flipBackBtn) {
+      flipBackBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        flipCard(card);
+      });
+    }
+
+    // Double-click anywhere to flip
+    card.addEventListener('dblclick', function (e) {
+      e.stopPropagation();
+      flipCard(card);
+    });
+
+    // Zoom trigger or clicking image opens modal
+    var zoomBtn = card.querySelector('.polaroid-zoom-trigger');
+    var imgWrap = card.querySelector('.polaroid-img-wrap');
+
+    function openModalForCard(e) {
+      if (e) e.stopPropagation();
       if (sfx.shutter) sfx.shutter();
       var imgSrc = card.getAttribute('data-img');
       var captionText = card.getAttribute('data-caption') || 'Cherished Memory';
 
       if (modalImg && imgSrc) modalImg.src = imgSrc;
       if (modalCaption) modalCaption.textContent = captionText;
+
+      // Populate note data
+      if (modalNoteWhere) modalNoteWhere.textContent = card.getAttribute('data-where') || '';
+      if (modalNoteSmile) modalNoteSmile.textContent = card.getAttribute('data-smile') || '';
+      if (modalNoteWhy) modalNoteWhy.textContent = card.getAttribute('data-why') || '';
+      var noteTitle = card.querySelector('.polaroid-caption');
+      if (modalNoteHeader && noteTitle) modalNoteHeader.textContent = noteTitle.textContent + ' ✨';
+
+      // Default to photo view
+      switchModalTab('photo');
+
       if (photoModal) photoModal.classList.add('active');
-    });
+    }
+
+    if (zoomBtn) {
+      zoomBtn.addEventListener('click', openModalForCard);
+    }
+    if (imgWrap) {
+      imgWrap.addEventListener('click', openModalForCard);
+    }
   });
+
+  function switchModalTab(tab) {
+    if (tab === 'note') {
+      if (modalTabNote) modalTabNote.classList.add('active');
+      if (modalTabPhoto) modalTabPhoto.classList.remove('active');
+      if (modalImgWrap) modalImgWrap.style.display = 'none';
+      if (modalNoteWrap) modalNoteWrap.style.display = 'block';
+      if (audioCtrl && audioCtrl.sfx && audioCtrl.sfx.paperWhoosh) {
+        audioCtrl.sfx.paperWhoosh();
+      }
+    } else {
+      if (modalTabPhoto) modalTabPhoto.classList.add('active');
+      if (modalTabNote) modalTabNote.classList.remove('active');
+      if (modalImgWrap) modalImgWrap.style.display = 'block';
+      if (modalNoteWrap) modalNoteWrap.style.display = 'none';
+    }
+  }
+
+  if (modalTabPhoto) {
+    modalTabPhoto.addEventListener('click', function () {
+      switchModalTab('photo');
+    });
+  }
+  if (modalTabNote) {
+    modalTabNote.addEventListener('click', function () {
+      switchModalTab('note');
+    });
+  }
 
   if (modalCloseBtn && photoModal) {
     modalCloseBtn.addEventListener('click', function () {
@@ -370,12 +947,17 @@ document.addEventListener('DOMContentLoaded', function () {
     modalReactBtn.addEventListener('click', function () {
       likes++;
       if (reactCountEl) reactCountEl.textContent = likes;
-      if (sfx.cheer) sfx.cheer();
+      if (audioCtrl && audioCtrl.sfx && audioCtrl.sfx.cheer) {
+        audioCtrl.sfx.cheer();
+      } else if (sfx.cheer) {
+        sfx.cheer();
+      }
 
-      // Spawn burst of miniature floating hearts from button
+      // Spawn burst of miniature floating stars & sparkles from button
+      var starParticles = ['⭐', '✨', '🌟', '💫', '🎉'];
       for (var f = 0; f < 8; f++) {
         var miniH = document.createElement('span');
-        miniH.textContent = '💖';
+        miniH.textContent = starParticles[Math.floor(Math.random() * starParticles.length)];
         miniH.style.position = 'fixed';
         miniH.style.left = (window.innerWidth / 2 + (Math.random() - 0.5) * 120) + 'px';
         miniH.style.top = (window.innerHeight / 2 + (Math.random() - 0.5) * 80) + 'px';
@@ -415,16 +997,409 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // =================================================
-  // STAGE 5: GRAND FINALE (SONG, CAKE, CANDLES, LETTER)
+  // FEATURE 3: 🎆 MAGICAL FIREWORKS & SPARKLER SHOW
   // =================================================
   var finaleSongBtn = document.getElementById('finaleSongBtn');
   var muteBtn = document.getElementById('muteBtn');
+  var globalMuteBtn = document.getElementById('globalMuteBtn');
+  var globalMuteIcon = document.getElementById('globalMuteIcon');
+  var globalMuteText = document.getElementById('globalMuteText');
+  var stopFireworksBtn = document.getElementById('stopFireworksBtn');
+  var marketQueenModal = document.getElementById('marketQueenModal');
+  var queenModalCloseBtn = document.getElementById('queenModalCloseBtn');
+  var queenDismissBtn = document.getElementById('queenDismissBtn');
+  var queenViewLetterBtn = document.getElementById('queenViewLetterBtn');
+
   var blowCakeBtn = document.getElementById('blowCakeBtn');
   var cakeFlame = document.getElementById('cakeFlame');
   var smokePuff = document.getElementById('smokePuff');
   var cakeCutBanner = document.getElementById('cakeCutBanner');
   var stage5PrevBtn = document.getElementById('stage5PrevBtn');
   var replayBtn = document.getElementById('replayBtn');
+  var fireworksCanvas = document.getElementById('fireworksCanvas');
+  var fctx = fireworksCanvas ? fireworksCanvas.getContext('2d') : null;
+  var twilightOverlay = document.getElementById('twilightOverlay');
+  var marketQueenBanner = document.getElementById('marketQueenBanner');
+  var relightCakeBtn = document.getElementById('relightCakeBtn');
+  var cakeSparklerCanvas = document.getElementById('cakeSparklerCanvas');
+  var sctx = cakeSparklerCanvas ? cakeSparklerCanvas.getContext('2d') : null;
+
+  // Fireworks Engine (Physics particles & rockets)
+  var fireworksEngine = {
+    active: false,
+    particles: [],
+    rockets: [],
+    lastRocketTime: 0,
+    animId: null
+  };
+
+  function resizeFireworks() {
+    if (!fireworksCanvas) return;
+    fireworksCanvas.width = window.innerWidth;
+    fireworksCanvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeFireworks);
+  resizeFireworks();
+
+  function launchRocket() {
+    if (!fireworksEngine.active) return;
+    var x = Math.random() * (window.innerWidth * 0.8) + window.innerWidth * 0.1;
+    var targetY = Math.random() * (window.innerHeight * 0.45) + window.innerHeight * 0.12;
+    var speed = Math.random() * 3 + 8;
+    fireworksEngine.rockets.push({
+      x: x,
+      y: window.innerHeight,
+      targetY: targetY,
+      speed: speed,
+      color: ['#f59e0b', '#ec4899', '#38bdf8', '#10b981', '#fef08a', '#a855f7'][Math.floor(Math.random() * 6)]
+    });
+
+    if (audioCtrl && audioCtrl.sfx && audioCtrl.sfx.fireworkLaunch) {
+      audioCtrl.sfx.fireworkLaunch();
+    }
+  }
+
+  function explodeFirework(x, y, color) {
+    var count = Math.floor(Math.random() * 35) + 65;
+    var isStar = Math.random() > 0.5;
+    for (var i = 0; i < count; i++) {
+      var angle, spd;
+      if (isStar) {
+        var t = (i / count) * Math.PI * 2;
+        // 5-pointed starburst geometry
+        var r = 1 + 0.55 * Math.cos(5 * t);
+        angle = t;
+        spd = r * (Math.random() * 2 + 3.2);
+      } else {
+        angle = Math.random() * Math.PI * 2;
+        spd = Math.random() * 6 + 1.5;
+      }
+      fireworksEngine.particles.push({
+        x: x,
+        y: y,
+        vx: Math.cos(angle) * spd,
+        vy: Math.sin(angle) * spd,
+        color: color,
+        alpha: 1,
+        life: Math.random() * 0.015 + 0.012,
+        gravity: 0.06,
+        drag: 0.96
+      });
+    }
+
+    if (audioCtrl && audioCtrl.sfx && audioCtrl.sfx.fireworkExplosion) {
+      audioCtrl.sfx.fireworkExplosion();
+    }
+  }
+
+  function runFireworks() {
+    if (!fireworksEngine.active || !fctx) return;
+    fctx.globalCompositeOperation = 'destination-out';
+    fctx.fillStyle = 'rgba(0, 0, 0, 0.18)';
+    fctx.fillRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+    fctx.globalCompositeOperation = 'lighter';
+
+    var now = Date.now();
+    if (now - fireworksEngine.lastRocketTime > 850) {
+      fireworksEngine.lastRocketTime = now;
+      launchRocket();
+    }
+
+    // Rockets
+    for (var r = fireworksEngine.rockets.length - 1; r >= 0; r--) {
+      var rocket = fireworksEngine.rockets[r];
+      rocket.y -= rocket.speed;
+      // Draw spark trail
+      fctx.fillStyle = '#fef08a';
+      fctx.fillRect(rocket.x, rocket.y, 3, 7);
+
+      if (rocket.y <= rocket.targetY) {
+        explodeFirework(rocket.x, rocket.y, rocket.color);
+        fireworksEngine.rockets.splice(r, 1);
+      }
+    }
+
+    // Explosion Particles
+    for (var p = fireworksEngine.particles.length - 1; p >= 0; p--) {
+      var pt = fireworksEngine.particles[p];
+      pt.vx *= pt.drag;
+      pt.vy *= pt.drag;
+      pt.vy += pt.gravity;
+      pt.x += pt.vx;
+      pt.y += pt.vy;
+      pt.alpha -= pt.life;
+
+      if (pt.alpha <= 0) {
+        fireworksEngine.particles.splice(p, 1);
+      } else {
+        fctx.save();
+        fctx.globalAlpha = pt.alpha;
+        fctx.fillStyle = pt.color;
+        fctx.beginPath();
+        fctx.arc(pt.x, pt.y, 2.5, 0, Math.PI * 2);
+        fctx.fill();
+        fctx.restore();
+      }
+    }
+
+    fireworksEngine.animId = requestAnimationFrame(runFireworks);
+  }
+
+  // Sparkler Fountain on Cake
+  var sparklerEngine = {
+    active: false,
+    particles: [],
+    animId: null
+  };
+
+  function runSparklers() {
+    if (!sparklerEngine.active || !sctx || !cakeSparklerCanvas) return;
+    sctx.clearRect(0, 0, cakeSparklerCanvas.width, cakeSparklerCanvas.height);
+
+    var w = cakeSparklerCanvas.width;
+    var h = cakeSparklerCanvas.height;
+    // Map candle wick positions from SVG 200x180 to canvas
+    var candleXPercent = [73.5 / 200, 91.5 / 200, 109.5 / 200, 127.5 / 200];
+    var candleYPercent = [42 / 180, 38 / 180, 38 / 180, 42 / 180];
+
+    // Spawn sparks
+    for (var k = 0; k < 4; k++) {
+      var cx = w * candleXPercent[k];
+      var cy = h * candleYPercent[k];
+      for (var s = 0; s < 3; s++) {
+        var ang = -Math.PI / 2 + (Math.random() - 0.5) * 1.3;
+        var spd = Math.random() * 5 + 3;
+        sparklerEngine.particles.push({
+          x: cx,
+          y: cy,
+          vx: Math.cos(ang) * spd,
+          vy: Math.sin(ang) * spd,
+          alpha: 1,
+          color: Math.random() > 0.3 ? '#fef08a' : '#ffffff',
+          size: Math.random() * 2.2 + 1
+        });
+      }
+    }
+
+    // Animate sparks
+    for (var i = sparklerEngine.particles.length - 1; i >= 0; i--) {
+      var sp = sparklerEngine.particles[i];
+      sp.vy += 0.14; // gravity
+      sp.x += sp.vx;
+      sp.y += sp.vy;
+      sp.alpha -= 0.045;
+      if (sp.alpha <= 0) {
+        sparklerEngine.particles.splice(i, 1);
+      } else {
+        sctx.save();
+        sctx.globalAlpha = sp.alpha;
+        sctx.fillStyle = sp.color;
+        sctx.beginPath();
+        sctx.arc(sp.x, sp.y, sp.size, 0, Math.PI * 2);
+        sctx.fill();
+        sctx.restore();
+      }
+    }
+
+    if (Math.random() > 0.65 && audioCtrl && audioCtrl.sfx && audioCtrl.sfx.sparklerCrackle) {
+      audioCtrl.sfx.sparklerCrackle();
+    }
+
+    sparklerEngine.animId = requestAnimationFrame(runSparklers);
+  }
+
+  var celebrationTimer = null;
+
+  function stopGrandCelebration() {
+    if (celebrationTimer) {
+      clearTimeout(celebrationTimer);
+      celebrationTimer = null;
+    }
+    if (stopFireworksBtn) {
+      stopFireworksBtn.style.display = 'none';
+    }
+    fireworksEngine.active = false;
+    if (fireworksEngine.animId) {
+      cancelAnimationFrame(fireworksEngine.animId);
+      fireworksEngine.animId = null;
+    }
+    sparklerEngine.active = false;
+    if (sparklerEngine.animId) {
+      cancelAnimationFrame(sparklerEngine.animId);
+      sparklerEngine.animId = null;
+    }
+    if (fctx && fireworksCanvas) {
+      fctx.clearRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+    }
+    if (sctx && cakeSparklerCanvas) {
+      sctx.clearRect(0, 0, cakeSparklerCanvas.width, cakeSparklerCanvas.height);
+    }
+    if (twilightOverlay) {
+      twilightOverlay.classList.remove('active');
+    }
+  }
+
+  function openMarketQueenModal() {
+    if (marketQueenModal) {
+      marketQueenModal.style.display = 'flex';
+    }
+  }
+
+  function closeMarketQueenModal() {
+    if (marketQueenModal) {
+      marketQueenModal.style.display = 'none';
+    }
+  }
+
+  function startGrandCelebration() {
+    window.__candlesBlown = true;
+
+    // Show floating button to close fireworks anytime
+    if (stopFireworksBtn) {
+      stopFireworksBtn.style.display = 'inline-flex';
+    }
+
+    // 1. Twilight overlay activates (gentle night sky glow)
+    if (twilightOverlay) twilightOverlay.classList.add('active');
+
+    // 2. Spotlight cake
+    var stage5 = document.getElementById('stage5');
+    if (stage5) stage5.classList.add('celebrating');
+
+    // 3. Extinguish candle flames & release smoke
+    if (cakeFlame) cakeFlame.classList.add('blown-out');
+    if (smokePuff) smokePuff.classList.add('active');
+
+    // 4. Sparkler fountain canvas
+    if (cakeSparklerCanvas) {
+      cakeSparklerCanvas.width = cakeSparklerCanvas.offsetWidth || 300;
+      cakeSparklerCanvas.height = cakeSparklerCanvas.offsetHeight || 270;
+      sparklerEngine.active = true;
+      runSparklers();
+    }
+
+    // 5. Fullscreen Fireworks Engine
+    fireworksEngine.active = true;
+    resizeFireworks();
+    runFireworks();
+    setTimeout(launchRocket, 100);
+    setTimeout(launchRocket, 400);
+    setTimeout(launchRocket, 700);
+
+    // Auto-close fireworks and sparkler show automatically after 30 seconds
+    if (celebrationTimer) clearTimeout(celebrationTimer);
+    celebrationTimer = setTimeout(function () {
+      stopGrandCelebration();
+    }, 30000);
+
+    // 6. Reveal Glowing Golden Market Queen Banner
+    setTimeout(function () {
+      if (marketQueenBanner) marketQueenBanner.classList.add('active');
+      if (cakeCutBanner) cakeCutBanner.classList.add('active');
+    }, 900);
+
+    // 7. Confetti bursts & Market Queen Popup Modal
+    setTimeout(function () {
+      if (audioCtrl && audioCtrl.sfx && audioCtrl.sfx.cheer) {
+        audioCtrl.sfx.cheer();
+      }
+      fireConfetti(true);
+      openMarketQueenModal();
+    }, 700);
+
+    setTimeout(function () {
+      fireConfetti(true);
+    }, 1400);
+
+    // Persist state
+    try {
+      sessionStorage.setItem('mahima_candles_blown', 'true');
+      localStorage.setItem('mahima_candles_blown', 'true');
+    } catch (e) {}
+  }
+
+  function resetCandleCelebration() {
+    window.__candlesBlown = false;
+    stopGrandCelebration();
+    closeMarketQueenModal();
+
+    if (cakeFlame) cakeFlame.classList.remove('blown-out');
+    if (smokePuff) smokePuff.classList.remove('active');
+    if (marketQueenBanner) marketQueenBanner.classList.remove('active');
+    if (cakeCutBanner) cakeCutBanner.classList.remove('active');
+
+    var stage5 = document.getElementById('stage5');
+    if (stage5) stage5.classList.remove('celebrating');
+
+    if (blowCakeBtn) {
+      blowCakeBtn.textContent = '💨 Make a Wish & Blow the Candles!';
+      blowCakeBtn.disabled = false;
+    }
+
+    try {
+      sessionStorage.removeItem('mahima_candles_blown');
+      localStorage.removeItem('mahima_candles_blown');
+    } catch (e) {}
+
+    if (audioCtrl && audioCtrl.sfx && audioCtrl.sfx.click) {
+      audioCtrl.sfx.click();
+    }
+  }
+
+  // Global Mute/Unmute Controller (Top-right button)
+  function updateMuteButtonUI(isMuted) {
+    if (globalMuteBtn) {
+      if (isMuted) {
+        globalMuteBtn.classList.add('is-muted');
+      } else {
+        globalMuteBtn.classList.remove('is-muted');
+      }
+    }
+    if (globalMuteIcon) {
+      globalMuteIcon.textContent = isMuted ? '🔇' : '🔊';
+    }
+    if (globalMuteText) {
+      globalMuteText.textContent = isMuted ? 'Sound OFF' : 'Sound ON';
+    }
+    if (muteBtn) {
+      muteBtn.textContent = isMuted ? '🔇' : '🔊';
+    }
+  }
+
+  if (globalMuteBtn) {
+    globalMuteBtn.addEventListener('click', function () {
+      if (audioCtrl && audioCtrl.toggleMute) {
+        var isMuted = audioCtrl.toggleMute();
+        updateMuteButtonUI(isMuted);
+        if (!isMuted && sfx.click) sfx.click();
+      }
+    });
+  }
+
+  // Fireworks manual close button
+  if (stopFireworksBtn) {
+    stopFireworksBtn.addEventListener('click', function () {
+      stopGrandCelebration();
+      if (sfx.click) sfx.click();
+    });
+  }
+
+  // Market Queen Popup Modal listeners
+  if (queenModalCloseBtn) {
+    queenModalCloseBtn.addEventListener('click', closeMarketQueenModal);
+  }
+  if (queenDismissBtn) {
+    queenDismissBtn.addEventListener('click', closeMarketQueenModal);
+  }
+  if (queenViewLetterBtn) {
+    queenViewLetterBtn.addEventListener('click', function () {
+      closeMarketQueenModal();
+      var letterCard = document.querySelector('.special-letter-card');
+      if (letterCard) {
+        letterCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  }
 
   // Song controls
   if (finaleSongBtn) {
@@ -439,7 +1414,7 @@ document.addEventListener('DOMContentLoaded', function () {
     muteBtn.addEventListener('click', function () {
       if (audioCtrl && audioCtrl.toggleMute) {
         var isMuted = audioCtrl.toggleMute();
-        muteBtn.textContent = isMuted ? '🔇' : '🔊';
+        updateMuteButtonUI(isMuted);
       }
     });
   }
@@ -450,37 +1425,20 @@ document.addEventListener('DOMContentLoaded', function () {
       if (audioCtrl && audioCtrl.sfx && audioCtrl.sfx.blow) {
         audioCtrl.sfx.blow();
       }
-
-      // Extinguish candle flame and persist state so returning from disco mode keeps candles blown
-      try {
-        sessionStorage.setItem('mahima_candles_blown', 'true');
-        localStorage.setItem('mahima_candles_blown', 'true');
-      } catch (e) {}
-      if (cakeFlame) cakeFlame.classList.add('blown-out');
-      if (smokePuff) smokePuff.classList.add('active');
-
-      setTimeout(function () {
-        if (audioCtrl && audioCtrl.sfx && audioCtrl.sfx.cheer) {
-          audioCtrl.sfx.cheer();
-        }
-        fireConfetti(true);
-      }, 400);
-
-      setTimeout(function () {
-        fireConfetti(true);
-      }, 1000);
-
-      if (cakeCutBanner) {
-        cakeCutBanner.classList.add('active');
-      }
-
       blowCakeBtn.textContent = '🎂 Candles Blown! Wish Sealed with Magic & Cheer! ✨';
       blowCakeBtn.disabled = true;
 
-      // Ensure song is playing
+      startGrandCelebration();
+
       if (audioCtrl && audioCtrl.playSong) {
         audioCtrl.playSong();
       }
+    });
+  }
+
+  if (relightCakeBtn) {
+    relightCakeBtn.addEventListener('click', function () {
+      resetCandleCelebration();
     });
   }
 
@@ -488,6 +1446,84 @@ document.addEventListener('DOMContentLoaded', function () {
     stage5PrevBtn.addEventListener('click', function () {
       if (sfx.click) sfx.click();
       goToStage(4);
+    });
+  }
+
+  var stage5NextBtn = document.getElementById('stage5NextBtn');
+  if (stage5NextBtn) {
+    stage5NextBtn.addEventListener('click', function () {
+      if (sfx.select) sfx.select();
+      goToStage(6);
+    });
+  }
+
+  // =================================================
+  // STAGE 6: THANK YOU & CLOSING BELL CONTROLS
+  // =================================================
+  var stage6PrevBtn = document.getElementById('stage6PrevBtn');
+  var replayFromStartBtn = document.getElementById('replayFromStartBtn');
+  var closingBellBtn = document.getElementById('closingBellBtn');
+  var closingBellToast = document.getElementById('closingBellToast');
+
+  if (stage6PrevBtn) {
+    stage6PrevBtn.addEventListener('click', function () {
+      if (sfx.click) sfx.click();
+      goToStage(5);
+    });
+  }
+
+  if (closingBellBtn) {
+    closingBellBtn.addEventListener('click', function () {
+      if (audioCtrl && audioCtrl.marketBell) {
+        audioCtrl.marketBell();
+      } else if (audioCtrl && audioCtrl.sfx && audioCtrl.sfx.cheer) {
+        audioCtrl.sfx.cheer();
+      }
+      fireConfetti(true);
+
+      if (closingBellToast) {
+        closingBellToast.style.display = 'inline-block';
+        closingBellToast.style.animation = 'none';
+        void closingBellToast.offsetWidth; // trigger reflow
+        closingBellToast.style.animation = 'cardEntry 0.5s ease-out';
+      }
+    });
+  }
+
+  // Stage 6 Delivery Card Visibility: Only show if treat was chosen (Yes) and completed
+  function updateThankYouDeliveryCardVisibility() {
+    var deliveryCard = document.getElementById('thankyouDeliveryCard');
+    if (!deliveryCard) return;
+
+    var hasOrdered = false;
+    try {
+      if (window.__treatOrderPlaced) {
+        hasOrdered = true;
+      } else {
+        var savedTreat = localStorage.getItem('bday_treat_order');
+        if (savedTreat) {
+          var parsed = JSON.parse(savedTreat);
+          if (parsed && parsed.address && parsed.treat) {
+            hasOrdered = true;
+          }
+        }
+      }
+    } catch (e) {}
+
+    deliveryCard.style.display = hasOrdered ? 'flex' : 'none';
+  }
+  updateThankYouDeliveryCardVisibility();
+
+  if (replayFromStartBtn) {
+    replayFromStartBtn.addEventListener('click', function () {
+      resetCandleCelebration();
+      window.__treatOrderPlaced = false;
+      try {
+        localStorage.removeItem('bday_treat_order');
+      } catch (e) {}
+      updateThankYouDeliveryCardVisibility();
+      if (sfx.click) sfx.click();
+      goToStage(1);
     });
   }
 
@@ -708,20 +1744,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-    if (replayBtn) {
+  if (replayBtn) {
     replayBtn.addEventListener('click', function () {
-      try {
-        sessionStorage.removeItem('mahima_candles_blown');
-        localStorage.removeItem('mahima_candles_blown');
-      } catch (e) {}
+      resetCandleCelebration();
       if (sfx.click) sfx.click();
-      if (cakeFlame) cakeFlame.classList.remove('blown-out');
-      if (smokePuff) smokePuff.classList.remove('active');
-      if (cakeCutBanner) cakeCutBanner.classList.remove('active');
-      if (blowCakeBtn) {
-        blowCakeBtn.textContent = '💨 Make a Wish & Blow the Candles!';
-        blowCakeBtn.disabled = false;
-      }
       goToStage(1);
     });
   }
@@ -817,21 +1843,25 @@ document.addEventListener('DOMContentLoaded', function () {
   } catch (err) { }
 
   
-  // Restore candle blown state if previously celebrated (e.g. returning from disco.html)
-  function restoreCandleState() {
-    try {
-      if (sessionStorage.getItem('mahima_candles_blown') === 'true' || localStorage.getItem('mahima_candles_blown') === 'true') {
-        if (cakeFlame) cakeFlame.classList.add('blown-out');
-        if (smokePuff) smokePuff.classList.add('active');
-        if (cakeCutBanner) cakeCutBanner.classList.add('active');
-        if (blowCakeBtn) {
-          blowCakeBtn.textContent = '🎂 Candles Blown! Wish Sealed with Magic & Cheer! ✨';
-          blowCakeBtn.disabled = true;
-        }
-      }
-    } catch (e) {}
+  // Ensure initial candle state is glowing & active
+  try {
+    sessionStorage.removeItem('mahima_candles_blown');
+    localStorage.removeItem('mahima_candles_blown');
+  } catch (e) {}
+  if (cakeFlame) cakeFlame.classList.remove('blown-out');
+  if (smokePuff) smokePuff.classList.remove('active');
+  if (cakeCutBanner) cakeCutBanner.classList.remove('active');
+  if (marketQueenBanner) marketQueenBanner.classList.remove('active');
+  if (blowCakeBtn) {
+    blowCakeBtn.textContent = '💨 Make a Wish & Blow the Candles!';
+    blowCakeBtn.disabled = false;
   }
-  restoreCandleState();
 
   console.log('✓ Mahima (Expert) Birthday Site Initialized (Step-by-Step Stock & Cute Theme + Disco Zone)');
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initMahimaApp);
+} else {
+  initMahimaApp();
+}

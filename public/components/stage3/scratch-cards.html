@@ -1,0 +1,93 @@
+  <!-- =======================================================
+       INTERACTIVE LOTTERY SCRATCH-OFF BIRTHDAY DIVIDEND CARDS
+       ======================================================= -->
+  <div class="dividend-lottery-wrapper" id="dividendLotterySection">
+    <div class="lottery-header">
+      <div class="welcome-badge" style="background: linear-gradient(135deg, #fef3c7, #fde68a); color: #92400e;">
+        🎰 LOTTERY SPECIAL · ZERO VOLATILITY
+      </div>
+      <h3 class="lottery-title">
+        🎁 "Scratch-Off" Birthday Dividend Cards ✨
+      </h3>
+      <p class="lottery-subtitle">
+        Scratch away the golden foil with your finger or mouse to unlock exclusive, non-expiring friendship coupons declared in your portfolio!
+      </p>
+    </div>
+
+    <div class="scratch-cards-grid">
+      <!-- Card 1: Coffee & Pastry Date -->
+      <div class="scratch-card-box" id="scratchCard1" data-index="1" data-revealed="false">
+        <div class="scratch-card-underlay">
+          <div class="coupon-seal">☕</div>
+          <div class="coupon-badge">DIVIDEND VOUCHER #01</div>
+          <h4 class="coupon-title">One Free Coffee & Pastry Party</h4>
+          <div class="coupon-restriction">★ STRICTLY NO MARKET TALK ★</div>
+          <p class="coupon-desc">
+            Valid for an all-expenses-paid iced latte, hot brew, and dessert Party. Strictly zero charts, tickers, or financial jargon—just pure laughs & peaceful vibes!
+          </p>
+          <div class="coupon-footer">
+            <span class="coupon-code">DIV-COFFEE-ATH</span>
+            <span class="coupon-validity">EXPIRY: NEVER</span>
+          </div>
+          <button class="btn-redeem-coupon" type="button" data-card="1">
+            🎁 Claim & Redeem Voucher
+          </button>
+        </div>
+        <canvas class="scratch-card-canvas" id="scratchCanvas1" width="280" height="350"></canvas>
+        <div class="scratch-hover-sparkle">🪙 SCRATCH WITH FINGER / MOUSE ✨</div>
+      </div>
+
+      <!-- Card 2: Guaranteed Cheer-Up Call -->
+      <div class="scratch-card-box" id="scratchCard2" data-index="2" data-revealed="false">
+        <div class="scratch-card-underlay">
+          <div class="coupon-seal">📞</div>
+          <div class="coupon-badge">DIVIDEND VOUCHER #02</div>
+          <h4 class="coupon-title">One Guaranteed Cheer-Up Call</h4>
+          <div class="coupon-restriction">★ ANYTIME CHARTS TURN RED ★</div>
+          <p class="coupon-desc">
+            Whenever the markets dip into a bear market, work gets overwhelming, or you just need an emergency hype speech—dial this for guaranteed smile rallies!
+          </p>
+          <div class="coupon-footer">
+            <span class="coupon-code">DIV-BULL-RALLY</span>
+            <span class="coupon-validity">24/7 PRIORITY SUPPORT</span>
+          </div>
+          <button class="btn-redeem-coupon" type="button" data-card="2">
+            🎁 Claim & Redeem Voucher
+          </button>
+        </div>
+        <canvas class="scratch-card-canvas" id="scratchCanvas2" width="280" height="350"></canvas>
+        <div class="scratch-hover-sparkle">🪙 SCRATCH WITH FINGER / MOUSE ✨</div>
+      </div>
+
+      <!-- Card 3: Unlimited Smiles & Listening Sessions -->
+      <div class="scratch-card-box" id="scratchCard3" data-index="3" data-revealed="false">
+        <div class="scratch-card-underlay">
+          <div class="coupon-seal">⭐</div>
+          <div class="coupon-badge">DIVIDEND VOUCHER #03</div>
+          <h4 class="coupon-title">Unlimited Smiles & Trading Banter</h4>
+          <div class="coupon-restriction">★ 100% UNCONDITIONAL SUPPORT ★</div>
+          <p class="coupon-desc">
+            An infinite compounded dividend that never expires. Valid for endless celebrations, crazy market theories, sharing stories, and having an awesome friend always in your corner!
+          </p>
+          <div class="coupon-footer">
+            <span class="coupon-code">DIV-INFINITY-HOLD</span>
+            <span class="coupon-validity">EXPIRY: LIFETIME</span>
+          </div>
+          <button class="btn-redeem-coupon" type="button" data-card="3">
+            🎁 Claim & Redeem Voucher
+          </button>
+        </div>
+        <canvas class="scratch-card-canvas" id="scratchCanvas3" width="280" height="350"></canvas>
+        <div class="scratch-hover-sparkle">🪙 SCRATCH WITH FINGER / MOUSE ✨</div>
+      </div>
+    </div>
+
+    <div class="lottery-actions">
+      <button class="btn-scratch-all" id="scratchAllBtn" type="button">
+        ✨ Reveal All 3 Dividends Instantly
+      </button>
+      <div class="lottery-counter" id="lotteryCounter">
+        Unlocked: <span id="scratchedCount">0</span> of 3 Dividends
+      </div>
+    </div>
+  </div>

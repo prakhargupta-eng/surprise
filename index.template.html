@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Happy Birthday Mahima! 🎂📈 The Market Expert & 100-Bagger Special</title>
+
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fredoka:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css?v=2.2">
+</head>
+
+  <!-- Persistent Floating Top-Right Mute / Unmute Button (Visible on all screens) -->
+  <button id="globalMuteBtn" class="global-mute-btn" type="button" aria-label="Toggle Sound" title="Mute / Unmute Audio">
+    <span class="mute-icon" id="globalMuteIcon">🔊</span>
+    <span class="mute-label" id="globalMuteText">Sound ON</span>
+  </button>
+
+  <!-- Floating Fireworks Close Button (Appears during fireworks show) -->
+  <button id="stopFireworksBtn" class="stop-fireworks-btn" type="button" aria-label="Close Fireworks" style="display: none;">
+    ✨ Close Fireworks ✕
+  </button>
+
+  <!-- Ambient Floating Background Particles -->
+  <div class="ambient-bg" id="ambientBg"></div>
+
+  <!-- Fullscreen Twilight Celebration Overlay & Fireworks Canvas -->
+  <div class="twilight-overlay" id="twilightOverlay">
+    <div class="twilight-stars"></div>
+    <div class="twilight-nebula"></div>
+  </div>
+  <canvas id="fireworksCanvas"></canvas>
+  <canvas id="confetti"></canvas>
+
+  <!-- ==========================================================
+       MODULAR COMPONENT: HEADER, TICKER & PROGRESS INDICATOR
+       File: public/components/header-ticker.html
+       ========================================================== -->
+  <!-- INCLUDE: header-ticker.html -->
+
+  <!-- ==========================================================
+       MAIN MULTI-STEP INTERACTIVE STAGES
+       ========================================================== -->
+  <main class="main-wrapper">
+    <!-- File: public/components/stage1-welcome.html -->
+    <!-- INCLUDE: stage1-welcome.html -->
+
+    <!-- File: public/components/stage2-market-report.html -->
+    <!-- INCLUDE: stage2-market-report.html -->
+
+    <!-- File: public/components/stage3-treats.html -->
+    <!-- INCLUDE: stage3-treats.html -->
+
+    <!-- File: public/components/stage4-gallery.html -->
+    <!-- INCLUDE: stage4-gallery.html -->
+
+    <!-- File: public/components/stage5-finale.html -->
+    <!-- INCLUDE: stage5-finale.html -->
+
+    <!-- File: public/components/stage6-thankyou.html -->
+    <!-- INCLUDE: stage6-thankyou.html -->
+  </main>
+
+  <!-- ==========================================================
+       MODULAR COMPONENT: INTERACTIVE MODALS & OVERLAYS
+       File: public/components/modals.html
+       ========================================================== -->
+  <!-- INCLUDE: modals.html -->
+
+  <!-- Audio Element for Birthday Song -->
+  <audio id="bdayAudio" src="happy_birthday.mp3" preload="auto"></audio>
+
+  <!-- Scripts -->
+  <script src="js/audio.js"></script>
+  <script src="js/confetti.js"></script>
+  <script type="module" src="js/firebase.js"></script>
+  <script src="js/app.js?v=2.2"></script>
+</body>
+
+</html>

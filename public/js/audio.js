@@ -150,6 +150,141 @@
       [523, 659, 784, 1046, 1318].forEach(function (f, i) {
         tone(f, 0.35, 'sine', 0.18, i * 0.06);
       });
+    },
+    paperWhoosh: function () {
+      try {
+        if (!ensureAudio()) return;
+        var t = actx.currentTime;
+        var len = Math.floor(actx.sampleRate * 0.22);
+        var buf = actx.createBuffer(1, len, actx.sampleRate);
+        var d = buf.getChannelData(0);
+        for (var i = 0; i < len; i++) {
+          d[i] = (Math.random() * 2 - 1) * Math.sin((i / len) * Math.PI);
+        }
+        var s = actx.createBufferSource();
+        s.buffer = buf;
+        var f = actx.createBiquadFilter();
+        f.type = 'bandpass';
+        f.frequency.setValueAtTime(800, t);
+        f.frequency.exponentialRampToValueAtTime(2200, t + 0.12);
+        f.frequency.exponentialRampToValueAtTime(600, t + 0.22);
+        f.Q.value = 2.5;
+        var g = actx.createGain();
+        g.gain.setValueAtTime(0.01, t);
+        g.gain.linearRampToValueAtTime(0.28, t + 0.08);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+        s.connect(f);
+        f.connect(g);
+        g.connect(actx.destination);
+        s.start(t);
+      } catch (e) {}
+    },
+    scratch: function () {
+      try {
+        if (!ensureAudio()) return;
+        var t = actx.currentTime;
+        var len = Math.floor(actx.sampleRate * 0.045);
+        var buf = actx.createBuffer(1, len, actx.sampleRate);
+        var d = buf.getChannelData(0);
+        for (var i = 0; i < len; i++) {
+          d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 1.2);
+        }
+        var s = actx.createBufferSource();
+        s.buffer = buf;
+        var f = actx.createBiquadFilter();
+        f.type = 'bandpass';
+        f.frequency.value = 2400 + (Math.random() - 0.5) * 800;
+        f.Q.value = 3.0;
+        var g = actx.createGain();
+        g.gain.setValueAtTime(0.18, t);
+        g.gain.exponentialRampToValueAtTime(0.005, t + 0.045);
+        s.connect(f);
+        f.connect(g);
+        g.connect(actx.destination);
+        s.start(t);
+      } catch (e) {}
+    },
+    voucherWin: function () {
+      try {
+        if (!ensureAudio()) return;
+        var chords = [659.25, 830.61, 987.77, 1318.51, 1661.22];
+        chords.forEach(function (freq, idx) {
+          tone(freq, 0.65, 'triangle', 0.2, idx * 0.07);
+          tone(freq * 1.5, 0.45, 'sine', 0.1, idx * 0.07);
+        });
+      } catch (e) {}
+    },
+    fireworkLaunch: function () {
+      try {
+        if (!ensureAudio()) return;
+        var t = actx.currentTime;
+        var osc = actx.createOscillator();
+        var g = actx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(320, t);
+        osc.frequency.exponentialRampToValueAtTime(1450, t + 0.55);
+        g.gain.setValueAtTime(0.001, t);
+        g.gain.linearRampToValueAtTime(0.14, t + 0.08);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.55);
+        osc.connect(g);
+        g.connect(actx.destination);
+        osc.start(t);
+        osc.stop(t + 0.58);
+      } catch (e) {}
+    },
+    fireworkExplosion: function () {
+      try {
+        if (!ensureAudio()) return;
+        var t = actx.currentTime;
+        // Deep resonance boom
+        var osc = actx.createOscillator();
+        var og = actx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(140, t);
+        osc.frequency.exponentialRampToValueAtTime(32, t + 0.4);
+        og.gain.setValueAtTime(0.45, t);
+        og.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
+        osc.connect(og);
+        og.connect(actx.destination);
+        osc.start(t);
+        osc.stop(t + 0.48);
+
+        // Crackle burst noise
+        var len = Math.floor(actx.sampleRate * 0.5);
+        var buf = actx.createBuffer(1, len, actx.sampleRate);
+        var d = buf.getChannelData(0);
+        for (var i = 0; i < len; i++) {
+          d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 1.8);
+        }
+        var s = actx.createBufferSource();
+        s.buffer = buf;
+        var f = actx.createBiquadFilter();
+        f.type = 'lowpass';
+        f.frequency.value = 1800;
+        var g = actx.createGain();
+        g.gain.setValueAtTime(0.35, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+        s.connect(f);
+        f.connect(g);
+        g.connect(actx.destination);
+        s.start(t);
+
+        // Sparkle crackles
+        for (var k = 0; k < 5; k++) {
+          (function (delay) {
+            setTimeout(function () {
+              noise(0.04, 0.12, 3000);
+            }, delay);
+          })(70 + k * 80 + Math.random() * 40);
+        }
+      } catch (e) {}
+    },
+    sparklerCrackle: function () {
+      try {
+        if (!ensureAudio()) return;
+        noise(0.035, 0.1, 4000);
+        tone(1200 + Math.random() * 800, 0.04, 'triangle', 0.04);
+      } catch (e) {}
     }
   };
 

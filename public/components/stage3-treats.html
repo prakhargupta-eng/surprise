@@ -1,0 +1,54 @@
+<!-- ==========================================================
+     STEP 3: BIRTHDAY TREATS RESERVATION & LOTTERY DIVIDENDS
+     ========================================================== -->
+<section class="stage-card" id="stage3" aria-labelledby="stage3Title">
+  <div class="bunting-garland">
+    <div class="bunting-flag flag-pink"></div>
+    <div class="bunting-flag flag-peach"></div>
+    <div class="bunting-flag flag-yellow"></div>
+    <div class="bunting-flag flag-purple"></div>
+    <div class="bunting-flag flag-green"></div>
+  </div>
+
+  <div style="text-align: center; margin-bottom: 16px;">
+    <div class="welcome-badge" style="background: var(--gold-light); color: #b45309;">
+      🎁 SPECIAL DIVIDEND PAYOUT
+    </div>
+    <h2 class="welcome-title" id="stage3Title" style="font-size: 28px;">
+      Would You Like a <span class="highlight">Birthday Treat?</span> 🍰
+    </h2>
+    <p style="color: var(--text-muted); font-size: 13.5px;">
+      An exclusive birthday treat voucher has been declared in your honor!
+    </p>
+  </div>
+
+  <div class="treats-hero-wrap">
+    <img src="bears_treats.jpg" alt="Cute Bears with Cupcakes & Treats" class="treats-hero-img" loading="eager"
+      onerror="this.onerror=null; this.src='bears_cake.jpg';" />
+  </div>
+
+  <!-- Treat Decision & Order Form -->
+  <!-- INCLUDE: stage3/treat-order-form.html -->
+
+  <!-- Treat Reservation Confirmation Receipt Card -->
+  <!-- INCLUDE: stage3/treat-receipt-card.html -->
+
+  <!-- Interactive Lottery Scratch-Off Cards -->
+  <!-- INCLUDE: stage3/scratch-cards.html -->
+
+  <!-- Mandatory Treat Address Warning Message (If YES selected) -->
+  <div class="scratch-required-msg" id="treatRequiredMsg" style="display: none; background: #fee2e2; border-color: #ef4444; color: #991b1b;">
+    📍 You selected YES for the Birthday Treat! Please enter your delivery address above and tap "Order Treats 🛍️✨" before proceeding! 🍰
+  </div>
+
+  <!-- Mandatory Scratch Warning Message -->
+  <div class="scratch-required-msg" id="scratchRequiredMsg" style="display: none;">
+    ⚠️ Please scratch and unlock all 3 Birthday Dividend Cards above before moving to the next page! 🪙✨
+  </div>
+
+  <div class="stage-nav-bar">
+    <button class="btn-nav btn-nav-next" id="stage3NextBtn">
+      Cherished Memories ➡️
+    </button>
+  </div>
+</section>

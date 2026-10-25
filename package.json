@@ -2,6 +2,10 @@
   "name": "himani-birthday-site",
   "version": "1.0.0",
   "private": true,
+  "scripts": {
+    "build": "node scripts/build-html.js",
+    "watch": "node scripts/watch-html.js"
+  },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0"
   }

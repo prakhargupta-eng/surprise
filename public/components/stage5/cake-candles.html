@@ -1,0 +1,130 @@
+  <!-- Music Player Bar -->
+  <div class="music-player-bar">
+    <div class="vinyl-disc" id="vinylDisc">
+      <div class="vinyl-center"></div>
+    </div>
+    <div class="song-details">
+      <div class="song-title">🎶 Happy Birthday Melody</div>
+      <div class="song-artist">Playing just for Mahima (Our Expert) · Celebrating You</div>
+    </div>
+    <button class="song-toggle-btn" id="finaleSongBtn" title="Play / Pause Song">
+      ▶
+    </button>
+  </div>
+
+  <!-- Interactive Birthday Cake & Candles -->
+  <div class="cake-interaction-card">
+    <div class="cake-stage-svg-wrap">
+      <svg viewBox="0 0 200 180" width="100%" height="100%">
+        <!-- Cake Plate -->
+        <ellipse cx="100" cy="165" rx="85" ry="12" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="2" />
+        <ellipse cx="100" cy="163" rx="78" ry="9" fill="#ffffff" />
+
+        <!-- Cake Bottom Tier -->
+        <path d="M 35 125 C 35 110, 165 110, 165 125 L 165 150 C 165 165, 35 165, 35 150 Z" fill="#ffb3cb" />
+        <!-- Bottom Tier Frosting Drips -->
+        <path
+          d="M 35 125 Q 50 138, 65 125 Q 80 138, 95 125 Q 110 138, 125 125 Q 140 138, 155 125 Q 160 130, 165 125 C 165 115, 35 115, 35 125 Z"
+          fill="#fff4ee" />
+
+        <!-- Cake Top Tier -->
+        <path d="M 55 90 C 55 78, 145 78, 145 90 L 145 118 C 145 130, 55 130, 55 118 Z" fill="#ff8aa9" />
+        <!-- Top Tier Frosting Drips -->
+        <path d="M 55 90 Q 70 102, 85 90 Q 100 102, 115 90 Q 130 102, 145 90 C 145 82, 55 82, 55 90 Z"
+          fill="#ffffff" />
+
+        <!-- Strawberry Toppings -->
+        <circle cx="60" cy="88" r="5" fill="#e11d48" />
+        <circle cx="80" cy="85" r="5.5" fill="#e11d48" />
+        <circle cx="100" cy="82" r="6" fill="#e11d48" />
+        <circle cx="120" cy="85" r="5.5" fill="#e11d48" />
+        <circle cx="140" cy="88" r="5" fill="#e11d48" />
+
+        <!-- 4 Birthday Candles (Pink, Sky Blue, Mint, Gold) -->
+        <!-- Candle 1: Pink -->
+        <rect x="70" y="50" width="7" height="34" fill="#ff7597" rx="2" />
+        <line x1="71" y1="56" x2="76" y2="60" stroke="#fff" stroke-width="1.2" />
+        <line x1="71" y1="66" x2="76" y2="70" stroke="#fff" stroke-width="1.2" />
+        <line x1="73.5" y1="50" x2="73.5" y2="42" stroke="#334155" stroke-width="2" />
+
+        <!-- Candle 2: Sky Blue -->
+        <rect x="88" y="46" width="7" height="36" fill="#38bdf8" rx="2" />
+        <line x1="89" y1="52" x2="94" y2="56" stroke="#fff" stroke-width="1.2" />
+        <line x1="89" y1="62" x2="94" y2="66" stroke="#fff" stroke-width="1.2" />
+        <line x1="89" y1="72" x2="94" y2="76" stroke="#fff" stroke-width="1.2" />
+        <line x1="91.5" y1="46" x2="91.5" y2="38" stroke="#334155" stroke-width="2" />
+
+        <!-- Candle 3: Mint Green -->
+        <rect x="106" y="46" width="7" height="36" fill="#10b981" rx="2" />
+        <line x1="107" y1="52" x2="112" y2="56" stroke="#fff" stroke-width="1.2" />
+        <line x1="107" y1="62" x2="112" y2="66" stroke="#fff" stroke-width="1.2" />
+        <line x1="107" y1="72" x2="112" y2="76" stroke="#fff" stroke-width="1.2" />
+        <line x1="109.5" y1="46" x2="109.5" y2="38" stroke="#334155" stroke-width="2" />
+
+        <!-- Candle 4: Golden Amber -->
+        <rect x="124" y="50" width="7" height="34" fill="#f59e0b" rx="2" />
+        <line x1="125" y1="56" x2="130" y2="60" stroke="#fff" stroke-width="1.2" />
+        <line x1="125" y1="66" x2="130" y2="70" stroke="#fff" stroke-width="1.2" />
+        <line x1="127.5" y1="50" x2="127.5" y2="42" stroke="#334155" stroke-width="2" />
+
+        <!-- Candle Flames (All 4 flickering together) -->
+        <g class="flame" id="cakeFlame">
+          <path d="M 73.5 22 C 68 30, 69 38, 73.5 40 C 78 38, 79 30, 73.5 22 Z" fill="#f59e0b" />
+          <path d="M 73.5 28 C 71 33, 72 37, 73.5 38.5 C 75 37, 76 33, 73.5 28 Z" fill="#fef08a" />
+
+          <path d="M 91.5 17 C 86 25, 87 34, 91.5 36 C 96 34, 97 25, 91.5 17 Z" fill="#f59e0b" />
+          <path d="M 91.5 23 C 89 28, 90 32, 91.5 34 C 93 32, 94 28, 91.5 23 Z" fill="#fef08a" />
+
+          <path d="M 109.5 17 C 104 25, 105 34, 109.5 36 C 114 34, 115 25, 109.5 17 Z" fill="#f59e0b" />
+          <path d="M 109.5 23 C 107 28, 108 32, 109.5 34 C 111 32, 112 28, 109.5 23 Z" fill="#fef08a" />
+
+          <path d="M 127.5 22 C 122 30, 123 38, 127.5 40 C 132 38, 133 30, 127.5 22 Z" fill="#f59e0b" />
+          <path d="M 127.5 28 C 125 33, 126 37, 127.5 38.5 C 129 37, 130 33, 127.5 28 Z" fill="#fef08a" />
+        </g>
+
+        <!-- Smoke Puffs across all 4 candles (Hidden until blown) -->
+        <g class="smoke-puff" id="smokePuff">
+          <circle cx="73" cy="24" r="6" fill="#94a3b8" />
+          <circle cx="91" cy="20" r="7" fill="#cbd5e1" />
+          <circle cx="110" cy="20" r="7" fill="#cbd5e1" />
+          <circle cx="128" cy="24" r="6" fill="#94a3b8" />
+        </g>
+
+        <!-- Golden Sparkler Fountains (Ignite when candle blown) -->
+        <g class="sparkler-fountain" id="sparklerFountain">
+          <g class="sparkler-jet jet-1" transform="translate(73.5, 42)"></g>
+          <g class="sparkler-jet jet-2" transform="translate(91.5, 38)"></g>
+          <g class="sparkler-jet jet-3" transform="translate(109.5, 38)"></g>
+          <g class="sparkler-jet jet-4" transform="translate(127.5, 42)"></g>
+        </g>
+      </svg>
+      <!-- Dynamic Canvas for real particle sparkler embers -->
+      <canvas class="cake-sparkler-canvas" id="cakeSparklerCanvas"></canvas>
+    </div>
+
+    <button class="blow-cake-btn" id="blowCakeBtn">
+      💨 Make a Wish & Blow the Candles!
+    </button>
+
+    <div class="cake-cut-banner" id="cakeCutBanner">
+      🎉 YAY! Your wish is on its way to the moon! 🚀🎂
+    </div>
+
+    <!-- Glowing Golden Grand Banner (Market Queen Celebration) -->
+    <div class="market-queen-banner" id="marketQueenBanner">
+      <div class="queen-crown-pulse">👑</div>
+      <h2 class="queen-banner-title">Happy Birthday, Market Queen!</h2>
+      <div class="queen-sparkles-row">✨ 📈 🎂 💎 🚀 ✨</div>
+      <p class="queen-banner-sub">
+        May your year ahead shatter every resistance level and shine forever at All-Time Highs!
+      </p>
+      <div class="queen-tags-row">
+        <span class="queen-tag">🏆 CERTIFIED #1 SUPERSTAR</span>
+        <span class="queen-tag">🌟 100-BAGGER SMILE</span>
+        <span class="queen-tag">📈 PERPETUAL BULL RUN</span>
+      </div>
+      <button class="btn-relight-celebration" id="relightCakeBtn" type="button">
+        ✨ Re-light Sparklers & Fireworks 🎆
+      </button>
+    </div>
+  </div>
