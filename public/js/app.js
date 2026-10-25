@@ -14,12 +14,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
   var sfx = (window.BdayAudio && window.BdayAudio.sfx) || window.sfx || {};
   var audioCtrl = window.BdayAudio;
-  var fireConfetti = window.fireConfetti || function () {};
+  var fireConfetti = window.fireConfetti || function () { };
 
   // Ambient floating hearts background generator
   var ambientBg = document.getElementById('ambientBg');
   if (ambientBg) {
-    var heartSymbols = ['💖', '🌸', '✨', '🎂', '📈', '🧁', '⭐'];
+    var heartSymbols = ['💖', ' ', '✨', '🎂', '📈', '🧁', '⭐'];
     for (var h = 0; h < 24; h++) {
       var heart = document.createElement('div');
       heart.className = 'floating-heart';
@@ -290,7 +290,7 @@ document.addEventListener('DOMContentLoaded', function () {
       // Save to LocalStorage
       try {
         localStorage.setItem('bday_treat_order', JSON.stringify(treatData));
-      } catch (e) {}
+      } catch (e) { }
 
       // Update and Show On-Screen Stamped Receipt
       var rItem = document.getElementById('receiptItem');
@@ -502,8 +502,8 @@ document.addEventListener('DOMContentLoaded', function () {
   var mascotWidget = document.getElementById('mascotWidget');
   var mascotBubble = document.getElementById('mascotBubble');
   var mascotPhrases = [
-    "Happy Birthday Mahima! 🌸",
-    "Dalal Street's favorite Expert! 📈",
+    "Happy Birthday Mahima!",
+    "The Market's favorite Expert! 📈",
     "Expert ki smile: Upper Circuit! 🔒",
     "Cake khilana zaroori hai, Expert! 🎂",
     "100% Bullish on you, Mahima! 🚀",
