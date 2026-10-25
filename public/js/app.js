@@ -10,8 +10,10 @@ document.addEventListener('DOMContentLoaded', function () {
   var NICKNAME = 'Expert';
   var TOTAL_STAGES = 5;
   var currentStage = 1;
+  window.__currentStage = 1;
   // =================================================
 
+  
   var sfx = (window.BdayAudio && window.BdayAudio.sfx) || window.sfx || {};
   var audioCtrl = window.BdayAudio;
   var fireConfetti = window.fireConfetti || function () { };
@@ -42,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var previousStage = currentStage;
     currentStage = stepNumber;
+    window.__currentStage = currentStage;
 
     // Toggle active stage cards
     for (var s = 1; s <= TOTAL_STAGES; s++) {
@@ -448,7 +451,11 @@ document.addEventListener('DOMContentLoaded', function () {
         audioCtrl.sfx.blow();
       }
 
-      // Extinguish candle flame
+      // Extinguish candle flame and persist state so returning from disco mode keeps candles blown
+      try {
+        sessionStorage.setItem('mahima_candles_blown', 'true');
+        localStorage.setItem('mahima_candles_blown', 'true');
+      } catch (e) {}
       if (cakeFlame) cakeFlame.classList.add('blown-out');
       if (smokePuff) smokePuff.classList.add('active');
 
@@ -467,7 +474,7 @@ document.addEventListener('DOMContentLoaded', function () {
         cakeCutBanner.classList.add('active');
       }
 
-      blowCakeBtn.textContent = '🎂 Candles Blown! Wish Sealed with Love!';
+      blowCakeBtn.textContent = '🎂 Candles Blown! Wish Sealed with Magic & Cheer! ✨';
       blowCakeBtn.disabled = true;
 
       // Ensure song is playing
@@ -484,8 +491,229 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  if (replayBtn) {
+  // =================================================
+  // DOWNLOAD OFFICIAL SHARE CERTIFICATE (CANVAS EXPORT & PREVIEW)
+  // =================================================
+  var downloadCertBtn = document.getElementById('downloadCertBtn');
+  var certPreviewModal = document.getElementById('certPreviewModal');
+  var certPreviewImg = document.getElementById('certPreviewImg');
+  var certDirectDownloadLink = document.getElementById('certDirectDownloadLink');
+  var certModalClose = document.getElementById('certModalClose');
+
+  if (certModalClose && certPreviewModal) {
+    certModalClose.addEventListener('click', function () {
+      certPreviewModal.hidden = true;
+    });
+    certPreviewModal.addEventListener('click', function (e) {
+      if (e.target === certPreviewModal) certPreviewModal.hidden = true;
+    });
+  }
+
+  if (downloadCertBtn) {
+    downloadCertBtn.addEventListener('click', function () {
+      if (sfx.cheer) sfx.cheer();
+      fireConfetti(true);
+
+      var canvas = document.createElement('canvas');
+      canvas.width = 1600;
+      canvas.height = 1100;
+      var ctx = canvas.getContext('2d');
+
+      // 1. Background Ivory Parchment
+      var bgGrad = ctx.createLinearGradient(0, 0, 1600, 1100);
+      bgGrad.addColorStop(0, '#fefdfb');
+      bgGrad.addColorStop(0.5, '#fbf8f0');
+      bgGrad.addColorStop(1, '#fefbf4');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, 1600, 1100);
+
+      // Subtle Stock Candlestick Watermark Pattern in background
+      ctx.strokeStyle = 'rgba(217, 180, 120, 0.08)';
+      ctx.lineWidth = 1;
+      for (var x = 80; x < 1520; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(x, 80);
+        ctx.lineTo(x, 1020);
+        ctx.stroke();
+      }
+
+      // 2. Royal Ornate Double Gold Borders
+      ctx.strokeStyle = '#b45309';
+      ctx.lineWidth = 6;
+      ctx.strokeRect(50, 50, 1500, 1000);
+
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 2.5;
+      ctx.strokeRect(62, 62, 1476, 976);
+
+      // Corner Rosettes
+      function drawRosette(cx, cy) {
+        ctx.fillStyle = '#b45309';
+        ctx.beginPath();
+        ctx.arc(cx, cy, 14, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#fef08a';
+        ctx.beginPath();
+        ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      drawRosette(50, 50);
+      drawRosette(1550, 50);
+      drawRosette(50, 1050);
+      drawRosette(1550, 1050);
+
+      // 3. Header & Issuer
+      ctx.textAlign = 'center';
+      ctx.font = 'bold 15px "JetBrains Mono", monospace';
+      ctx.fillStyle = '#78350f';
+      ctx.fillText('★ NATIONAL & GLOBAL HAPPINESS EXCHANGE · SPECIAL BIRTHDAY ISSUE ★', 800, 120);
+
+      ctx.font = '600 13px "JetBrains Mono", monospace';
+      ctx.fillStyle = '#92400e';
+      ctx.fillText('SERIES 2026 · CERTIFICATE REF: MAHIMA-ATH-100X · ALL-TIME HIGH', 800, 155);
+
+      // Main Title
+      ctx.font = 'bold 44px "Fredoka", "Outfit", sans-serif';
+      ctx.fillStyle = '#1e1b4b';
+      ctx.fillText('OFFICIAL SHARE CERTIFICATE OF APPRECIATION', 800, 220);
+
+      // Attribution
+      ctx.font = 'italic 20px "Caveat", cursive';
+      ctx.fillStyle = '#b45309';
+      ctx.fillText('This is officially awarded and certified unto:', 800, 268);
+
+      // Recipient Name
+      ctx.font = 'bold 54px "Fredoka", "Outfit", sans-serif';
+      var nameGrad = ctx.createLinearGradient(400, 0, 1200, 0);
+      nameGrad.addColorStop(0, '#f59e0b');
+      nameGrad.addColorStop(0.5, '#ec4899');
+      nameGrad.addColorStop(1, '#8b5cf6');
+      ctx.fillStyle = nameGrad;
+      ctx.fillText('MAHIMA (THE MARKET EXPERT)', 800, 345);
+
+      // Divider Line
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(350, 380);
+      ctx.lineTo(1250, 380);
+      ctx.stroke();
+
+      // Certificate Body Text
+      ctx.font = '500 20px "Outfit", sans-serif';
+      ctx.fillStyle = '#334155';
+      ctx.fillText('Recognized as a True 100-Bagger Friend, Market Guru & Radiant Soul.', 800, 430);
+      ctx.fillText('Trading permanently at All-Time Highs with 100% Upper Circuit warmth,', 800, 468);
+      ctx.fillText('sharp analytical intellect, unmatched kindness, and inspiring positive energy!', 800, 506);
+
+      // 4. Stock Market Metrics Boxes
+      var metrics = [
+        { label: 'VALUATION', val: 'PRICELESS 💎' },
+        { label: 'DAILY CIRCUIT', val: 'UPPER CIRCUIT 🔒' },
+        { label: 'LIFETIME RETURN', val: '+10,000% HAPPINESS 📈' },
+        { label: 'ANALYST CONSENSUS', val: 'STRONG BUY FOREVER ⭐' }
+      ];
+
+      var boxW = 245, boxH = 82, startX = 250, gap = 20, boxY = 575;
+      metrics.forEach(function (m, idx) {
+        var bx = startX + idx * (boxW + gap);
+        ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.roundRect(bx, boxY, boxW, boxH, 12);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.font = 'bold 11px "JetBrains Mono", monospace';
+        ctx.fillStyle = '#64748b';
+        ctx.fillText(m.label, bx + boxW / 2, boxY + 28);
+
+        ctx.font = 'bold 14px "Fredoka", sans-serif';
+        ctx.fillStyle = '#0f172a';
+        ctx.fillText(m.val, bx + boxW / 2, boxY + 58);
+      });
+
+      // 5. Official Gold Certified Stamp / Seal on Left
+      var sealX = 350, sealY = 820;
+      ctx.beginPath();
+      ctx.arc(sealX, sealY, 62, 0, Math.PI * 2);
+      ctx.fillStyle = '#f59e0b';
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(sealX, sealY, 54, 0, Math.PI * 2);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(sealX, sealY, 48, 0, Math.PI * 2);
+      ctx.fillStyle = '#fef3c7';
+      ctx.fill();
+
+      ctx.fillStyle = '#92400e';
+      ctx.font = 'bold 12px "JetBrains Mono", monospace';
+      ctx.fillText('★ 100-BAGGER ★', sealX, sealY - 8);
+      ctx.font = 'bold 15px "JetBrains Mono", monospace';
+      ctx.fillText('OFFICIAL', sealX, sealY + 12);
+      ctx.font = 'bold 11px "JetBrains Mono", monospace';
+      ctx.fillText('CERTIFIED', sealX, sealY + 28);
+
+      // 6. Authorized Signatory on Right
+      var sigX = 1250, sigLineY = 820;
+      ctx.font = 'bold 36px "Caveat", cursive';
+      ctx.fillStyle = '#4338ca';
+      ctx.fillText('Your Constant Cheerleader 🌟', sigX, sigLineY - 14);
+
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(sigX - 170, sigLineY);
+      ctx.lineTo(sigX + 170, sigLineY);
+      ctx.stroke();
+
+      ctx.font = 'bold 14px "JetBrains Mono", monospace';
+      ctx.fillStyle = '#1e293b';
+      ctx.fillText('AUTHORIZED BEST FRIEND & MARKET ADMIRER', sigX, sigLineY + 26);
+
+      ctx.font = '600 12px "JetBrains Mono", monospace';
+      ctx.fillStyle = '#64748b';
+      ctx.fillText('VALID FOR LIFE · NON-EXPIRING DIVIDENDS', sigX, sigLineY + 46);
+
+      // Generate Data URL (100% Reliable Synchronous PNG)
+      var dataUrl = canvas.toDataURL('image/png');
+
+      // 1. Direct Download Trigger
+      try {
+        var link = document.createElement('a');
+        link.download = 'Mahima_Official_100_Bagger_Certificate.png';
+        link.href = dataUrl;
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        setTimeout(function () {
+          if (link.parentNode) link.parentNode.removeChild(link);
+        }, 1000);
+      } catch (err) {
+        console.warn('Direct download attempt:', err);
+      }
+
+      // 2. Open Certificate Preview Modal (Guaranteed View & Save on Mobile & Desktop)
+      if (certPreviewImg) certPreviewImg.src = dataUrl;
+      if (certDirectDownloadLink) certDirectDownloadLink.href = dataUrl;
+      if (certPreviewModal) certPreviewModal.hidden = false;
+
+      downloadCertBtn.textContent = '✓ Certificate Ready! Tap to View & Download 📜';
+    });
+  }
+
+    if (replayBtn) {
     replayBtn.addEventListener('click', function () {
+      try {
+        sessionStorage.removeItem('mahima_candles_blown');
+        localStorage.removeItem('mahima_candles_blown');
+      } catch (e) {}
       if (sfx.click) sfx.click();
       if (cakeFlame) cakeFlame.classList.remove('blown-out');
       if (smokePuff) smokePuff.classList.remove('active');
@@ -533,5 +761,77 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  console.log('✓ Mahima (Expert) Birthday Site Initialized (Step-by-Step Stock & Cute Theme)');
+  // =================================================
+  // DISCO ZONE & HEADPHONE DISCLAIMER MODAL
+  // =================================================
+  var launchDiscoBtn = document.getElementById('launchDiscoBtn');
+  var headphoneModal = document.getElementById('headphoneModal');
+  var hpModalCloseBtn = document.getElementById('hpModalCloseBtn');
+  var hpCancelBtn = document.getElementById('hpCancelBtn');
+  var hpProceedBtn = document.getElementById('hpProceedBtn');
+
+  if (launchDiscoBtn && headphoneModal) {
+    launchDiscoBtn.addEventListener('click', function () {
+      if (sfx.pop) sfx.pop();
+      headphoneModal.classList.add('active');
+    });
+  }
+
+  function closeHeadphoneModal() {
+    if (sfx.click) sfx.click();
+    if (headphoneModal) headphoneModal.classList.remove('active');
+  }
+
+  if (hpModalCloseBtn) hpModalCloseBtn.addEventListener('click', closeHeadphoneModal);
+  if (hpCancelBtn) hpCancelBtn.addEventListener('click', closeHeadphoneModal);
+
+  if (headphoneModal) {
+    headphoneModal.addEventListener('click', function (e) {
+      if (e.target === headphoneModal) {
+        closeHeadphoneModal();
+      }
+    });
+  }
+
+  if (hpProceedBtn) {
+    hpProceedBtn.addEventListener('click', function () {
+      // Pause background birthday song before launching disco
+      var bdayAudio = document.getElementById('bdayAudio');
+      if (bdayAudio && !bdayAudio.paused) {
+        bdayAudio.pause();
+      }
+    });
+  }
+
+  // Support direct stage deep-linking (e.g. returning from disco.html with ?stage=5#stage5)
+  try {
+    var searchParams = new URLSearchParams(window.location.search);
+    var initStage = parseInt(searchParams.get('stage'), 10);
+    if (!initStage && window.location.hash) {
+      var hashMatch = window.location.hash.match(/stage(\d+)/i);
+      if (hashMatch) initStage = parseInt(hashMatch[1], 10);
+    }
+    if (initStage && initStage >= 1 && initStage <= TOTAL_STAGES) {
+      goToStage(initStage);
+    }
+  } catch (err) { }
+
+  
+  // Restore candle blown state if previously celebrated (e.g. returning from disco.html)
+  function restoreCandleState() {
+    try {
+      if (sessionStorage.getItem('mahima_candles_blown') === 'true' || localStorage.getItem('mahima_candles_blown') === 'true') {
+        if (cakeFlame) cakeFlame.classList.add('blown-out');
+        if (smokePuff) smokePuff.classList.add('active');
+        if (cakeCutBanner) cakeCutBanner.classList.add('active');
+        if (blowCakeBtn) {
+          blowCakeBtn.textContent = '🎂 Candles Blown! Wish Sealed with Magic & Cheer! ✨';
+          blowCakeBtn.disabled = true;
+        }
+      }
+    } catch (e) {}
+  }
+  restoreCandleState();
+
+  console.log('✓ Mahima (Expert) Birthday Site Initialized (Step-by-Step Stock & Cute Theme + Disco Zone)');
 });
