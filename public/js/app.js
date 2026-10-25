@@ -260,7 +260,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var downloadUrl = URL.createObjectURL(blob);
         var a = document.createElement('a');
         a.href = downloadUrl;
-        a.download = 'birthday_treat_request_mahima_expert.txt';
+        a.download = 'mahima_birthday_treat_request.txt';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -269,18 +269,20 @@ document.addEventListener('DOMContentLoaded', function () {
         console.error('Download error:', err);
       }
 
-      // Save to Firebase if available
+      // Save to Firebase with 'mahima' prefix
       var treatData = {
-        recipient: NAME,
+        recipient: NAME + ' (The Expert)',
         orderId: orderId,
         treat: selectedTreatName,
         customNote: customNote,
         address: address,
-        date: timestampStr
+        date: timestampStr,
+        fileName: 'mahima_birthday_treat_' + Date.now() + '.txt',
+        fileContent: textContent
       };
 
       if (window.__saveTreat) {
-        window.__saveTreat(treatData).catch(function (e) {
+        window.__saveTreat(treatData, textContent).catch(function (e) {
           console.log('Firebase save log:', e);
         });
       }

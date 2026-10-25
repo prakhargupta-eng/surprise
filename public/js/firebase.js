@@ -1,8 +1,10 @@
 /**
- * firebase.js - Firebase integration for treat selections
+ * firebase.js - Firebase integration for treat selections & text file storage
+ * All records and files saved with 'mahima' prefix
  */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+import { getStorage, ref, uploadString } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAUnJWIPnjkDKEd4J-B-L6gfAAQx4je74Y",
@@ -16,15 +18,26 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+let storage = null;
+try {
+  storage = getStorage(app);
+} catch (e) {
+  console.log("Storage initialization note:", e);
+}
 
-// Save preferences in Firebase with unique 'mahima' doc id in events1 table
-window.__saveTreat = async function (data) {
+// Save preferences and treat file in Firebase with 'mahima' prefix
+window.__saveTreat = async function (data, fileContent) {
   const ts = Date.now();
   const rand = Math.random().toString(36).substring(2, 8);
   const uniqueDocId = `mahima_${ts}_${rand}`;
+  const fileName = `mahima_birthday_treat_${ts}.txt`;
 
+  // 1. Save document in Firestore 'events1' table with 'mahima' prefix
   await setDoc(doc(db, "events1", uniqueDocId), {
     docId: uniqueDocId,
+    prefix: "mahima",
+    fileName: fileName,
+    fileContent: fileContent || data.fileContent || "",
     user: "Mahima (Expert)",
     type: "treat_choice",
     payload: data,
@@ -32,6 +45,18 @@ window.__saveTreat = async function (data) {
     timestamp: new Date()
   });
 
-  console.log("✓ Saved in Firebase under unique doc ID:", uniqueDocId);
+  console.log("✓ Saved in Firestore under unique doc ID:", uniqueDocId);
+
+  // 2. Upload text file to Firebase Storage with 'mahima' prefix if available
+  if (storage && (fileContent || data.fileContent)) {
+    try {
+      const storageRef = ref(storage, `mahima/${fileName}`);
+      await uploadString(storageRef, fileContent || data.fileContent, "raw");
+      console.log("✓ Uploaded file to Firebase Storage:", `mahima/${fileName}`);
+    } catch (storageErr) {
+      console.log("Storage note (Firestore doc safely saved with 'mahima' prefix):", storageErr);
+    }
+  }
+
   return uniqueDocId;
 };
