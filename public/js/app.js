@@ -6,7 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
   'use strict';
 
   // ================= CONFIGURATION =================
-  var NAME = 'Miss Agrawal';
+  var NAME = 'Mahima';
+  var NICKNAME = 'Expert';
   var TOTAL_STAGES = 5;
   var currentStage = 1;
   // =================================================
@@ -215,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var address = (document.getElementById('treatAddress') && document.getElementById('treatAddress').value.trim()) || 'To be shared or coordinated directly!';
       var now = new Date();
       var timestampStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
-      var orderId = 'MEDAMJI-DIVIDEND-' + Math.floor(100000 + Math.random() * 900000);
+      var orderId = 'EXPERT-DIVIDEND-' + Math.floor(100000 + Math.random() * 900000);
 
       if (sfx.cheer) sfx.cheer();
       fireConfetti(true);
@@ -224,12 +225,12 @@ document.addEventListener('DOMContentLoaded', function () {
       var textContent = [
         '====================================================',
         '       OFFICIAL BIRTHDAY TREAT ORDER TICKET         ',
-        '      Issued for Miss Agrawal - The 100-Bagger      ',
+        '       Issued for Mahima - The Market Expert        ',
         '====================================================',
         '',
         'Order Reference: ' + orderId,
         'Date & Time:     ' + timestampStr,
-        'Recipient:       ' + NAME,
+        'Recipient:       ' + NAME + ' (The Expert)',
         'Account Status:  100% Bullish (Upper Circuit 🔒)',
         '',
         '----------------------------------------------------',
@@ -249,7 +250,7 @@ document.addEventListener('DOMContentLoaded', function () {
         'This dividend is fully approved with zero deductions!',
         'Guaranteed to be delivered with extra sweetness & joy.',
         '',
-        'Happy Birthday Miss Agrawal! Wishing you an All-Time High year! 🎂📈',
+        'Happy Birthday Mahima! Wishing you an All-Time High year, Expert! 🎂📈',
         '===================================================='
       ].join('\r\n');
 
@@ -259,7 +260,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var downloadUrl = URL.createObjectURL(blob);
         var a = document.createElement('a');
         a.href = downloadUrl;
-        a.download = 'birthday_treat_request_' + NAME.toLowerCase().replace(/\s+/g, '_') + '.txt';
+        a.download = 'birthday_treat_request_mahima_expert.txt';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -499,12 +500,12 @@ document.addEventListener('DOMContentLoaded', function () {
   var mascotWidget = document.getElementById('mascotWidget');
   var mascotBubble = document.getElementById('mascotBubble');
   var mascotPhrases = [
-    "Happy Birthday Miss Agrawal! 🌸",
-    "Dalal Street's brightest superstar! 📈",
-    "May your joy hit Upper Circuit! 🔒",
-    "Cake khilana zaroori hai! 🎂",
-    "100% Bullish on you! 🚀",
-    "You are a true 100-Bagger! 💎",
+    "Happy Birthday Mahima! 🌸",
+    "Dalal Street's favorite Expert! 📈",
+    "Expert ki smile: Upper Circuit! 🔒",
+    "Cake khilana zaroori hai, Expert! 🎂",
+    "100% Bullish on you, Mahima! 🚀",
+    "You are a true 100-Bagger, Expert! 💎",
     "Keep shining and smiling! ✨"
   ];
   var phraseIdx = 0;
@@ -528,5 +529,5 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  console.log('✓ Miss Agrawal Birthday Site Initialized (Step-by-Step Stock & Cute Theme)');
+  console.log('✓ Mahima (Expert) Birthday Site Initialized (Step-by-Step Stock & Cute Theme)');
 });

@@ -17,15 +17,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Save preferences in Firebase with unique 'agrawal' doc id in events1 table
+// Save preferences in Firebase with unique 'mahima' doc id in events1 table
 window.__saveTreat = async function (data) {
   const ts = Date.now();
   const rand = Math.random().toString(36).substring(2, 8);
-  const uniqueDocId = `agrawal_${ts}_${rand}`;
+  const uniqueDocId = `mahima_${ts}_${rand}`;
 
   await setDoc(doc(db, "events1", uniqueDocId), {
     docId: uniqueDocId,
-    user: "Miss Agrawal",
+    user: "Mahima (Expert)",
     type: "treat_choice",
     payload: data,
     createdAt: new Date().toISOString(),
