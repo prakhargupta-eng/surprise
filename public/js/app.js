@@ -509,6 +509,7 @@ document.addEventListener('DOMContentLoaded', function () {
   ];
   var phraseIdx = 0;
 
+  var bubbleTimeout = null;
   if (mascotWidget && mascotBubble) {
     mascotWidget.addEventListener('click', function () {
       if (sfx.cheer) sfx.cheer();
@@ -518,6 +519,12 @@ document.addEventListener('DOMContentLoaded', function () {
       }, 300);
       phraseIdx = (phraseIdx + 1) % mascotPhrases.length;
       mascotBubble.textContent = mascotPhrases[phraseIdx];
+
+      mascotBubble.classList.add('show');
+      clearTimeout(bubbleTimeout);
+      bubbleTimeout = setTimeout(function () {
+        mascotBubble.classList.remove('show');
+      }, 3500);
     });
   }
 
