@@ -1,5 +1,6 @@
 /**
- * audio.js - Web Audio synthesizer and birthday soundtrack controller
+ * audio.js - Web Audio synthesizer & Birthday soundtrack controller
+ * Supports Stock Market Opening Bell, celebratory pops, chimes, and happy_birthday.mp3
  */
 (function (window) {
   'use strict';
@@ -8,6 +9,9 @@
   var muted = false;
   var songAudio = new Audio('happy_birthday.mp3');
   var isSongPlaying = false;
+
+  songAudio.loop = true;
+  songAudio.preload = 'auto';
 
   function ensureAudio() {
     if (muted) return false;
@@ -75,7 +79,7 @@
       hp.type = 'highpass';
       hp.frequency.value = 900;
       var g = actx.createGain();
-      g.gain.setValueAtTime(0.9, t);
+      g.gain.setValueAtTime(0.8, t);
       g.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
       src.connect(hp);
       hp.connect(g);
@@ -87,7 +91,7 @@
       o.type = 'sine';
       o.frequency.setValueAtTime(180, t);
       o.frequency.exponentialRampToValueAtTime(50, t + 0.15);
-      og.gain.setValueAtTime(0.7, t);
+      og.gain.setValueAtTime(0.6, t);
       og.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
       o.connect(og);
       og.connect(actx.destination);
@@ -97,89 +101,80 @@
       [784, 988, 1175, 1568].forEach(function (f, i) {
         var os = actx.createOscillator();
         var gg = actx.createGain();
-        var s = t + 0.12 + i * 0.09;
+        var s = t + 0.1 + i * 0.08;
         os.type = 'triangle';
         os.frequency.value = f;
         gg.gain.setValueAtTime(0.0001, s);
-        gg.gain.exponentialRampToValueAtTime(0.25, s + 0.02);
-        gg.gain.exponentialRampToValueAtTime(0.0001, s + 0.5);
+        gg.gain.exponentialRampToValueAtTime(0.2, s + 0.02);
+        gg.gain.exponentialRampToValueAtTime(0.0001, s + 0.45);
         os.connect(gg);
         gg.connect(actx.destination);
         os.start(s);
-        os.stop(s + 0.55);
+        os.stop(s + 0.5);
       });
     } catch (e) {}
   }
 
-  var sfx = {
-    click: function () {
-      tone(660, 0.08, 'triangle', 0.18);
-      tone(990, 0.1, 'triangle', 0.12, 0.05);
-    },
-    type: function () {
-      tone(1800 + Math.random() * 400, 0.03, 'square', 0.04);
-    },
-    select: function () {
-      tone(520, 0.07, 'sine', 0.2);
-      tone(780, 0.09, 'sine', 0.15, 0.05);
-    },
-    wish: function () {
-      tone(659, 0.35, 'sine', 0.16);
-      tone(880, 0.5, 'sine', 0.14, 0.12);
-    },
-    shutter: function () {
-      noise(0.05, 0.4, 2500);
-      setTimeout(function () {
-        noise(0.07, 0.3, 1500);
-      }, 90);
-    },
-    thud: function () {
-      tone(110, 0.18, 'sine', 0.3);
-    },
-    candle: function () {
-      tone(1400, 0.08, 'triangle', 0.12);
-    },
-    light: function () {
-      noise(0.25, 0.12, 3000);
-      tone(1200, 0.15, 'sine', 0.1);
-    },
-    cheer: function () {
-      [523, 659, 784, 1046].forEach(function (f, i) {
-        tone(f, 0.3, 'sine', 0.15, i * 0.07);
-      });
-    },
-    error: function () {
-      tone(220, 0.22, 'sawtooth', 0.25);
-    },
-    popSound: popSound
-  };
-
-  function updateSongUIs() {
-    var btns = [
-      { textEl: document.getElementById('songBtnText'), vizEl: document.getElementById('audioVisualizer') },
-      { textEl: document.getElementById('expiredSongBtnText'), vizEl: document.getElementById('expiredAudioVisualizer') }
-    ];
-
-    btns.forEach(function (item) {
-      if (item.textEl) {
-        item.textEl.textContent = isSongPlaying ? '⏸ Pause song' : '▶ Play birthday song';
-      }
-      if (item.vizEl) {
-        if (isSongPlaying) {
-          item.vizEl.classList.add('playing');
-        } else {
-          item.vizEl.classList.remove('playing');
-        }
-      }
+  // Stock Market Opening Bell sound
+  function marketBell() {
+    ensureAudio();
+    [880, 1108, 1318, 1760].forEach(function (f, i) {
+      tone(f, 1.4, 'sine', 0.22, i * 0.04);
+      tone(f * 1.5, 0.9, 'triangle', 0.1, i * 0.04);
     });
   }
 
+  var sfx = {
+    click: function () {
+      tone(660, 0.07, 'triangle', 0.16);
+      tone(990, 0.09, 'triangle', 0.12, 0.04);
+    },
+    select: function () {
+      tone(523, 0.08, 'sine', 0.2);
+      tone(659, 0.1, 'sine', 0.18, 0.05);
+      tone(784, 0.12, 'sine', 0.15, 0.1);
+    },
+    bell: marketBell,
+    pop: popSound,
+    shutter: function () {
+      noise(0.05, 0.35, 2500);
+      setTimeout(function () {
+        noise(0.07, 0.25, 1500);
+      }, 90);
+    },
+    blow: function () {
+      noise(0.4, 0.3, 800);
+      tone(440, 0.3, 'sine', 0.1);
+    },
+    cheer: function () {
+      [523, 659, 784, 1046, 1318].forEach(function (f, i) {
+        tone(f, 0.35, 'sine', 0.18, i * 0.06);
+      });
+    }
+  };
+
+  function updateSongUIs() {
+    var disc = document.getElementById('vinylDisc');
+    var btn = document.getElementById('finaleSongBtn');
+    if (disc) {
+      if (isSongPlaying) {
+        disc.classList.add('playing');
+      } else {
+        disc.classList.remove('playing');
+      }
+    }
+    if (btn) {
+      btn.textContent = isSongPlaying ? '⏸' : '▶';
+    }
+  }
+
   function playSong() {
+    ensureAudio();
     songAudio.play().then(function () {
       isSongPlaying = true;
       updateSongUIs();
     }).catch(function (err) {
-      console.log('Audio playback waiting for interaction or autoplay policy:', err);
+      console.log('Audio autoplay prevented, user interaction required:', err);
     });
   }
 
@@ -197,36 +192,28 @@
     }
   }
 
-  songAudio.addEventListener('ended', function () {
-    isSongPlaying = false;
-    songAudio.currentTime = 0;
-    updateSongUIs();
-  });
-
   function toggleMute() {
     muted = !muted;
     songAudio.muted = muted;
     return muted;
   }
 
-  function isMuted() {
-    return muted;
+  function isPlaying() {
+    return isSongPlaying;
   }
 
   window.BdayAudio = {
     sfx: sfx,
     tone: tone,
-    noise: noise,
+    marketBell: marketBell,
     popSound: popSound,
-    ensureAudio: ensureAudio,
-    toggleMute: toggleMute,
-    isMuted: isMuted,
     playSong: playSong,
     pauseSong: pauseSong,
     toggleSong: toggleSong,
+    toggleMute: toggleMute,
+    isPlaying: isPlaying,
     updateSongUIs: updateSongUIs
   };
 
-  // Global shorthand for compatibility
   window.sfx = sfx;
 })(window);

@@ -3,461 +3,622 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>생일 축하해요 👩🏼‍💻 Happy Birthday, Miss Agrawal!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Happy Birthday Miss Agrawal! 🎂📈 The 100-Bagger Special</title>
+  
+  <!-- Modern Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fredoka:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  
   <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
-  <div class="ambient">
-    <div class="moon"></div>
-  </div>
+  <!-- Ambient Floating Background Hearts -->
+  <div class="ambient-bg" id="ambientBg"></div>
+
+  <!-- Confetti Canvas -->
   <canvas id="confetti"></canvas>
-  <div class="bar top"></div>
-  <div class="top-header-mask"></div>
-  <div class="bar bottom"></div>
 
-  <button class="mute" id="muteBtn" aria-label="Toggle sound">🔊</button>
-
-  <!-- Auto-scroll indicator & controller -->
-  <div class="autoscroll-pill" id="autoScrollPill"
-    title="Smooth auto-scrolling is enabled. Scroll manually anytime to pause.">
-    <span class="pulse-dot"></span>
-    <span id="autoScrollTxt">Auto-scroll ON</span>
+  <!-- Top Running Stock Market Ticker Tape -->
+  <div class="stock-ticker-bar">
+    <div class="ticker-label">
+      <span>📈 NSE / BSE LIVE</span>
+    </div>
+    <div class="ticker-track" id="tickerTrack">
+      <div class="ticker-item"><span class="ticker-up">▲ $MEDAMJI</span> 99,999.00 <span class="ticker-bull">+999.9% ATH</span></div>
+      <div class="ticker-item"><span class="ticker-up">▲ $SMILE</span> 100.00 <span class="ticker-bull">UPPER CIRCUIT 🔒</span></div>
+      <div class="ticker-item"><span class="ticker-up">▲ $CHARM</span> ∞ <span class="ticker-bull">MULTI-BAGGER</span></div>
+      <div class="ticker-item"><span class="ticker-up">▲ $VALUATION</span> PRICELESS 💎</div>
+      <div class="ticker-item"><span class="ticker-up">▲ $HAPPINESS</span> ALL-TIME HIGH 🚀</div>
+      <div class="ticker-item"><span class="ticker-up">▲ $PORTFOLIO</span> 100% BULLISH ❤️</div>
+      <!-- Duplicate for seamless looping -->
+      <div class="ticker-item"><span class="ticker-up">▲ $MEDAMJI</span> 99,999.00 <span class="ticker-bull">+999.9% ATH</span></div>
+      <div class="ticker-item"><span class="ticker-up">▲ $SMILE</span> 100.00 <span class="ticker-bull">UPPER CIRCUIT 🔒</span></div>
+      <div class="ticker-item"><span class="ticker-up">▲ $CHARM</span> ∞ <span class="ticker-bull">MULTI-BAGGER</span></div>
+      <div class="ticker-item"><span class="ticker-up">▲ $VALUATION</span> PRICELESS 💎</div>
+      <div class="ticker-item"><span class="ticker-up">▲ $HAPPINESS</span> ALL-TIME HIGH 🚀</div>
+      <div class="ticker-item"><span class="ticker-up">▲ $PORTFOLIO</span> 100% BULLISH ❤️</div>
+    </div>
   </div>
 
-  <!-- VIP PIN Access Modal -->
-  <dialog id="vipPinModal" class="vip-pin-modal" aria-labelledby="vipPinTitle">
-    <div class="pin-modal-card">
-      <button class="pin-close-btn" id="pinCloseBtn" type="button" aria-label="Close VIP PIN dialog">✕</button>
-
-      <div class="pin-badge">🔐 VIP PASSCODE · 비밀번호</div>
-      <h2 class="pin-title" id="vipPinTitle">Enter VIP PIN to Unlock</h2>
-      <p class="pin-sub">생일 프리미어 조기 입장 · Enter the 6-digit VIP pass code</p>
-
-      <div class="pin-digits-wrap" id="pinDigitsWrap" aria-live="polite">
-        <div class="pin-slot active" data-idx="0"></div>
-        <div class="pin-slot" data-idx="1"></div>
-        <div class="pin-slot" data-idx="2"></div>
-        <div class="pin-slot" data-idx="3"></div>
-        <div class="pin-slot" data-idx="4"></div>
-        <div class="pin-slot" data-idx="5"></div>
-      </div>
-
-      <div class="pin-feedback info" id="pinFeedback">Enter the 6-digit passcode to proceed</div>
-
-      <div class="pin-keypad" id="pinKeypad">
-        <button type="button" class="pin-key" data-digit="1">1</button>
-        <button type="button" class="pin-key" data-digit="2">2</button>
-        <button type="button" class="pin-key" data-digit="3">3</button>
-        <button type="button" class="pin-key" data-digit="4">4</button>
-        <button type="button" class="pin-key" data-digit="5">5</button>
-        <button type="button" class="pin-key" data-digit="6">6</button>
-        <button type="button" class="pin-key" data-digit="7">7</button>
-        <button type="button" class="pin-key" data-digit="8">8</button>
-        <button type="button" class="pin-key" data-digit="9">9</button>
-        <button type="button" class="pin-key key-util" data-action="clear">Clear</button>
-        <button type="button" class="pin-key" data-digit="0">0</button>
-        <button type="button" class="pin-key key-util" data-action="backspace">⌫</button>
-      </div>
-      <div id="pinHintDisplay"
-        style="font-size: 6px; color: rgba(255, 244, 238, 0.45); margin-top: 8px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.15em; text-align: center;">
-        TARGET PIN: D'day ***96</div>
-    </div>
-  </dialog>
-
-  <!-- Shin-chan Animated Corner Widget -->
-  <div class="shinchan-corner" id="shinchanCorner" title="짱구 (Shin-chan) is here! Tap for birthday greetings">
-    <div class="shinchan-bubble" id="shinchanBubble">Happy Birthday! 🌸</div>
-    <img src="shinchan.gif" alt="Shin-chan dancing" class="shinchan-img" id="shinchanImg" />
+  <!-- Floating Audio Controls -->
+  <div class="top-controls">
+    <button class="icon-btn" id="muteBtn" title="Toggle Music / Sound" aria-label="Toggle Sound">🔊</button>
   </div>
 
-  <div class="eps">
-    <span class="ep" data-ep="0" id="ep0Pill" style="display:none;">13.OCT</span>
-    <span class="ep on" data-ep="1">EP.01</span>
-    <span class="ep" data-ep="2">EP.02</span>
-    <span class="ep" data-ep="3">EP.03</span>
-    <span class="ep" data-ep="4">FINAL</span>
+  <!-- Mascot Corner Helper (Shin-chan / Cute Bear) -->
+  <div class="mascot-widget" id="mascotWidget" title="Tap for birthday cheer!">
+    <div class="mascot-bubble" id="mascotBubble">Happy Birthday! Tap me for cheer 🌸</div>
+    <img src="shinchan.gif" alt="Shin-chan dancing" class="mascot-avatar" id="mascotAvatar" />
   </div>
 
-  <!-- COUNTDOWN STAGE (Starting Point for Before October 13 Premiere) -->
-  <section class="stage" id="step0">
-    <div class="countdown-badge">🌸 Birthday Premiere · October 13, 2026</div>
-    <h1 class="hangul" style="font-size: clamp(38px, 9vw, 80px); margin-top: 14px;">생일 카운트다운</h1>
-    <span class="sub" style="font-size: 13px;">The Official Birthday Countdown</span>
-    <p class="roman" style="margin-top: 8px;">Counting down to <span class="nm">Miss Agrawal</span>'s Birthday! 🎂</p>
-
-    <div class="countdown-card">
-      <div style="font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--sakura); letter-spacing:0.15em;">
-        PREMIERE UNLOCKS AT MIDNIGHT (13 OCT)
+  <!-- Progress Steps Indicator -->
+  <div class="progress-container">
+    <div class="progress-steps">
+      <div class="progress-line">
+        <div class="progress-line-fill" id="progressLineFill"></div>
       </div>
-
-      <div class="countdown-timer">
-        <div class="timer-segment">
-          <span class="timer-val" id="cdDays">00</span>
-          <span class="timer-lbl">Days</span>
-        </div>
-        <span class="timer-colon">:</span>
-        <div class="timer-segment">
-          <span class="timer-val" id="cdHours">00</span>
-          <span class="timer-lbl">Hours</span>
-        </div>
-        <span class="timer-colon">:</span>
-        <div class="timer-segment">
-          <span class="timer-val" id="cdMins">00</span>
-          <span class="timer-lbl">Mins</span>
-        </div>
-        <span class="timer-colon">:</span>
-        <div class="timer-segment">
-          <span class="timer-val" id="cdSecs">00</span>
-          <span class="timer-lbl">Secs</span>
-        </div>
+      <div class="step-indicator active" data-step="1" id="stepInd1">
+        1
+        <span class="step-label">Welcome</span>
       </div>
-
-      <p style="font-size:13.5px; color:rgba(255,244,238,0.78); margin:0 0 16px; line-height:1.6;">
-        Special birthday episode unlocks automatically when the clock strikes October 13! 🎉
-      </p>
-
-      <button class="btn" id="unlockNowBtn" style="margin-top:10px;">
-        🎉 Unlock Now / VIP Early Access
-      </button>
-    </div>
-  </section>
-
-  <!-- EP 1 : poster -->
-  <section class="stage active" id="step1">
-    <div class="tag">Pune · Original Series · 2026</div>
-    <h1 class="hangul">생일 축하해요</h1>
-    <span class="sub">Happy Birthday!</span>
-    <p class="roman">Saengil Chukhahaeyo, <span class="nm">Miss Agrawal</span>! 🌸</p>
-    <span class="sub">생일 축하해요! 오늘은 당신의 날이에요.</span>
-    <div class="cast">
-      Starring: <b class="nm">Miss Agrawal</b> as the Amazing Web Developer<br>
-      Genre: Friendship · Comedy · Code · Cake<br>
-      Rated: 100% Fun
-      <span class="sub">주연: 멋진 웹 개발자 · 장르: 우정 · 코미디 · 코드 · 케이크 · 등급: 100% 재미</span>
-    </div>
-    <button class="btn" id="startBtn">▶ Play Episode 1</button>
-  </section>
-
-  <!-- EP 2 : terminal + Character Dossier / Diagnostics -->
-  <section class="stage" id="step2">
-    <div class="tag">Episode 2 · "Compiling your birthday"</div>
-    <div class="term">
-      <div class="term-head"><i></i><i></i><i></i><span>birthday.js — Pune, India</span></div>
-      <pre id="codeOut"></pre>
-    </div>
-
-    <!-- Unique EP2 Content: Character Dossier & Diagnostics Grid -->
-    <div class="dossier-header" id="dossierHeader" style="opacity: 0; transition: opacity 0.5s;">
-      <h3>✨ Character Analysis & System Diagnostics</h3>
-      <span>LEVEL UP 2026</span>
-    </div>
-    <span class="sub" id="dossierSub" style="opacity: 0; transition: opacity 0.5s;">
-      생일 특별 스펙 분석표 · Certified Developer Profile
-    </span>
-
-    <div class="dossier-wrap" id="dossierGrid">
-      <div class="dcard">
-        <span class="dcard-tag">Core Spec #1</span>
-        <div class="dcard-title">💻 Elite Web Developer</div>
-        <p class="dcard-desc">Writes clean, elegant code that compiles like poetry. Solves tricky edge cases
-          effortlessly while keeping aesthetics 10/10.</p>
-        <div class="dcard-stat">
-          <span>CLEAN CODE: 100%</span>
-          <button type="button" class="dcard-badge-btn" onclick="celebrateCard(this)">★ BOOST</button>
-        </div>
+      <div class="step-indicator" data-step="2" id="stepInd2">
+        2
+        <span class="step-label">Stock Report</span>
       </div>
-
-      <div class="dcard">
-        <span class="dcard-tag">Core Spec #2</span>
-        <div class="dcard-title">🎬 K-Drama Main Character</div>
-        <p class="dcard-desc">Radiates pure main character aura (주인공 에너지). Walking into any room automatically cues an
-          uplifting, catchy drama OST in the background.</p>
-        <div class="dcard-stat">
-          <span>CHARM LEVEL: MAX</span>
-          <button type="button" class="dcard-badge-btn" onclick="celebrateCard(this)">★ BOOST</button>
-        </div>
+      <div class="step-indicator" data-step="3" id="stepInd3">
+        3
+        <span class="step-label">Birthday Treat</span>
       </div>
-
-      <div class="dcard">
-        <span class="dcard-tag">Diagnostics</span>
-        <div class="dcard-title">🔍 Zero Bugs Detected</div>
-        <p class="dcard-desc">System scan finished with 0 errors, 0 warnings. Aura running at steady 120 FPS. Certified
-          sunshine dispenser in Pune.</p>
-        <div class="dcard-stat">
-          <span>PERFORMANCE: 120 FPS</span>
-          <button type="button" class="dcard-badge-btn" onclick="celebrateCard(this)">★ BOOST</button>
-        </div>
+      <div class="step-indicator" data-step="4" id="stepInd4">
+        4
+        <span class="step-label">Memories</span>
       </div>
-
-      <div class="dcard">
-        <span class="dcard-tag">Special Title</span>
-        <div class="dcard-title">🏆 Certified Legendary Friend</div>
-        <p class="dcard-desc">Officially awarded Friend of the Year. Supportive, kind, hilarious, and always knows the
-          best snack recommendations.</p>
-        <div class="dcard-stat">
-          <span>KINDNESS: INFINITE ∞</span>
-          <button type="button" class="dcard-badge-btn" onclick="celebrateCard(this)">★ BOOST</button>
-        </div>
+      <div class="step-indicator" data-step="5" id="stepInd5">
+        5
+        <span class="step-label">Grand Finale</span>
       </div>
     </div>
+  </div>
 
-    <button class="btn" id="toTreatBtn">Next Episode ▶</button>
-  </section>
+  <!-- Main Multi-Step Interactive Stages -->
+  <main class="main-wrapper">
 
-  <!-- EP 3 : treat picker (mandatory) -->
-  <section class="stage" id="step3">
-    <div class="tag">Episode 3 · "The Birthday Treat"</div>
-    <h2 class="section-title">Pick your birthday treat 🍰</h2>
-    <span class="sub">생일 간식을 골라보세요! · Choose your birthday treat!</span>
-    <p class="lead">Pick what you'd love to eat and tell me where to send it. I'll arrange the treat! 😄</p>
-    <span class="sub">먹고 싶은 걸 고르고 보낼 주소를 알려주세요. 제가 꼭 준비할게요!</span>
-
-    <div class="treats" id="treats" role="radiogroup" aria-label="Choose your birthday treat"></div>
-    <input type="text" id="otherInput" placeholder="Type what you'd like to eat" autocomplete="off" maxlength="60">
-
-    <div class="addr-wrap">
-      <label for="addrInput" class="addr-label">Where should I send it? 📍</label>
-      <span class="sub">보낼 주소를 적어주세요 · Your delivery address</span>
-      <textarea id="addrInput" rows="3" maxlength="300"
-        placeholder="House / flat no., street, area, Pune, pincode"></textarea>
-    </div>
-
-    <div class="need" id="needMsg">
-      Pick a treat and add your address to continue
-      <span class="sub" style="color:rgba(246,198,103,0.75);">계속하려면 간식을 고르고 주소를 입력해주세요</span>
-    </div>
-    <button class="btn" id="treatBtn" disabled>Choose treat + address first</button>
-  </section>
-
-  <!-- FINAL EPISODE -->
-  <section class="stage" id="step4">
-    <div class="tag">Final Episode · "Make a wish"</div>
-
-    <!-- Festive Bunting Banner atop the Final page -->
-    <div class="bunting-wrap" aria-hidden="true">
-      <svg class="bunting-rope" viewBox="0 0 700 60" preserveAspectRatio="none">
-        <path d="M 0,16 Q 350,56 700,16" fill="none" stroke="rgba(255, 244, 238, 0.4)" stroke-width="2.5"
-          stroke-dasharray="6,3" />
-      </svg>
-      <div class="bunting-flags-row">
-        <div class="bflag yellow" title="Banners"></div>
-        <div class="bflag purple" title="Banners"></div>
-        <div class="bflag pink" title="Banners"></div>
-        <div class="bflag teal" title="Banners"></div>
-        <div class="bflag yellow" title="Banners"></div>
-        <div class="bflag purple" title="Banners"></div>
-        <div class="bflag pink" title="Banners"></div>
-        <div class="bflag teal" title="Banners"></div>
-      </div>
-    </div>
-
-    <h2 class="section-title">Happy Birthday,<br><span class="nm">Miss Agrawal</span>! 🎂</h2>
-    <span class="sub">생일 축하해요, <span class="nm">Miss Agrawal</span>! · Happy Birthday, <span class="nm">Miss
-        Agrawal</span>!</span>
-    <p class="lead">Wishing you a day full of smiles, good food and your favourite drama playing in the background. You
-      deserve every bit of it.</p>
-    <span class="sub">웃음 가득한 하루, 맛있는 음식, 그리고 배경에 흐르는 좋아하는 드라마. 당신은 그 모든 걸 누릴 자격이 있어요.</span>
-
-    <div class="cake">
-      <div class="candles">
-        <div class="candle">
-          <div class="flame"></div>
-        </div>
-        <div class="candle">
-          <div class="flame"></div>
-        </div>
-        <div class="candle">
-          <div class="flame"></div>
-        </div>
-      </div>
-      <div class="drip"></div>
-      <div class="tier tier1"></div>
-      <div class="tier tier2"></div>
-      <div class="plate"></div>
-    </div>
-
-    <!-- BUNTING BANNER DIRECTLY ATOP PHOTO STRIP -->
-    <div class="bunting-wrap" style="margin-top: 40px;" aria-hidden="true">
-      <svg class="bunting-rope" viewBox="0 0 700 60" preserveAspectRatio="none">
-        <path d="M 0,14 Q 350,58 700,14" fill="none" stroke="rgba(255, 244, 238, 0.45)" stroke-width="2.5"
-          stroke-dasharray="6,3" />
-      </svg>
-      <div class="bunting-flags-row">
-        <div class="bflag yellow" title="Party Banners"></div>
-        <div class="bflag purple" title="Party Banners"></div>
-        <div class="bflag pink" title="Party Banners"></div>
-        <div class="bflag teal" title="Party Banners"></div>
-        <div class="bflag yellow" title="Party Banners"></div>
-        <div class="bflag purple" title="Party Banners"></div>
-        <div class="bflag pink" title="Party Banners"></div>
-        <div class="bflag teal" title="Party Banners"></div>
-      </div>
-    </div>
-
-    <div class="block-title">인생네컷 · Life Four Cuts 📸</div>
-    <span class="sub">우리의 네 컷 사진 · Aesthetic celebratory photo reel</span>
-    <div class="strip" id="strip"></div>
-
-    <!-- INTERACTIVE BIRTHDAY MYSTERY BOX -->
-    <div class="gift-box-wrap">
-      <div class="mystery-card" id="mysteryBox" onclick="openMysteryBox()">
-        <span class="gift-icon">🎁</span>
-        <div class="mystery-title">Tap to Open Special Birthday Gift Box!</div>
-        <p class="mystery-sub">특별한 생일 깜짝 상자를 열어보세요 · Click for an extra surprise</p>
-        <div class="secret-perks" id="secretPerks">
-          <b>🎉 VIP Birthday Perk Unlocked:</b><br>
-          ✓ 365 Days of Unlimited Good Fortune 🍀<br>
-          ✓ Free Sweet Treats & Iced Boba Passes 🧋<br>
-          ✓ Zero Runtime Errors in All Future Projects 🚀<br>
-          <i>Specially issued for Miss Agrawal · Valid across all seasons!</i>
-        </div>
-      </div>
-    </div>
-
-    <div class="block-title">All my wishes for you</div>
-    <span class="sub">당신을 위한 모든 소원 · All the wishes for you</span>
-    <div class="wishes" id="finalWishes"></div>
-
-    <div class="row" style="margin-top:26px;">
-      <button class="btn btn-ghost" id="songBtn" style="margin-top:0;">
-        <span id="songBtnText">▶ Play the birthday song</span>
-        <span class="visualizer" id="audioVisualizer">
-          <span class="v-bar"></span>
-          <span class="v-bar"></span>
-          <span class="v-bar"></span>
-          <span class="v-bar"></span>
-        </span>
-      </button>
-      <a class="btn btn-ghost" id="waBtn" style="margin-top:0; display:none;" target="_blank" rel="noopener">📲 Send my
-        pick</a>
-    </div>
-
-    <div class="credits">
-      — To be continued in the next season —<br>
-      Directed with <b>✨</b> by your friend, the frontend dev 😄
-      <span class="sub">프론트엔드 개발자 친구가 정성껏 만들었어요 — 다음 시즌에 계속!</span>
-    </div>
-  </section>
-
-  <!-- POST-BIRTHDAY / EXPIRED STAGE (For visits after October 13th) -->
-  <section class="stage" id="stepExpired">
-    <div class="countdown-badge"
-      style="background: rgba(255, 122, 162, 0.12); border-color: rgba(255, 122, 162, 0.35); color: var(--sakura);">
-      🎬 Limited Broadcast Concluded · 본방송 종료
-    </div>
-
-    <!-- Festive Bunting Banner -->
-    <div class="bunting-wrap" aria-hidden="true" style="margin-top: 20px;">
-      <svg class="bunting-rope" viewBox="0 0 700 60" preserveAspectRatio="none">
-        <path d="M 0,16 Q 350,56 700,16" fill="none" stroke="rgba(255, 244, 238, 0.4)" stroke-width="2.5"
-          stroke-dasharray="6,3" />
-      </svg>
-      <div class="bunting-flags-row">
-        <div class="bflag yellow"></div>
-        <div class="bflag purple"></div>
-        <div class="bflag pink"></div>
-        <div class="bflag teal"></div>
-        <div class="bflag yellow"></div>
-        <div class="bflag purple"></div>
-        <div class="bflag pink"></div>
-        <div class="bflag teal"></div>
-      </div>
-    </div>
-
-    <h1 class="hangul" style="font-size: clamp(38px, 9vw, 84px); margin-top: 10px;">생일 축하해요</h1>
-    <span class="sub" style="font-size: 14px;">Belated happy birthday, <span class="nm">Miss Agrawal</span>! 🌸</span>
-    <p class="roman" style="margin-top: 6px;">I hope you had a wonderful day and a great start to your new year! 🎂</p>
-
-    <!-- 4 Cut Photos Strip (Life Four Cuts) -->
-    <div class="expired-photo-section">
-      <div class="block-title" style="margin-top: 26px;">인생네컷 · 4 Cut Celebration Reel 📸</div>
-      <span class="sub">우리의 네 컷 사진 · Life Four Cuts Commemorative Photos</span>
-      <div class="strip" id="expiredStrip"></div>
-    </div>
-
-    <!-- Bottom Notice Card: Sorry missed live episode + Happy Post Birthday -->
-    <div class="expired-card">
-      <div class="expired-header">
-        <span class="expired-icon">📺</span>
-        <div>
-          <h2 class="expired-title">Broadcast Notice · 본방송 종료 안내</h2>
-          <span class="sub" style="margin-top: 2px; color: var(--gold);">Season 2026 Premiere Broadcast Has Ended</span>
-        </div>
+    <!-- ==========================================================
+         STEP 1: WELCOME & OPENING BELL
+         ========================================================== -->
+    <section class="stage-card active" id="stage1" aria-labelledby="stage1Title">
+      <div class="bunting-garland">
+        <div class="bunting-flag flag-pink"></div>
+        <div class="bunting-flag flag-yellow"></div>
+        <div class="bunting-flag flag-blue"></div>
+        <div class="bunting-flag flag-green"></div>
+        <div class="bunting-flag flag-purple"></div>
+        <div class="bunting-flag flag-peach"></div>
+        <div class="bunting-flag flag-pink"></div>
       </div>
 
-      <div class="expired-body">
-        <p class="expired-lead">
-          <strong>Belated happy birthday, <span class="nm">Miss Agrawal</span>! 🎂✨</strong><br>
-          I hope you had a wonderful day and a great start to your new year! 🌸<br><br>
-          We are sorry you missed the live interactive broadcast of this drama series! The full episodes (EP.01 - EP.03) aired on October 13th. Even though the live premiere has officially wrapped up, great memories, friendship, and happy vibes continue on!
+      <div style="text-align: center;">
+        <div class="welcome-badge">🔔 SPECIAL MARKET OPENING · 2026</div>
+        <h1 class="welcome-title" id="stage1Title">
+          Happy Birthday, <span class="highlight">Miss Agrawal!</span> 🌸
+        </h1>
+        <p style="color: var(--text-muted); font-size: 14.5px; margin-bottom: 12px;">
+          The trading bell has rung for the most wonderful, brilliant person! ✨
         </p>
-        <span class="sub" style="line-height: 1.7; color: rgba(255, 244, 238, 0.75);">
-          늦었지만 생일 진심으로 축하해요! 행복한 생일을 보내셨기를 바라며, 멋진 새로운 한 해의 시작이 되길 바랍니다. 실시간 본방송(10월 13일)은 종료되었지만 따뜻한 축하와 최고의 응원은 항상 유효합니다! 🌸
-        </span>
+      </div>
 
-        <div class="expired-perks-grid">
-          <div class="expired-perk-item">
-            <span class="perk-icon">🌟</span>
-            <div>
-              <strong>Drama Series Rating</strong>
-              <span>100% Masterpiece · 0 Bugs</span>
-            </div>
+      <div class="hero-bear-wrap">
+        <img src="bears_cake.jpg" alt="Cute Bears Celebrating Birthday Cake" class="hero-bear-img" id="heroBearImg" />
+      </div>
+
+      <div class="welcome-quote-card">
+        <p class="quote-text">
+          "I created a little something just for you, to celebrate how beautiful you make my life. Ready to see it?"
+        </p>
+        <p class="quote-sub">Prepared with lots of love, stock market laughs, and special surprises 💖</p>
+      </div>
+
+      <div class="stage-nav-bar" style="justify-content: center;">
+        <button class="btn-nav btn-nav-next" id="stage1NextBtn">
+          Ring Opening Bell & Begin 🔔
+        </button>
+      </div>
+    </section>
+
+    <!-- ==========================================================
+         STEP 2: STOCK MARKET THEMED REPORT
+         ========================================================== -->
+    <section class="stage-card" id="stage2" aria-labelledby="stage2Title">
+      <div class="bunting-garland">
+        <div class="bunting-flag flag-green"></div>
+        <div class="bunting-flag flag-yellow"></div>
+        <div class="bunting-flag flag-pink"></div>
+        <div class="bunting-flag flag-blue"></div>
+        <div class="bunting-flag flag-peach"></div>
+      </div>
+
+      <div style="text-align: center; margin-bottom: 18px;">
+        <div class="welcome-badge" style="background: var(--bull-light); color: var(--bull-green);">
+          📈 SPECIAL EQUITY RESEARCH REPORT
+        </div>
+        <h2 class="welcome-title" id="stage2Title" style="font-size: 28px;">
+          The <span class="highlight">100-Bagger</span> of My Life 🚀
+        </h2>
+        <p style="color: var(--text-muted); font-size: 13.5px;">
+          Live Trading Terminal for Miss Agrawal · The Stock Market Wizard
+        </p>
+      </div>
+
+      <!-- Live Stock Ticker Card -->
+      <div class="stock-header-card">
+        <div class="ticker-title-row">
+          <div class="ticker-symbol">
+            <span>📈 $MEDAMJI</span>
+            <span style="font-size: 13px; color: #94a3b8;">(BSE/NSE: SPECIAL)</span>
           </div>
-          <div class="expired-perk-item">
-            <span class="perk-icon">🍰</span>
-            <div>
-              <strong>Sweet Treats & Cheers</strong>
-              <span>Infinite smiles & cake from Pune</span>
-            </div>
+          <span class="circuit-badge">UPPER CIRCUIT LOCKED 🔒</span>
+        </div>
+
+        <div class="price-row">
+          <div class="current-price">₹99,999.00</div>
+          <div class="price-change">
+            <span>▲ +999.9%</span>
+            <span style="font-size: 12px; color: #94a3b8;">(ALL-TIME HIGH)</span>
           </div>
-          <div class="expired-perk-item">
-            <span class="perk-icon">🚀</span>
-            <div>
-              <strong>Best Wishes Always</strong>
-              <span>Leveling up in code, happiness & peace</span>
-            </div>
+        </div>
+
+        <!-- Candlestick SVG Breakout Chart -->
+        <div class="chart-container">
+          <svg class="candlestick-svg" viewBox="0 0 500 130" preserveAspectRatio="none">
+            <!-- Grid lines -->
+            <line x1="0" y1="30" x2="500" y2="30" stroke="#334155" stroke-dasharray="4,4" stroke-width="0.7"/>
+            <line x1="0" y1="70" x2="500" y2="70" stroke="#334155" stroke-dasharray="4,4" stroke-width="0.7"/>
+            <line x1="0" y1="100" x2="500" y2="100" stroke="#334155" stroke-dasharray="4,4" stroke-width="0.7"/>
+
+            <!-- Candles (ascending green bull breakout) -->
+            <!-- Candle 1 -->
+            <line x1="40" y1="75" x2="40" y2="115" stroke="#10b981" stroke-width="1.5"/>
+            <rect x="33" y="82" width="14" height="24" fill="#10b981" rx="2"/>
+
+            <!-- Candle 2 -->
+            <line x1="90" y1="65" x2="90" y2="105" stroke="#10b981" stroke-width="1.5"/>
+            <rect x="83" y="72" width="14" height="22" fill="#10b981" rx="2"/>
+
+            <!-- Candle 3 -->
+            <line x1="140" y1="55" x2="140" y2="95" stroke="#10b981" stroke-width="1.5"/>
+            <rect x="133" y="60" width="14" height="26" fill="#10b981" rx="2"/>
+
+            <!-- Candle 4 -->
+            <line x1="190" y1="45" x2="190" y2="85" stroke="#10b981" stroke-width="1.5"/>
+            <rect x="183" y="50" width="14" height="25" fill="#10b981" rx="2"/>
+
+            <!-- Candle 5 (Breakout spike) -->
+            <line x1="240" y1="30" x2="240" y2="75" stroke="#10b981" stroke-width="1.5"/>
+            <rect x="233" y="38" width="14" height="28" fill="#10b981" rx="2"/>
+
+            <!-- Candle 6 -->
+            <line x1="290" y1="20" x2="290" y2="60" stroke="#10b981" stroke-width="1.5"/>
+            <rect x="283" y="25" width="14" height="25" fill="#10b981" rx="2"/>
+
+            <!-- Candle 7 -->
+            <line x1="340" y1="12" x2="340" y2="50" stroke="#10b981" stroke-width="1.5"/>
+            <rect x="333" y="16" width="14" height="24" fill="#10b981" rx="2"/>
+
+            <!-- Parabolic Glowing Green Trendline -->
+            <path d="M 30 110 Q 180 85, 300 35 T 480 8" fill="none" stroke="#34d399" stroke-width="3" filter="drop-shadow(0 0 6px #10b981)"/>
+            <circle cx="480" cy="8" r="5" fill="#34d399"/>
+            <text x="410" y="24" fill="#34d399" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700">MOON 🚀</text>
+          </svg>
+        </div>
+
+        <!-- Key Financial Metrics -->
+        <div class="bull-stats-grid">
+          <div class="stat-box">
+            <div class="stat-title">Market Cap</div>
+            <div class="stat-val bull">Priceless 💎</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-title">52-Week High</div>
+            <div class="stat-val bull">Every Day 📈</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-title">P/E Ratio</div>
+            <div class="stat-val">Infinite ♾️</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-title">Analyst Rating</div>
+            <div class="stat-val bull">Strong Buy 🌟</div>
           </div>
         </div>
       </div>
 
-      <div class="expired-actions">
-        <button type="button" class="btn btn-ghost" id="expiredSongBtn" style="margin-top: 0;">
-          <span id="expiredSongBtnText">▶ Play Birthday OST</span>
-          <span class="visualizer" id="expiredAudioVisualizer">
-            <span class="v-bar"></span>
-            <span class="v-bar"></span>
-            <span class="v-bar"></span>
-            <span class="v-bar"></span>
-          </span>
-        </button>
-        <button type="button" class="btn btn-ghost" id="expiredConfettiBtn" style="margin-top: 0;">
-          🎉 Pop Confetti
-        </button>
-        <button type="button" class="btn" id="expiredReplayBtn" style="margin-top: 0;">
-          🔐 Watch Replay / VIP Pass
+      <!-- Stock Bear Graphic + Memo Card -->
+      <div class="stock-memo-card">
+        <img src="bears_stocks.jpg" alt="Cute Bears Trading Stocks" class="stock-memo-img" />
+        <div class="stock-memo-content">
+          <span class="memo-tag">CHIEF INVESTMENT MEMO</span>
+          <h3 class="memo-h">To the Girl Who Masters the Market:</h3>
+          <p class="memo-p">
+            While Dalal Street and Wall Street face ups and downs, your happiness, elegance, and charm are permanently locked in <b>Upper Circuit</b>. You are the ultimate multi-bagger investment of love, grace, and intelligence!
+          </p>
+        </div>
+      </div>
+
+      <div class="stage-nav-bar">
+        <button class="btn-nav btn-nav-prev" id="stage2PrevBtn">⬅️ Back</button>
+        <button class="btn-nav btn-nav-next" id="stage2NextBtn">
+          Claim Birthday Dividend ➡️
         </button>
       </div>
-    </div>
+    </section>
 
-    <div class="credits" style="margin-top: 36px;">
-      — To be continued in Season 2027 —<br>
-      Directed with <b>✨</b> by your friend, the frontend dev 😄
-      <span class="sub">프론트엔드 개발자 친구가 정성껏 만들었어요 · 언제나 행복하세요!</span>
-    </div>
-  </section>
+    <!-- ==========================================================
+         STEP 3: BIRTHDAY TREATS REQUEST (.TXT DOWNLOAD)
+         ========================================================== -->
+    <section class="stage-card" id="stage3" aria-labelledby="stage3Title">
+      <div class="bunting-garland">
+        <div class="bunting-flag flag-pink"></div>
+        <div class="bunting-flag flag-peach"></div>
+        <div class="bunting-flag flag-yellow"></div>
+        <div class="bunting-flag flag-purple"></div>
+        <div class="bunting-flag flag-green"></div>
+      </div>
 
-  <!-- Modular Scripts -->
-  <script type="module" src="js/firebase.js"></script>
+      <div style="text-align: center; margin-bottom: 16px;">
+        <div class="welcome-badge" style="background: var(--gold-light); color: #b45309;">
+          🎁 SPECIAL DIVIDEND PAYOUT
+        </div>
+        <h2 class="welcome-title" id="stage3Title" style="font-size: 28px;">
+          Would You Like a <span class="highlight">Birthday Treat?</span> 🍰
+        </h2>
+        <p style="color: var(--text-muted); font-size: 13.5px;">
+          An exclusive birthday treat voucher has been declared in your honor!
+        </p>
+      </div>
+
+      <div class="treats-hero-wrap">
+        <img src="bears_treats.jpg" alt="Cute Bears with Cupcakes & Treats" class="treats-hero-img" />
+      </div>
+
+      <!-- Interactive Question Box -->
+      <div class="treat-decision-box" id="treatDecisionBox">
+        <p class="treat-question">
+          Would you like to claim your special birthday treat today? 🎁✨
+        </p>
+        <div class="treat-btns-wrap" id="treatBtnsWrap">
+          <button class="btn-nav btn-yes" id="treatYesBtn">YES, Absolutely! 😋</button>
+          <button class="btn-nav btn-no" id="treatNoBtn">No thanks</button>
+        </div>
+      </div>
+
+      <!-- Treat Selection Form (Revealed on Yes) -->
+      <div class="treat-form-container" id="treatFormContainer">
+        <p style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">
+          Step 1: Pick your favorite treat:
+        </p>
+        <div class="treat-grid">
+          <div class="treat-option-card selected" data-treat="Gourmet Birthday Cake (Belgium Truffle / Red Velvet)">
+            <span class="treat-icon">🎂</span>
+            <span class="treat-name">Gourmet Cake</span>
+          </div>
+          <div class="treat-option-card" data-treat="Box of Luxury Handcrafted Chocolates">
+            <span class="treat-icon">🍫</span>
+            <span class="treat-name">Luxury Chocolates</span>
+          </div>
+          <div class="treat-option-card" data-treat="Starbucks Signature Brew & Dessert">
+            <span class="treat-icon">☕</span>
+            <span class="treat-name">Starbucks Treat</span>
+          </div>
+          <div class="treat-option-card" data-treat="Special Candlelight Dinner Treat">
+            <span class="treat-icon">🍽️</span>
+            <span class="treat-name">Special Dinner</span>
+          </div>
+          <div class="treat-option-card" data-treat="Secret Mystery Surprise Gift Box">
+            <span class="treat-icon">🎁</span>
+            <span class="treat-name">Mystery Gift</span>
+          </div>
+          <div class="treat-option-card" data-treat="Custom Foodie Wish">
+            <span class="treat-icon">🌟</span>
+            <span class="treat-name">Custom Wish</span>
+          </div>
+        </div>
+
+        <div class="treat-input-wrap">
+          <label class="treat-label" for="treatCustomNote">
+            Step 2: Specific flavor or special cravings?
+          </label>
+          <input type="text" id="treatCustomNote" class="treat-input" placeholder="e.g. Dark Chocolate Truffle, Extra sprinkles, or Boba Tea..." />
+        </div>
+
+        <div class="treat-input-wrap">
+          <label class="treat-label" for="treatAddress">
+            Step 3: Where should this treat be delivered or what time suits you?
+          </label>
+          <textarea id="treatAddress" class="treat-textarea" placeholder="Enter delivery address, office desk, or preferred date/time..."></textarea>
+        </div>
+
+        <div style="text-align: center; margin-top: 18px;">
+          <button class="btn-nav btn-nav-next" id="saveTreatBtn" style="padding: 14px 30px; font-size: 16px;">
+            Save & Download Treat Order (.txt) 📄✨
+          </button>
+        </div>
+      </div>
+
+      <!-- Stamped VIP Receipt (Displays after saving) -->
+      <div class="treat-receipt-card" id="treatReceiptCard">
+        <div class="receipt-stamp">CONFIRMED ✓</div>
+        <h4 style="font-family: var(--font-cute); color: var(--text-main); font-size: 16px; margin-bottom: 6px;">
+          🎉 Treat Order Ticket Generated!
+        </h4>
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+          <b>Item:</b> <span id="receiptItem">Gourmet Cake</span><br>
+          <b>Preference:</b> <span id="receiptNote">None</span><br>
+          <b>Delivery Info:</b> <span id="receiptAddress">Provided</span><br>
+          <span style="color: var(--bull-green); font-weight: 600;">✓ Saved to text file & recorded in your VIP birthday records!</span>
+        </p>
+      </div>
+
+      <div class="stage-nav-bar">
+        <button class="btn-nav btn-nav-prev" id="stage3PrevBtn">⬅️ Back</button>
+        <button class="btn-nav btn-nav-next" id="stage3NextBtn">
+          Cherished Memories ➡️
+        </button>
+      </div>
+    </section>
+
+    <!-- ==========================================================
+         STEP 4: PHOTO MEMORY COLLECTION (POLAROIDS & MULTI-BAGGERS)
+         ========================================================== -->
+    <section class="stage-card" id="stage4" aria-labelledby="stage4Title">
+      <div class="bunting-garland">
+        <div class="bunting-flag flag-yellow"></div>
+        <div class="bunting-flag flag-pink"></div>
+        <div class="bunting-flag flag-blue"></div>
+        <div class="bunting-flag flag-green"></div>
+        <div class="bunting-flag flag-purple"></div>
+        <div class="bunting-flag flag-peach"></div>
+      </div>
+
+      <div class="gallery-intro">
+        <div class="welcome-badge">📸 THE HALL OF FAME</div>
+        <h2 class="welcome-title" id="stage4Title" style="font-size: 28px;">
+          <span class="highlight">100-Bagger</span> Moments ✨
+        </h2>
+        <p style="color: var(--text-muted); font-size: 13.5px;">
+          A precious collection of snapshots celebrating the queen of our hearts!
+        </p>
+      </div>
+
+      <!-- Polaroid Cards Grid -->
+      <div class="gallery-grid">
+        <!-- Photo 1 -->
+        <div class="polaroid-card" data-img="photo1.jpg" data-caption="The Cutest Million-Dollar Smile 🌸" data-tag="📈 100-BAGGER SMILE">
+          <div class="polaroid-pin"></div>
+          <div class="polaroid-img-wrap">
+            <span class="bagger-tag">📈 100-BAGGER SMILE</span>
+            <img src="photo1.jpg" alt="Miss Agrawal Snapshot 1" class="polaroid-img" loading="lazy" />
+          </div>
+          <div class="polaroid-caption">The Cutest Smile 🌸</div>
+          <div class="polaroid-sub">Valuation: Priceless · Tap to zoom</div>
+        </div>
+
+        <!-- Photo 2 -->
+        <div class="polaroid-card" data-img="photo2.jpg" data-caption="Pure Elegance & Grace ✨" data-tag="🔒 UPPER CIRCUIT CHARM">
+          <div class="polaroid-pin"></div>
+          <div class="polaroid-img-wrap">
+            <span class="bagger-tag gold">🔒 UPPER CIRCUIT CHARM</span>
+            <img src="photo2.jpg" alt="Miss Agrawal Snapshot 2" class="polaroid-img" loading="lazy" />
+          </div>
+          <div class="polaroid-caption">Pure Elegance & Grace ✨</div>
+          <div class="polaroid-sub">Always stealing the spotlight · Tap to zoom</div>
+        </div>
+
+        <!-- Photo 3 -->
+        <div class="polaroid-card" data-img="photo3.jpg" data-caption="Market Wizard at Work 💼" data-tag="💎 BLUE CHIP BRILLIANCE">
+          <div class="polaroid-pin"></div>
+          <div class="polaroid-img-wrap">
+            <span class="bagger-tag">💎 BLUE CHIP BRILLIANCE</span>
+            <img src="photo3.jpg" alt="Miss Agrawal Snapshot 3" class="polaroid-img" loading="lazy" />
+          </div>
+          <div class="polaroid-caption">Market Wizard at Work 💼</div>
+          <div class="polaroid-sub">Sharp mind, pure golden heart · Tap to zoom</div>
+        </div>
+
+        <!-- Photo 4 -->
+        <div class="polaroid-card" data-img="photo4.jpg" data-caption="Forever My Favorite Superstar 🌟" data-tag="🚀 ALL-TIME HIGH">
+          <div class="polaroid-pin"></div>
+          <div class="polaroid-img-wrap">
+            <span class="bagger-tag gold">🚀 ALL-TIME HIGH</span>
+            <img src="photo4.jpg" alt="Miss Agrawal Snapshot 4" class="polaroid-img" loading="lazy" />
+          </div>
+          <div class="polaroid-caption">Forever My Favorite 🌟</div>
+          <div class="polaroid-sub">Radiance that lights up every room · Tap to zoom</div>
+        </div>
+
+        <!-- Photo 5: Cute Bear Celebration Card -->
+        <div class="polaroid-card" data-img="bears_cake.jpg" data-caption="Celebration Squad Forever 🥂" data-tag="💖 100% SPECIAL">
+          <div class="polaroid-pin"></div>
+          <div class="polaroid-img-wrap">
+            <span class="bagger-tag">💖 100% SPECIAL</span>
+            <img src="bears_cake.jpg" alt="Cute Bears Celebration" class="polaroid-img" loading="lazy" />
+          </div>
+          <div class="polaroid-caption">Celebration Squad 🥂</div>
+          <div class="polaroid-sub">To many more sweet milestones! · Tap to zoom</div>
+        </div>
+      </div>
+
+      <div class="stage-nav-bar">
+        <button class="btn-nav btn-nav-prev" id="stage4PrevBtn">⬅️ Back</button>
+        <button class="btn-nav btn-nav-next" id="stage4NextBtn">
+          Grand Birthday Finale 🎂➡️
+        </button>
+      </div>
+    </section>
+
+    <!-- ==========================================================
+         STEP 5: GRAND FINALE (SONG, CAKE, CANDLE, TOUCHING LETTER)
+         ========================================================== -->
+    <section class="stage-card" id="stage5" aria-labelledby="stage5Title">
+      <div class="bunting-garland">
+        <div class="bunting-flag flag-pink"></div>
+        <div class="bunting-flag flag-yellow"></div>
+        <div class="bunting-flag flag-blue"></div>
+        <div class="bunting-flag flag-green"></div>
+        <div class="bunting-flag flag-purple"></div>
+        <div class="bunting-flag flag-peach"></div>
+        <div class="bunting-flag flag-pink"></div>
+      </div>
+
+      <div style="text-align: center; margin-bottom: 20px;">
+        <span class="finale-badge">👑 THE GRAND FINALE</span>
+        <h2 class="welcome-title" id="stage5Title" style="font-size: clamp(26px, 5vw, 36px);">
+          Make a Wish, <span class="highlight">Miss Agrawal!</span> 🎂✨
+        </h2>
+        <p style="color: var(--text-muted); font-size: 14px;">
+          May your year ahead shatter every resistance level and reach new heights!
+        </p>
+      </div>
+
+      <!-- Music Player Bar -->
+      <div class="music-player-bar">
+        <div class="vinyl-disc" id="vinylDisc">
+          <div class="vinyl-center"></div>
+        </div>
+        <div class="song-details">
+          <div class="song-title">🎶 Happy Birthday Melody</div>
+          <div class="song-artist">Playing just for Miss Agrawal · Celebrating You</div>
+        </div>
+        <button class="song-toggle-btn" id="finaleSongBtn" title="Play / Pause Song">
+          ▶
+        </button>
+      </div>
+
+      <!-- Interactive Birthday Cake & Candles -->
+      <div class="cake-interaction-card">
+        <div class="cake-stage-svg-wrap">
+          <svg viewBox="0 0 200 180" width="100%" height="100%">
+            <!-- Cake Plate -->
+            <ellipse cx="100" cy="165" rx="85" ry="12" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="2"/>
+            <ellipse cx="100" cy="163" rx="78" ry="9" fill="#ffffff"/>
+
+            <!-- Cake Bottom Tier -->
+            <path d="M 35 125 C 35 110, 165 110, 165 125 L 165 150 C 165 165, 35 165, 35 150 Z" fill="#ffb3cb"/>
+            <!-- Bottom Tier Frosting Drips -->
+            <path d="M 35 125 Q 50 138, 65 125 Q 80 138, 95 125 Q 110 138, 125 125 Q 140 138, 155 125 Q 160 130, 165 125 C 165 115, 35 115, 35 125 Z" fill="#fff4ee"/>
+
+            <!-- Cake Top Tier -->
+            <path d="M 55 90 C 55 78, 145 78, 145 90 L 145 118 C 145 130, 55 130, 55 118 Z" fill="#ff8aa9"/>
+            <!-- Top Tier Frosting Drips -->
+            <path d="M 55 90 Q 70 102, 85 90 Q 100 102, 115 90 Q 130 102, 145 90 C 145 82, 55 82, 55 90 Z" fill="#ffffff"/>
+
+            <!-- Strawberry Toppings -->
+            <circle cx="70" cy="84" r="6" fill="#e11d48"/>
+            <circle cx="100" cy="80" r="7" fill="#e11d48"/>
+            <circle cx="130" cy="84" r="6" fill="#e11d48"/>
+
+            <!-- Candle Body -->
+            <rect x="96" y="46" width="8" height="34" fill="#38bdf8" rx="2"/>
+            <line x1="97" y1="52" x2="103" y2="56" stroke="#fff" stroke-width="1.5"/>
+            <line x1="97" y1="62" x2="103" y2="66" stroke="#fff" stroke-width="1.5"/>
+            <line x1="97" y1="72" x2="103" y2="76" stroke="#fff" stroke-width="1.5"/>
+
+            <!-- Candle Wick -->
+            <line x1="100" y1="46" x2="100" y2="38" stroke="#334155" stroke-width="2"/>
+
+            <!-- Candle Flame -->
+            <g class="flame" id="cakeFlame">
+              <path d="M 100 14 C 92 26, 94 36, 100 38 C 106 36, 108 26, 100 14 Z" fill="#f59e0b"/>
+              <path d="M 100 22 C 96 28, 97 34, 100 36 C 103 34, 104 28, 100 22 Z" fill="#fef08a"/>
+            </g>
+
+            <!-- Smoke Puff (Hidden until blown) -->
+            <g class="smoke-puff" id="smokePuff">
+              <circle cx="100" cy="24" r="8" fill="#94a3b8"/>
+              <circle cx="95" cy="18" r="6" fill="#cbd5e1"/>
+              <circle cx="106" cy="14" r="7" fill="#e2e8f0"/>
+            </g>
+          </svg>
+        </div>
+
+        <button class="blow-cake-btn" id="blowCakeBtn">
+          💨 Make a Wish & Blow the Candles!
+        </button>
+
+        <div class="cake-cut-banner" id="cakeCutBanner">
+          🎉 YAY! Your wish is on its way to the moon! 🚀🎂
+        </div>
+      </div>
+
+      <!-- Heartfelt Special Friend Letter -->
+      <div class="special-letter-card">
+        <div class="letter-wax-seal">💖</div>
+        <div class="letter-header">
+          <div class="letter-to">Dearest Miss Agrawal,</div>
+        </div>
+        <div class="letter-body">
+          <p>
+            In a world filled with everyday routine, endless market noise, and sudden ups and downs, having someone like you around is like striking the rarest, most cherished jackpot.
+          </p>
+          <p>
+            You are deeply inspiring — whether you're navigating complex charts with that brilliant mind of yours, solving challenges with pure dedication, or simply lighting up an entire room with that genuine, contagious smile.
+          </p>
+          <p>
+            You aren’t just extraordinary at what you do; you are genuinely one of the kindest, most radiant, and most irreplaceable souls I have ever had the privilege to know. That is why to me, you will always be the truest <b>100-Bagger</b> — priceless, cherished, and celebrated today and forever.
+          </p>
+          <p>
+            May this new chapter bring you limitless laughter, peace of mind, unshakeable good health, all the sweet treats you desire, and all-time highs in every single dream you chase.
+          </p>
+          <div class="letter-signoff">
+            With warmest wishes & deep respect,<br>
+            <b>Your Constant Cheerleader ❤️</b>
+          </div>
+        </div>
+      </div>
+
+      <!-- Multi-Bagger Official Certificate -->
+      <div class="certificate-box">
+        <div class="cert-seal">🏅</div>
+        <h3 class="cert-title">CERTIFIED 100-BAGGER OF EXCELLENCE</h3>
+        <p class="cert-desc">
+          Officially awarded to <b>Miss Agrawal</b> on this day for unparalleled charm, sharp intellect in the stock markets, unmatched kindness, and bringing sunshine everywhere she goes.
+        </p>
+      </div>
+
+      <!-- Finale Navigation Buttons -->
+      <div class="stage-nav-bar">
+        <button class="btn-nav btn-nav-prev" id="stage5PrevBtn">⬅️ Back to Photos</button>
+        <button class="btn-nav btn-nav-next" id="replayBtn" style="background: linear-gradient(135deg, var(--gold), #f59e0b);">
+          🔄 Replay Surprise
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Photo Fullscreen Zoom Modal -->
+  <div class="photo-modal" id="photoModal">
+    <div class="photo-modal-card">
+      <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close photo view">✕</button>
+      <div class="modal-img-wrap">
+        <img src="" alt="Enlarged Photo" id="modalImg" />
+      </div>
+      <div class="modal-caption" id="modalCaption">Memory</div>
+      <button class="modal-reaction-btn" id="modalReactBtn">
+        ❤️ Send Love & Shower Hearts (<span id="reactCount">1</span>)
+      </button>
+    </div>
+  </div>
+
+  <!-- Audio Element for Birthday Song -->
+  <audio id="bdayAudio" src="happy_birthday.mp3" preload="auto"></audio>
+
+  <!-- Scripts -->
   <script src="js/audio.js"></script>
   <script src="js/confetti.js"></script>
+  <script type="module" src="js/firebase.js"></script>
   <script src="js/app.js"></script>
 </body>
-
 </html>

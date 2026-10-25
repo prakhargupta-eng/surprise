@@ -1,783 +1,525 @@
 /**
- * app.js - Main Application Controller for Miss Agrawal's Birthday Site
+ * app.js - Main Application Controller for Miss Agrawal's Birthday Surprise
+ * Stock Market Theme × Cute Pastel Bubu & Dudu Aesthetic
  */
 document.addEventListener('DOMContentLoaded', function () {
   'use strict';
 
   // ================= CONFIGURATION =================
   var NAME = 'Miss Agrawal';
-  var BIRTHDAY_DATE = new Date('2026-10-13T00:00:00'); // October 13, 2026
-  var EXPIRY_DATE = new Date('2026-10-14T00:00:00');   // October 14, 2026 (Post-birthday)
-  var PHOTOS = ['photo1.jpg', 'photo2.jpg', 'photo3.jpg', 'photo4.jpg'];
-  var CAPTIONS = ['첫 번째 컷 · Cut 1', '두 번째 컷 · Cut 2', '세 번째 컷 · Cut 3', '네 번째 컷 · Cut 4'];
-  var FRIEND_WHATSAPP = '';
+  var TOTAL_STAGES = 5;
+  var currentStage = 1;
   // =================================================
 
   var sfx = (window.BdayAudio && window.BdayAudio.sfx) || window.sfx || {};
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var audioCtrl = window.BdayAudio;
+  var fireConfetti = window.fireConfetti || function () {};
 
-  // Insert name into placeholders
-  document.querySelectorAll('.nm').forEach(function (el) {
-    el.textContent = NAME;
+  // Ambient floating hearts background generator
+  var ambientBg = document.getElementById('ambientBg');
+  if (ambientBg) {
+    var heartSymbols = ['💖', '🌸', '✨', '🎂', '📈', '🧁', '⭐'];
+    for (var h = 0; h < 24; h++) {
+      var heart = document.createElement('div');
+      heart.className = 'floating-heart';
+      heart.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+      heart.style.left = (Math.random() * 95) + 'vw';
+      heart.style.animationDelay = (Math.random() * 12) + 's';
+      heart.style.animationDuration = (8 + Math.random() * 8) + 's';
+      heart.style.fontSize = (16 + Math.random() * 16) + 'px';
+      ambientBg.appendChild(heart);
+    }
+  }
+
+  // =================================================
+  // STAGE NAVIGATION CONTROLLER
+  // =================================================
+  var progressLineFill = document.getElementById('progressLineFill');
+
+  function goToStage(stepNumber) {
+    if (stepNumber < 1 || stepNumber > TOTAL_STAGES) return;
+
+    var previousStage = currentStage;
+    currentStage = stepNumber;
+
+    // Toggle active stage cards
+    for (var s = 1; s <= TOTAL_STAGES; s++) {
+      var stageEl = document.getElementById('stage' + s);
+      var indEl = document.getElementById('stepInd' + s);
+
+      if (stageEl) {
+        if (s === currentStage) {
+          stageEl.classList.add('active');
+        } else {
+          stageEl.classList.remove('active');
+        }
+      }
+
+      if (indEl) {
+        if (s === currentStage) {
+          indEl.classList.add('active');
+          indEl.classList.remove('done');
+        } else if (s < currentStage) {
+          indEl.classList.remove('active');
+          indEl.classList.add('done');
+        } else {
+          indEl.classList.remove('active');
+          indEl.classList.remove('done');
+        }
+      }
+    }
+
+    // Update progress line percentage
+    if (progressLineFill) {
+      var pct = ((currentStage - 1) / (TOTAL_STAGES - 1)) * 100;
+      progressLineFill.style.width = pct + '%';
+    }
+
+    // Smooth scroll into stage view
+    var activeStageEl = document.getElementById('stage' + currentStage);
+    if (activeStageEl) {
+      activeStageEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Specific stage behaviors
+    if (currentStage === 2) {
+      // Stock market stage: trigger pop sound
+      if (sfx.pop) sfx.pop();
+    } else if (currentStage === 5) {
+      // Grand Finale: trigger confetti & auto-play song
+      fireConfetti(true);
+      if (audioCtrl && audioCtrl.playSong) {
+        audioCtrl.playSong();
+      }
+    }
+  }
+
+  // Step indicator clicks
+  for (var i = 1; i <= TOTAL_STAGES; i++) {
+    (function (step) {
+      var ind = document.getElementById('stepInd' + step);
+      if (ind) {
+        ind.addEventListener('click', function () {
+          if (sfx.click) sfx.click();
+          goToStage(step);
+        });
+      }
+    })(i);
+  }
+
+  // =================================================
+  // STAGE 1: OPENING BELL
+  // =================================================
+  var stage1NextBtn = document.getElementById('stage1NextBtn');
+  if (stage1NextBtn) {
+    stage1NextBtn.addEventListener('click', function () {
+      if (audioCtrl && audioCtrl.marketBell) {
+        audioCtrl.marketBell();
+      }
+      fireConfetti(true);
+      setTimeout(function () {
+        goToStage(2);
+      }, 350);
+    });
+  }
+
+  // =================================================
+  // STAGE 2: STOCK MARKET REPORT
+  // =================================================
+  var stage2PrevBtn = document.getElementById('stage2PrevBtn');
+  var stage2NextBtn = document.getElementById('stage2NextBtn');
+
+  if (stage2PrevBtn) {
+    stage2PrevBtn.addEventListener('click', function () {
+      if (sfx.click) sfx.click();
+      goToStage(1);
+    });
+  }
+  if (stage2NextBtn) {
+    stage2NextBtn.addEventListener('click', function () {
+      if (sfx.select) sfx.select();
+      goToStage(3);
+    });
+  }
+
+  // =================================================
+  // STAGE 3: BIRTHDAY TREAT REQUEST (.TXT EXPORT)
+  // =================================================
+  var treatYesBtn = document.getElementById('treatYesBtn');
+  var treatNoBtn = document.getElementById('treatNoBtn');
+  var treatFormContainer = document.getElementById('treatFormContainer');
+  var treatDecisionBox = document.getElementById('treatDecisionBox');
+  var saveTreatBtn = document.getElementById('saveTreatBtn');
+  var treatReceiptCard = document.getElementById('treatReceiptCard');
+  var stage3PrevBtn = document.getElementById('stage3PrevBtn');
+  var stage3NextBtn = document.getElementById('stage3NextBtn');
+
+  var selectedTreatName = 'Gourmet Birthday Cake (Belgium Truffle / Red Velvet)';
+
+  // Treat Yes Click
+  if (treatYesBtn) {
+    treatYesBtn.addEventListener('click', function () {
+      if (sfx.cheer) sfx.cheer();
+      fireConfetti();
+      if (treatFormContainer) {
+        treatFormContainer.classList.add('active');
+      }
+      treatYesBtn.textContent = 'Awesome! Claiming Treat 🥳';
+    });
+  }
+
+  // Playful Dodging No Button
+  if (treatNoBtn) {
+    var dodgeCount = 0;
+    var dodgeTexts = [
+      'Are you sure? 🥺',
+      'No is not allowed! 😜',
+      'Upper Circuit locked! 🔒',
+      'Cake is mandatory! 🍰',
+      '100% Bullish on treats! 📈'
+    ];
+
+    function dodgeNoBtn() {
+      dodgeCount++;
+      if (sfx.click) sfx.click();
+      var xOffset = (Math.random() - 0.5) * 160;
+      var yOffset = (Math.random() - 0.5) * 80;
+      treatNoBtn.style.transform = 'translate(' + xOffset + 'px, ' + yOffset + 'px)';
+      treatNoBtn.textContent = dodgeTexts[dodgeCount % dodgeTexts.length];
+    }
+
+    treatNoBtn.addEventListener('mouseenter', dodgeNoBtn);
+    treatNoBtn.addEventListener('touchstart', dodgeNoBtn, { passive: true });
+    treatNoBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      dodgeNoBtn();
+      alert('Error: "No" is not an available option on your birthday! Please pick your treat! 🎂🥰');
+    });
+  }
+
+  // Treat Option Selection Cards
+  var treatCards = document.querySelectorAll('.treat-option-card');
+  treatCards.forEach(function (card) {
+    card.addEventListener('click', function () {
+      if (sfx.select) sfx.select();
+      treatCards.forEach(function (c) { c.classList.remove('selected'); });
+      card.classList.add('selected');
+      selectedTreatName = card.getAttribute('data-treat') || 'Gourmet Birthday Cake';
+    });
   });
 
-  // Mute button controller
+  // Save & Download Treat Order (.txt)
+  if (saveTreatBtn) {
+    saveTreatBtn.addEventListener('click', function () {
+      var customNote = (document.getElementById('treatCustomNote') && document.getElementById('treatCustomNote').value.trim()) || 'None specified (Surprise me!)';
+      var address = (document.getElementById('treatAddress') && document.getElementById('treatAddress').value.trim()) || 'To be shared or coordinated directly!';
+      var now = new Date();
+      var timestampStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+      var orderId = 'MEDAMJI-DIVIDEND-' + Math.floor(100000 + Math.random() * 900000);
+
+      if (sfx.cheer) sfx.cheer();
+      fireConfetti(true);
+
+      // Generate Clean Text File Content
+      var textContent = [
+        '====================================================',
+        '       OFFICIAL BIRTHDAY TREAT ORDER TICKET         ',
+        '      Issued for Miss Agrawal - The 100-Bagger      ',
+        '====================================================',
+        '',
+        'Order Reference: ' + orderId,
+        'Date & Time:     ' + timestampStr,
+        'Recipient:       ' + NAME,
+        'Account Status:  100% Bullish (Upper Circuit 🔒)',
+        '',
+        '----------------------------------------------------',
+        'SELECTED BIRTHDAY TREAT:',
+        '----------------------------------------------------',
+        'Item:            ' + selectedTreatName,
+        'Special Cravings:' + customNote,
+        '',
+        '----------------------------------------------------',
+        'DELIVERY INSTRUCTIONS / ADDRESS:',
+        '----------------------------------------------------',
+        address,
+        '',
+        '----------------------------------------------------',
+        'SPECIAL BIRTHDAY CLAUSE:',
+        '----------------------------------------------------',
+        'This dividend is fully approved with zero deductions!',
+        'Guaranteed to be delivered with extra sweetness & joy.',
+        '',
+        'Happy Birthday Miss Agrawal! Wishing you an All-Time High year! 🎂📈',
+        '===================================================='
+      ].join('\r\n');
+
+      // Trigger .txt File Download
+      try {
+        var blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+        var downloadUrl = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = 'birthday_treat_request_' + NAME.toLowerCase().replace(/\s+/g, '_') + '.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(downloadUrl);
+      } catch (err) {
+        console.error('Download error:', err);
+      }
+
+      // Save to Firebase if available
+      var treatData = {
+        recipient: NAME,
+        orderId: orderId,
+        treat: selectedTreatName,
+        customNote: customNote,
+        address: address,
+        date: timestampStr
+      };
+
+      if (window.__saveTreat) {
+        window.__saveTreat(treatData).catch(function (e) {
+          console.log('Firebase save log:', e);
+        });
+      }
+
+      // Save to LocalStorage
+      try {
+        localStorage.setItem('bday_treat_order', JSON.stringify(treatData));
+      } catch (e) {}
+
+      // Update and Show On-Screen Stamped Receipt
+      var rItem = document.getElementById('receiptItem');
+      var rNote = document.getElementById('receiptNote');
+      var rAddr = document.getElementById('receiptAddress');
+
+      if (rItem) rItem.textContent = selectedTreatName;
+      if (rNote) rNote.textContent = customNote;
+      if (rAddr) rAddr.textContent = address;
+
+      if (treatReceiptCard) {
+        treatReceiptCard.classList.add('active');
+        treatReceiptCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      saveTreatBtn.textContent = '✓ Order Saved & Downloaded! 🎉';
+      saveTreatBtn.disabled = true;
+    });
+  }
+
+  if (stage3PrevBtn) {
+    stage3PrevBtn.addEventListener('click', function () {
+      if (sfx.click) sfx.click();
+      goToStage(2);
+    });
+  }
+  if (stage3NextBtn) {
+    stage3NextBtn.addEventListener('click', function () {
+      if (sfx.select) sfx.select();
+      goToStage(4);
+    });
+  }
+
+  // =================================================
+  // STAGE 4: PHOTO MEMORY COLLECTION (POLAROIDS & MODAL)
+  // =================================================
+  var polaroidCards = document.querySelectorAll('.polaroid-card');
+  var photoModal = document.getElementById('photoModal');
+  var modalCloseBtn = document.getElementById('modalCloseBtn');
+  var modalImg = document.getElementById('modalImg');
+  var modalCaption = document.getElementById('modalCaption');
+  var modalReactBtn = document.getElementById('modalReactBtn');
+  var reactCountEl = document.getElementById('reactCount');
+  var likes = 1;
+
+  polaroidCards.forEach(function (card) {
+    card.addEventListener('click', function () {
+      if (sfx.shutter) sfx.shutter();
+      var imgSrc = card.getAttribute('data-img');
+      var captionText = card.getAttribute('data-caption') || 'Cherished Memory';
+
+      if (modalImg && imgSrc) modalImg.src = imgSrc;
+      if (modalCaption) modalCaption.textContent = captionText;
+      if (photoModal) photoModal.classList.add('active');
+    });
+  });
+
+  if (modalCloseBtn && photoModal) {
+    modalCloseBtn.addEventListener('click', function () {
+      if (sfx.click) sfx.click();
+      photoModal.classList.remove('active');
+    });
+
+    photoModal.addEventListener('click', function (e) {
+      if (e.target === photoModal) {
+        photoModal.classList.remove('active');
+      }
+    });
+  }
+
+  if (modalReactBtn) {
+    modalReactBtn.addEventListener('click', function () {
+      likes++;
+      if (reactCountEl) reactCountEl.textContent = likes;
+      if (sfx.cheer) sfx.cheer();
+
+      // Spawn burst of miniature floating hearts from button
+      for (var f = 0; f < 8; f++) {
+        var miniH = document.createElement('span');
+        miniH.textContent = '💖';
+        miniH.style.position = 'fixed';
+        miniH.style.left = (window.innerWidth / 2 + (Math.random() - 0.5) * 120) + 'px';
+        miniH.style.top = (window.innerHeight / 2 + (Math.random() - 0.5) * 80) + 'px';
+        miniH.style.fontSize = '24px';
+        miniH.style.pointerEvents = 'none';
+        miniH.style.zIndex = '1100';
+        miniH.style.transition = 'all 1s ease-out';
+        document.body.appendChild(miniH);
+
+        (function (el) {
+          setTimeout(function () {
+            el.style.transform = 'translateY(-100px) scale(1.5)';
+            el.style.opacity = '0';
+          }, 20);
+          setTimeout(function () {
+            if (el.parentNode) el.parentNode.removeChild(el);
+          }, 1100);
+        })(miniH);
+      }
+    });
+  }
+
+  var stage4PrevBtn = document.getElementById('stage4PrevBtn');
+  var stage4NextBtn = document.getElementById('stage4NextBtn');
+
+  if (stage4PrevBtn) {
+    stage4PrevBtn.addEventListener('click', function () {
+      if (sfx.click) sfx.click();
+      goToStage(3);
+    });
+  }
+  if (stage4NextBtn) {
+    stage4NextBtn.addEventListener('click', function () {
+      if (sfx.select) sfx.select();
+      goToStage(5);
+    });
+  }
+
+  // =================================================
+  // STAGE 5: GRAND FINALE (SONG, CAKE, CANDLES, LETTER)
+  // =================================================
+  var finaleSongBtn = document.getElementById('finaleSongBtn');
   var muteBtn = document.getElementById('muteBtn');
+  var blowCakeBtn = document.getElementById('blowCakeBtn');
+  var cakeFlame = document.getElementById('cakeFlame');
+  var smokePuff = document.getElementById('smokePuff');
+  var cakeCutBanner = document.getElementById('cakeCutBanner');
+  var stage5PrevBtn = document.getElementById('stage5PrevBtn');
+  var replayBtn = document.getElementById('replayBtn');
+
+  // Song controls
+  if (finaleSongBtn) {
+    finaleSongBtn.addEventListener('click', function () {
+      if (audioCtrl && audioCtrl.toggleSong) {
+        audioCtrl.toggleSong();
+      }
+    });
+  }
+
   if (muteBtn) {
     muteBtn.addEventListener('click', function () {
-      if (window.BdayAudio) {
-        var isMuted = window.BdayAudio.toggleMute();
+      if (audioCtrl && audioCtrl.toggleMute) {
+        var isMuted = audioCtrl.toggleMute();
         muteBtn.textContent = isMuted ? '🔇' : '🔊';
       }
     });
   }
 
-  /* ---------- SHIN-CHAN CORNER WIDGET INTERACTION ---------- */
-  var shinchanCorner = document.getElementById('shinchanCorner');
-  var shinchanBubble = document.getElementById('shinchanBubble');
-  var shinchanPhrases = [
-    "Belated happy birthday! 🌸",
-    "Hope you had a wonderful day! 🍰",
-    "A great start to your new year! ✨",
-    "Cake khila do! Hungry Shinchan! 🍰",
-    "Zero bugs all year long! ✨",
-    "Main character vibes! 🎬",
-    "Boba & Ramen treat time! 🧋",
-    "Shin-chan still saved you cake! 🍰"
-  ];
-  var shinchanIndex = 0;
-  if (shinchanCorner && shinchanBubble) {
-    shinchanCorner.addEventListener('click', function () {
-      if (sfx.cheer) sfx.cheer();
-      shinchanCorner.classList.add('bounce');
+  // Interactive Candle Blow / Cake Cut
+  if (blowCakeBtn) {
+    blowCakeBtn.addEventListener('click', function () {
+      if (audioCtrl && audioCtrl.sfx && audioCtrl.sfx.blow) {
+        audioCtrl.sfx.blow();
+      }
+
+      // Extinguish candle flame
+      if (cakeFlame) cakeFlame.classList.add('blown-out');
+      if (smokePuff) smokePuff.classList.add('active');
+
       setTimeout(function () {
-        shinchanCorner.classList.remove('bounce');
+        if (audioCtrl && audioCtrl.sfx && audioCtrl.sfx.cheer) {
+          audioCtrl.sfx.cheer();
+        }
+        fireConfetti(true);
       }, 400);
-      shinchanIndex = (shinchanIndex + 1) % shinchanPhrases.length;
-      shinchanBubble.textContent = shinchanPhrases[shinchanIndex];
-    });
-  }
 
-  /* ---------- AUTO-SCROLLING ENGINE ---------- */
-  var autoScrollEnabled = true;
-  var lastManualScroll = 0;
-  var autoScrollPill = document.getElementById('autoScrollPill');
-  var autoScrollTxt = document.getElementById('autoScrollTxt');
-  var scrollTimeout = null;
-
-  function onManualScroll() {
-    lastManualScroll = Date.now();
-    if (autoScrollPill) autoScrollPill.classList.add('paused');
-    if (autoScrollTxt) autoScrollTxt.textContent = 'Auto-scroll: Paused';
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(function () {
-      if (autoScrollEnabled) {
-        if (autoScrollPill) autoScrollPill.classList.remove('paused');
-        if (autoScrollTxt) autoScrollTxt.textContent = 'Auto-scroll ON';
-      }
-    }, 2200);
-  }
-
-  ['wheel', 'touchmove', 'keydown'].forEach(function (ev) {
-    window.addEventListener(ev, onManualScroll, { passive: true });
-  });
-
-  if (autoScrollPill && autoScrollTxt) {
-    autoScrollPill.addEventListener('click', function () {
-      autoScrollEnabled = !autoScrollEnabled;
-      if (autoScrollEnabled) {
-        autoScrollPill.classList.remove('paused');
-        autoScrollTxt.textContent = 'Auto-scroll ON';
-      } else {
-        autoScrollPill.classList.add('paused');
-        autoScrollTxt.textContent = 'Auto-scroll OFF';
-      }
-    });
-  }
-
-  function autoScrollTo(el, alignCenter) {
-    if (!autoScrollEnabled) return;
-    if (Date.now() - lastManualScroll < 2200) return;
-    if (!el) return;
-    try {
-      var rect = el.getBoundingClientRect();
-      var offset = alignCenter ? (window.innerHeight - rect.height) / 2 : window.innerHeight * 0.35;
-      var targetY = window.pageYOffset + rect.top - Math.max(20, offset);
-      window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
-    } catch (e) {}
-  }
-
-  /* Auto-reveal helper with automatic gentle scrolling */
-  function revealAll(selector, startDelay, gap, sound, autoScroll) {
-    var items = document.querySelectorAll(selector);
-    items.forEach(function (el, idx) {
       setTimeout(function () {
-        el.classList.add('show');
-        if (sound) sound();
-        if (autoScroll !== false) {
-          autoScrollTo(el, false);
-        }
-      }, reduce ? 0 : startDelay + idx * gap);
-    });
-  }
+        fireConfetti(true);
+      }, 1000);
 
-  /* ---------- CARD BOOSTER (EP 2) ---------- */
-  window.celebrateCard = function (btn) {
-    if (sfx.cheer) sfx.cheer();
-    btn.textContent = '★ ACTIVE!';
-    btn.style.background = 'rgba(143, 227, 200, 0.3)';
-    btn.style.color = '#8fe3c8';
-  };
-
-  /* ---------- STAGES NAVIGATION ---------- */
-  var stages = {
-    0: document.getElementById('step0'),
-    1: document.getElementById('step1'),
-    2: document.getElementById('step2'),
-    3: document.getElementById('step3'),
-    4: document.getElementById('step4'),
-    'expired': document.getElementById('stepExpired')
-  };
-  var eps = document.querySelectorAll('.ep');
-  var epsNavContainer = document.querySelector('.eps');
-
-  function goTo(stageKey) {
-    Object.keys(stages).forEach(function (k) {
-      if (stages[k]) {
-        stages[k].classList.toggle('active', String(k) === String(stageKey));
+      if (cakeCutBanner) {
+        cakeCutBanner.classList.add('active');
       }
-    });
 
-    eps.forEach(function (e) {
-      e.classList.toggle('on', String(e.dataset.ep) === String(stageKey));
-    });
+      blowCakeBtn.textContent = '🎂 Candles Blown! Wish Sealed with Love!';
+      blowCakeBtn.disabled = true;
 
-    // Control visibility of top episode pills
-    if (epsNavContainer) {
-      if (stageKey === 'expired') {
-        epsNavContainer.style.display = 'none';
-      } else {
-        epsNavContainer.style.display = 'flex';
-      }
-    }
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  // Top episode indicator is display-only (shows current episode progression)
-
-  /* ---------- DATE LOGIC & ROUTING ---------- */
-  var urlParams = new URLSearchParams(window.location.search);
-  var now = new Date();
-
-  // URL overrides for easy testing (e.g. ?preview=expired or ?date=2026-10-14)
-  if (urlParams.has('date')) {
-    var parsed = new Date(urlParams.get('date'));
-    if (!isNaN(parsed.getTime())) now = parsed;
-  } else if (urlParams.get('preview') === 'expired') {
-    now = new Date('2026-10-14T12:00:00');
-  } else if (urlParams.get('preview') === 'countdown') {
-    now = new Date('2026-10-12T12:00:00');
-  } else if (urlParams.get('preview') === 'live' || urlParams.get('preview') === 'birthday') {
-    now = new Date('2026-10-13T12:00:00');
-  }
-
-  var ep0Pill = document.getElementById('ep0Pill');
-  var isPostBirthday = (now >= EXPIRY_DATE);
-  var isBeforeBirthday = (now < BIRTHDAY_DATE);
-  var unlockedSession = sessionStorage.getItem('unlocked_bday_preview');
-
-  /* ---------- COUNTDOWN TIMER LOGIC (BEFORE 13 OCT) ---------- */
-  var cdDays = document.getElementById('cdDays');
-  var cdHours = document.getElementById('cdHours');
-  var cdMins = document.getElementById('cdMins');
-  var cdSecs = document.getElementById('cdSecs');
-  var countdownFinished = false;
-
-  function updateCountdown() {
-    var curr = new Date();
-    if (urlParams.has('date')) {
-      var p = new Date(urlParams.get('date'));
-      if (!isNaN(p.getTime())) curr = p;
-    }
-    var diff = BIRTHDAY_DATE - curr;
-
-    if (diff <= 0) {
-      if (!countdownFinished) {
-        countdownFinished = true;
-        onCountdownComplete();
-      }
-      return;
-    }
-
-    var d = Math.floor(diff / (1000 * 60 * 60 * 24));
-    var h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    var m = Math.floor((diff / (1000 * 60)) % 60);
-    var s = Math.floor((diff / 1000) % 60);
-
-    if (cdDays) cdDays.textContent = d < 10 ? '0' + d : d;
-    if (cdHours) cdHours.textContent = h < 10 ? '0' + h : h;
-    if (cdMins) cdMins.textContent = m < 10 ? '0' + m : m;
-    if (cdSecs) cdSecs.textContent = s < 10 ? '0' + s : s;
-  }
-
-  function onCountdownComplete() {
-    if (window.BdayConfetti) window.BdayConfetti.fireConfettiOnce();
-    if (sfx.cheer) sfx.cheer();
-    goTo(1);
-  }
-
-  if (isBeforeBirthday) {
-    var timerInterval = setInterval(updateCountdown, 1000);
-    updateCountdown();
-  }
-
-  /* ---------- VIP PIN MODAL LOGIC ---------- */
-  var TARGET_PIN = '131096';
-  var currentPin = '';
-  var vipModal = document.getElementById('vipPinModal');
-  var pinSlots = document.querySelectorAll('.pin-slot');
-  var pinWrap = document.getElementById('pinDigitsWrap');
-  var pinFeedback = document.getElementById('pinFeedback');
-  var isVerifying = false;
-
-  function renderPin() {
-    pinSlots.forEach(function (slot, idx) {
-      slot.className = 'pin-slot';
-      if (idx < currentPin.length) {
-        slot.textContent = currentPin[idx];
-        slot.classList.add('filled');
-      } else {
-        slot.textContent = '';
-      }
-      if (idx === currentPin.length && !isVerifying) {
-        slot.classList.add('active');
+      // Ensure song is playing
+      if (audioCtrl && audioCtrl.playSong) {
+        audioCtrl.playSong();
       }
     });
   }
 
-  function openVipModal() {
-    currentPin = '';
-    isVerifying = false;
-    if (pinFeedback) {
-      pinFeedback.className = 'pin-feedback info';
-      pinFeedback.textContent = 'Enter the 6-digit passcode to proceed';
-    }
-    renderPin();
-    if (vipModal) {
-      if (typeof vipModal.showModal === 'function') {
-        vipModal.showModal();
-      } else {
-        vipModal.setAttribute('open', '');
-      }
-    }
-    if (sfx.click) sfx.click();
-  }
-
-  function closeVipModal() {
-    if (vipModal) {
-      if (typeof vipModal.close === 'function') {
-        vipModal.close();
-      } else {
-        vipModal.removeAttribute('open');
-      }
-    }
-    currentPin = '';
-    isVerifying = false;
-    renderPin();
-  }
-
-  function handleDigit(digit) {
-    if (isVerifying || currentPin.length >= 6) return;
-    currentPin += digit;
-    if (sfx.type) sfx.type();
-    renderPin();
-    if (currentPin.length === 6) {
-      verifyPin();
-    }
-  }
-
-  function handleBackspace() {
-    if (isVerifying || currentPin.length === 0) return;
-    currentPin = currentPin.slice(0, -1);
-    if (sfx.click) sfx.click();
-    renderPin();
-    if (pinFeedback) {
-      pinFeedback.className = 'pin-feedback info';
-      pinFeedback.textContent = 'Enter the 6-digit passcode to proceed';
-    }
-  }
-
-  function handleClear() {
-    if (isVerifying) return;
-    currentPin = '';
-    if (sfx.click) sfx.click();
-    renderPin();
-    if (pinFeedback) {
-      pinFeedback.className = 'pin-feedback info';
-      pinFeedback.textContent = 'Enter the 6-digit passcode to proceed';
-    }
-  }
-
-  function verifyPin() {
-    isVerifying = true;
-    if (currentPin === TARGET_PIN) {
-      pinSlots.forEach(function (slot) { slot.className = 'pin-slot success'; });
-      if (pinFeedback) {
-        pinFeedback.className = 'pin-feedback success';
-        pinFeedback.textContent = '🎉 VIP Access Granted! Welcome! 🌸';
-      }
-      if (sfx.cheer) sfx.cheer();
-      if (window.BdayConfetti) window.BdayConfetti.fireConfettiOnce();
-      setTimeout(function () {
-        sessionStorage.setItem('unlocked_bday_preview', 'true');
-        closeVipModal();
-        goTo(1);
-      }, 650);
-    } else {
-      pinSlots.forEach(function (slot) { slot.className = 'pin-slot error'; });
-      if (pinWrap) pinWrap.classList.add('shake');
-      if (pinFeedback) {
-        pinFeedback.className = 'pin-feedback error';
-        pinFeedback.textContent = '❌ Incorrect PIN. Please try again.';
-      }
-      if (sfx.error) sfx.error();
-      setTimeout(function () {
-        if (pinWrap) pinWrap.classList.remove('shake');
-        currentPin = '';
-        isVerifying = false;
-        if (pinFeedback) {
-          pinFeedback.className = 'pin-feedback info';
-          pinFeedback.textContent = 'Enter the 6-digit passcode to proceed';
-        }
-        renderPin();
-      }, 700);
-    }
-  }
-
-  var unlockNowBtn = document.getElementById('unlockNowBtn');
-  if (unlockNowBtn) unlockNowBtn.addEventListener('click', openVipModal);
-
-  var pinCloseBtn = document.getElementById('pinCloseBtn');
-  if (pinCloseBtn) pinCloseBtn.addEventListener('click', closeVipModal);
-
-  if (vipModal) {
-    vipModal.addEventListener('click', function (e) {
-      var rect = vipModal.getBoundingClientRect();
-      var inDialog = (rect.top <= e.clientY && e.clientY <= rect.top + rect.height &&
-        rect.left <= e.clientX && e.clientX <= rect.left + rect.width);
-      if (!inDialog) closeVipModal();
-    });
-  }
-
-  var pinKeypad = document.getElementById('pinKeypad');
-  if (pinKeypad) {
-    pinKeypad.addEventListener('click', function (e) {
-      var btn = e.target.closest('button');
-      if (!btn) return;
-      var digit = btn.dataset.digit;
-      var action = btn.dataset.action;
-      if (digit !== undefined) {
-        handleDigit(digit);
-      } else if (action === 'backspace') {
-        handleBackspace();
-      } else if (action === 'clear') {
-        handleClear();
-      }
-    });
-  }
-
-  window.addEventListener('keydown', function (e) {
-    if (!vipModal || !vipModal.hasAttribute('open')) return;
-    if (e.key >= '0' && e.key <= '9') {
-      e.preventDefault();
-      handleDigit(e.key);
-    } else if (e.key === 'Backspace') {
-      e.preventDefault();
-      handleBackspace();
-    } else if (e.key === 'Escape') {
-      closeVipModal();
-    }
-  });
-
-  window.addEventListener('paste', function (e) {
-    if (!vipModal || !vipModal.hasAttribute('open')) return;
-    var text = (e.clipboardData || window.clipboardData).getData('text');
-    if (text) {
-      var cleaned = text.replace(/\D/g, '').slice(0, 6);
-      if (cleaned) {
-        e.preventDefault();
-        currentPin = '';
-        for (var i = 0; i < cleaned.length; i++) {
-          currentPin += cleaned[i];
-        }
-        if (sfx.type) sfx.type();
-        renderPin();
-        if (currentPin.length === 6) verifyPin();
-      }
-    }
-  });
-
-  /* ---------- PHOTO STRIP BUILDER (4 CUTS) ---------- */
-  function buildPhotoStrip(containerId) {
-    var strip = document.getElementById(containerId);
-    if (!strip) return;
-    strip.innerHTML = '';
-    PHOTOS.forEach(function (src, i) {
-      var shot = document.createElement('div');
-      shot.className = 'shot show';
-
-      var tape = document.createElement('div');
-      tape.className = 'washi-tape';
-      shot.appendChild(tape);
-
-      var ph = document.createElement('div');
-      ph.className = 'ph';
-      var img = document.createElement('img');
-      img.alt = 'Miss Agrawal celebration cut ' + (i + 1);
-      img.src = src;
-      img.addEventListener('error', function () {
-        ph.innerHTML = '<div style="padding:20px; color:var(--sakura); font-size:12px;">📷 Cut ' + (i + 1) + '</div>';
-      });
-      ph.appendChild(img);
-
-      var cap = document.createElement('div');
-      cap.className = 'cap';
-      cap.textContent = CAPTIONS[i] || ('Cut ' + (i + 1));
-      shot.appendChild(ph);
-      shot.appendChild(cap);
-      strip.appendChild(shot);
-    });
-  }
-
-  // Populate photos for Final Page and Post-Birthday page
-  buildPhotoStrip('strip');
-  buildPhotoStrip('expiredStrip');
-
-  /* ---------- POST-BIRTHDAY / EXPIRED PAGE CONTROLLERS ---------- */
-  var expiredSongBtn = document.getElementById('expiredSongBtn');
-  if (expiredSongBtn) {
-    expiredSongBtn.addEventListener('click', function () {
-      if (window.BdayAudio) window.BdayAudio.toggleSong();
-    });
-  }
-
-  var expiredConfettiBtn = document.getElementById('expiredConfettiBtn');
-  if (expiredConfettiBtn) {
-    expiredConfettiBtn.addEventListener('click', function () {
-      if (window.BdayConfetti) window.BdayConfetti.fireConfetti(true);
-      if (sfx.cheer) sfx.cheer();
-    });
-  }
-
-  var expiredReplayBtn = document.getElementById('expiredReplayBtn');
-  if (expiredReplayBtn) {
-    expiredReplayBtn.addEventListener('click', function () {
-      openVipModal();
-    });
-  }
-
-  /* ---------- ROUTING EVALUATION ON LOAD ---------- */
-  if (isPostBirthday) {
-    // Visits on or after October 14th show the Post-Birthday Special page
-    goTo('expired');
-  } else if (isBeforeBirthday && !unlockedSession) {
-    // Visits before October 13th show Countdown
-    if (ep0Pill) ep0Pill.style.display = 'inline-block';
-    goTo(0);
-  } else {
-    // Visits on October 13th (or preview unlocked) start at EP.01
-    goTo(1);
-  }
-
-  /* ---------- EP 2 : Typewriter Terminal ---------- */
-  var codeLines = [
-    '<span class="c">// birthday.js</span>',
-    '<span class="k">const</span> <span class="f">birthday</span> = {',
-    '  name: <span class="s">"' + NAME + '"</span>,',
-    '  role: <span class="s">"Web Developer"</span>,',
-    '  city: <span class="s">"Pune"</span>,',
-    '  loves: [<span class="s">"K-Drama"</span>, <span class="s">"Good Food"</span>, <span class="s">"Clean Code"</span>],',
-    '  age: <span class="n">age</span> + <span class="n">1</span>,',
-    '  status: <span class="s">"Level Up 🎮"</span>',
-    '};',
-    '',
-    '<span class="f">celebrate</span>(birthday); <span class="c">// 생일 축하해요! (Happy Birthday!)</span>',
-    '<span class="p">&gt; Compiled successfully. 0 errors, 1 amazing friend.</span>'
-  ];
-  var codeEl = document.getElementById('codeOut');
-  var typed = false;
-  function typeCode(done) {
-    if (typed || !codeEl) return;
-    typed = true;
-    var i = 0, out = [];
-    (function next() {
-      if (i >= codeLines.length) {
-        codeEl.innerHTML = out.join('\n');
-        if (done) done();
-        return;
-      }
-      if (sfx.type) sfx.type();
-      out.push(codeLines[i]);
-      i++;
-      codeEl.innerHTML = out.join('\n') + '\n<span class="cursor"></span>';
-      if (i % 3 === 0) {
-        autoScrollTo(codeEl, false);
-      }
-      setTimeout(next, reduce ? 0 : 280);
-    })();
-  }
-
-  /* ---------- Treat Picker (EP 3) ---------- */
-  var TREATS = [
-    { id: 'cake',     emoji: '🎂', en: 'Chocolate Cake', ko: '초콜릿 케이크' },
-    { id: 'waffle',   emoji: '🧇', en: 'Waffles',        ko: '와플' },
-    { id: 'dessert',  emoji: '🧁', en: 'Dessert Box',    ko: '디저트 박스' },
-    { id: 'icecream', emoji: '🍦', en: 'Ice Cream',      ko: '아이스크림' },
-    { id: 'boba',     emoji: '🧋', en: 'Bubble Tea',     ko: '버블티' },
-    { id: 'pizza',    emoji: '🍕', en: 'Veg Pizza',      ko: '채식 피자' },
-    { id: 'other',    emoji: '✍️', en: 'Something else', ko: '다른 것' }
-  ];
-  var selected = null;
-  var treatsBox = document.getElementById('treats');
-  var otherInput = document.getElementById('otherInput');
-  var treatBtn = document.getElementById('treatBtn');
-  var needMsg = document.getElementById('needMsg');
-  var addrInput = document.getElementById('addrInput');
-
-  if (treatsBox) {
-    TREATS.forEach(function (t) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'treat';
-      b.setAttribute('role', 'radio');
-      b.setAttribute('aria-checked', 'false');
-      b.innerHTML = '<span class="em"></span><span class="en"></span><span class="ko"></span>';
-      b.querySelector('.em').textContent = t.emoji;
-      b.querySelector('.en').textContent = t.en;
-      b.querySelector('.ko').textContent = t.ko;
-      b.addEventListener('click', function () {
-        selected = t;
-        if (sfx.select) sfx.select();
-        treatsBox.querySelectorAll('.treat').forEach(function (x) {
-          x.classList.remove('sel');
-          x.setAttribute('aria-checked', 'false');
-        });
-        b.classList.add('sel');
-        b.setAttribute('aria-checked', 'true');
-        if (otherInput) {
-          otherInput.style.display = t.id === 'other' ? 'block' : 'none';
-          if (t.id === 'other') otherInput.focus();
-        }
-        validateTreat();
-        if (addrInput) autoScrollTo(addrInput, false);
-      });
-      treatsBox.appendChild(b);
-    });
-  }
-
-  function treatLabel() {
-    if (!selected) return '';
-    if (selected.id === 'other' && otherInput) return otherInput.value.trim();
-    return selected.en;
-  }
-
-  function validateTreat() {
-    if (!treatBtn || !needMsg || !addrInput) return;
-    var ok = !!selected &&
-      (selected.id !== 'other' || (otherInput && otherInput.value.trim().length > 0)) &&
-      addrInput.value.trim().length >= 8;
-    treatBtn.disabled = !ok;
-    treatBtn.textContent = ok ? 'Continue to Final Episode ▶' : 'Choose treat + address first';
-    needMsg.style.visibility = ok ? 'hidden' : 'visible';
-  }
-
-  if (otherInput) {
-    otherInput.addEventListener('input', validateTreat);
-    otherInput.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' && treatBtn && !treatBtn.disabled) submitTreat();
-    });
-  }
-
-  if (addrInput) {
-    addrInput.addEventListener('input', validateTreat);
-  }
-
-  function saveLocal(data, docId) {
-    try {
-      var key = 'birthday_events';
-      var existing = JSON.parse(localStorage.getItem(key) || '[]');
-      existing.push({ type: 'treat_choice', docId: docId, payload: data, ts: Date.now() });
-      localStorage.setItem(key, JSON.stringify(existing));
-    } catch (e) {}
-  }
-
-  function saveTreat(data) {
-    try {
-      if (window.__saveTreat) {
-        window.__saveTreat(data).then(function (id) {
-          saveLocal(data, id);
-        }).catch(function (err) {
-          console.warn("Firebase save fallback to local:", err);
-          saveLocal(data, 'agrawal_' + Date.now());
-        });
-      } else {
-        saveLocal(data, 'agrawal_' + Date.now());
-      }
-    } catch (e) {
-      saveLocal(data, 'agrawal_' + Date.now());
-    }
-  }
-
-  var chosenText = '';
-  function submitTreat() {
-    if (!treatBtn || treatBtn.disabled) return;
-    if (sfx.click) sfx.click();
-    chosenText = treatLabel();
-    saveTreat({
-      name: NAME,
-      treat: chosenText,
-      korean: selected.ko,
-      custom: selected.id === 'other',
-      address: addrInput ? addrInput.value.trim() : ''
-    });
-    buildTreatSummary();
-    goTo(4);
-    enterFinal();
-  }
-
-  if (treatBtn) treatBtn.addEventListener('click', submitTreat);
-  validateTreat();
-
-  function buildTreatSummary() {
-    var box = document.getElementById('treatCard');
-    if (!box) return;
-    var b = box.querySelector('b');
-    var s = box.querySelector('.sub');
-    if (b) b.textContent = (selected.id === 'other' ? '✍️ ' : selected.emoji + ' ') + chosenText;
-    if (s && addrInput) {
-      s.textContent = '선택한 간식: ' + (selected.id === 'other' ? chosenText : selected.ko) + ' · 배달 주소: ' + addrInput.value.trim();
-    }
-    if (FRIEND_WHATSAPP && addrInput) {
-      var wa = document.getElementById('waBtn');
-      if (wa) {
-        wa.href = 'https://wa.me/' + FRIEND_WHATSAPP + '?text=' + encodeURIComponent('Hi! My birthday treat pick is: ' + chosenText + ' 🎂\nAddress: ' + addrInput.value.trim());
-        wa.style.display = 'inline-block';
-      }
-    }
-  }
-
-  /* ---------- WISHES (FINAL PAGE) ---------- */
-  var WISHES = [
-    { kr: '첫 번째 소원 · Wish #1', en: 'May your code compile on the first try, every deploy go green, and every bug turn out to be a missing semicolon. 🐛✨', ko: '코드가 한 번에 컴파일되고, 배포는 항상 성공하고, 모든 버그가 세미콜론 하나 때문이길 바라요.' },
-    { kr: '두 번째 소원 · Wish #2', en: 'May your life have a happy-ending K-drama plot: great friends, great food, zero filler episodes, and a perfect OST on repeat. 🎶', ko: '좋은 친구와 맛있는 음식, 지루한 에피소드 없이, 최고의 OST가 흐르는 해피엔딩 드라마 같은 삶이 되길 바라요.' },
-    { kr: '세 번째 소원 · Wish #3', en: 'Thank you for being such a kind, supportive and fun friend. May this year bring you growth, big wins and all the peace you deserve. 💛', ko: '다정하고 든든하고 재미있는 친구가 되어줘서 고마워요. 올해는 성장과 큰 성과, 그리고 마음의 평화가 가득하길 바라요.' },
-    { kr: '네 번째 소원 · Wish #4', en: '화이팅! (Fighting!) Keep building cool things in Pune. The best season of your story is just starting. 🚀', ko: '푸네에서 멋진 것들을 계속 만들어가세요. 당신 이야기의 가장 좋은 시즌이 이제 시작이에요.' }
-  ];
-
-  function renderFinalWishes() {
-    var box = document.getElementById('finalWishes');
-    if (!box) return;
-    box.innerHTML = '';
-    WISHES.forEach(function (w) {
-      var card = document.createElement('div'); card.className = 'wish';
-      var kr = document.createElement('div'); kr.className = 'kr'; kr.textContent = w.kr;
-      var p = document.createElement('p'); p.textContent = w.en;
-      var s = document.createElement('span'); s.className = 'sub'; s.textContent = w.ko;
-      card.appendChild(kr); card.appendChild(p); card.appendChild(s);
-      box.appendChild(card);
-    });
-
-    var treatCard = document.createElement('div');
-    treatCard.className = 'wish treat-box';
-    treatCard.id = 'treatCard';
-    treatCard.innerHTML = '<div class="kr">🎁 Your Birthday Treat · 생일 간식</div><p><b></b></p><span class="sub"></span>';
-    box.appendChild(treatCard);
-  }
-  renderFinalWishes();
-
-  /* ---------- Mystery Gift Box (Final Page) ---------- */
-  window.openMysteryBox = function () {
-    var perks = document.getElementById('secretPerks');
-    if (perks) {
-      perks.classList.toggle('open');
-      if (sfx.cheer) sfx.cheer();
-      if (window.BdayConfetti) window.BdayConfetti.fireConfettiOnce();
-      autoScrollTo(perks, false);
-    }
-  };
-
-  /* ---------- Song Player (Final Page) ---------- */
-  var songBtn = document.getElementById('songBtn');
-  if (songBtn) {
-    songBtn.addEventListener('click', function () {
-      if (window.BdayAudio) window.BdayAudio.toggleSong();
-    });
-  }
-
-  /* ---------- Final Page Sequencing & Auto-Scrolling ---------- */
-  var finalStarted = false;
-  function enterFinal() {
-    if (finalStarted) return;
-    finalStarted = true;
-    if (window.BdayConfetti) window.BdayConfetti.fireConfettiOnce();
-
-    if (!reduce && sfx.thud) {
-      [600, 1100, 1500].forEach(function (ms) { setTimeout(sfx.thud, ms); });
-      [1700, 1850, 2000].forEach(function (ms) { if (sfx.candle) setTimeout(sfx.candle, ms); });
-      if (sfx.light) setTimeout(sfx.light, 2400);
-    }
-
-    if (window.BdayAudio) {
-      setTimeout(function () {
-        window.BdayAudio.playSong();
-      }, reduce ? 0 : 1300);
-    }
-
-    // Reveal photos
-    revealAll('#step4 .shot', 2500, 900, sfx.shutter, true);
-
-    // Mystery Box
-    setTimeout(function () {
-      var mb = document.getElementById('mysteryBox');
-      if (mb) {
-        mb.classList.add('show');
-        if (sfx.wish) sfx.wish();
-        autoScrollTo(mb, false);
-      }
-    }, 6200);
-
-    // Final Wishes
-    revealAll('#finalWishes .wish', 7000, 750, sfx.wish, true);
-  }
-
-  /* ---------- EP 1 -> EP 2 Navigation ---------- */
-  var startBtn = document.getElementById('startBtn');
-  if (startBtn) {
-    startBtn.addEventListener('click', function () {
+  if (stage5PrevBtn) {
+    stage5PrevBtn.addEventListener('click', function () {
       if (sfx.click) sfx.click();
-      goTo(2);
-      typeCode(function () {
-        var header = document.getElementById('dossierHeader');
-        var sub = document.getElementById('dossierSub');
-        if (header) header.style.opacity = '1';
-        if (sub) sub.style.opacity = '1';
-
-        revealAll('#dossierGrid .dcard', 200, 650, sfx.wish, true);
-
-        setTimeout(function () {
-          autoScrollTo(document.getElementById('toTreatBtn'), false);
-        }, 3200);
-      });
+      goToStage(4);
     });
   }
 
-  /* ---------- EP 2 -> EP 3 Navigation ---------- */
-  var toTreatBtn = document.getElementById('toTreatBtn');
-  if (toTreatBtn) {
-    toTreatBtn.addEventListener('click', function () {
+  if (replayBtn) {
+    replayBtn.addEventListener('click', function () {
       if (sfx.click) sfx.click();
-      goTo(3);
+      if (cakeFlame) cakeFlame.classList.remove('blown-out');
+      if (smokePuff) smokePuff.classList.remove('active');
+      if (cakeCutBanner) cakeCutBanner.classList.remove('active');
+      if (blowCakeBtn) {
+        blowCakeBtn.textContent = '💨 Make a Wish & Blow the Candles!';
+        blowCakeBtn.disabled = false;
+      }
+      goToStage(1);
     });
   }
+
+  // =================================================
+  // MASCOT HELPER (SHIN-CHAN / CUTE BEAR)
+  // =================================================
+  var mascotWidget = document.getElementById('mascotWidget');
+  var mascotBubble = document.getElementById('mascotBubble');
+  var mascotPhrases = [
+    "Happy Birthday Miss Agrawal! 🌸",
+    "Dalal Street's brightest superstar! 📈",
+    "May your joy hit Upper Circuit! 🔒",
+    "Cake khilana zaroori hai! 🎂",
+    "100% Bullish on you! 🚀",
+    "You are a true 100-Bagger! 💎",
+    "Keep shining and smiling! ✨"
+  ];
+  var phraseIdx = 0;
+
+  if (mascotWidget && mascotBubble) {
+    mascotWidget.addEventListener('click', function () {
+      if (sfx.cheer) sfx.cheer();
+      mascotWidget.style.transform = 'scale(1.15) rotate(-6deg)';
+      setTimeout(function () {
+        mascotWidget.style.transform = '';
+      }, 300);
+      phraseIdx = (phraseIdx + 1) % mascotPhrases.length;
+      mascotBubble.textContent = mascotPhrases[phraseIdx];
+    });
+  }
+
+  console.log('✓ Miss Agrawal Birthday Site Initialized (Step-by-Step Stock & Cute Theme)');
 });
