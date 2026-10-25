@@ -169,32 +169,34 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Playful Dodging No Button
+  // Playful No Button & Funny Popup
+  var noPopupModal = document.getElementById('noPopupModal');
+  var noPopupRetryBtn = document.getElementById('noPopupRetryBtn');
+
   if (treatNoBtn) {
-    var dodgeCount = 0;
-    var dodgeTexts = [
-      'Are you sure? 🥺',
-      'No is not allowed! 😜',
-      'Upper Circuit locked! 🔒',
-      'Cake is mandatory! 🍰',
-      '100% Bullish on treats! 📈'
-    ];
-
-    function dodgeNoBtn() {
-      dodgeCount++;
-      if (sfx.click) sfx.click();
-      var xOffset = (Math.random() - 0.5) * 160;
-      var yOffset = (Math.random() - 0.5) * 80;
-      treatNoBtn.style.transform = 'translate(' + xOffset + 'px, ' + yOffset + 'px)';
-      treatNoBtn.textContent = dodgeTexts[dodgeCount % dodgeTexts.length];
-    }
-
-    treatNoBtn.addEventListener('mouseenter', dodgeNoBtn);
-    treatNoBtn.addEventListener('touchstart', dodgeNoBtn, { passive: true });
     treatNoBtn.addEventListener('click', function (e) {
       e.preventDefault();
-      dodgeNoBtn();
-      alert('Error: "No" is not an available option on your birthday! Please pick your treat! 🎂🥰');
+      if (sfx.click) sfx.click();
+      if (noPopupModal) {
+        noPopupModal.classList.add('active');
+      }
+    });
+  }
+
+  if (noPopupRetryBtn) {
+    noPopupRetryBtn.addEventListener('click', function () {
+      if (sfx.click) sfx.click();
+      if (noPopupModal) {
+        noPopupModal.classList.remove('active');
+      }
+      if (treatNoBtn) {
+        treatNoBtn.style.transform = '';
+        treatNoBtn.textContent = 'No thanks';
+      }
+      // Draw attention to YES button
+      if (treatYesBtn) {
+        treatYesBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     });
   }
 
