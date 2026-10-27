@@ -404,18 +404,18 @@
   };
 
   function updateSongUIs() {
-    var disc = document.getElementById('vinylDisc');
-    var btn = document.getElementById('finaleSongBtn');
-    if (disc) {
+    var discs = document.querySelectorAll('.vinyl-disc');
+    var btns = document.querySelectorAll('.song-toggle-btn');
+    discs.forEach(function (disc) {
       if (isSongPlaying) {
         disc.classList.add('playing');
       } else {
         disc.classList.remove('playing');
       }
-    }
-    if (btn) {
+    });
+    btns.forEach(function (btn) {
       btn.textContent = isSongPlaying ? '⏸' : '▶';
-    }
+    });
   }
 
   function playSong() {

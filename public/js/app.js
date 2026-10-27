@@ -566,12 +566,19 @@ function initMahimaApp() {
       activeStageEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // Specific stage behaviors
     if (currentStage === 2) {
       // Stock market stage: trigger pop sound
       if (sfx.pop) sfx.pop();
+    } else if (currentStage === 4) {
+      // Stage 4 Memory Gallery: play song so the round vinyl disc spins
+      if (audioCtrl && audioCtrl.playSong && !audioCtrl.isPlaying()) {
+        audioCtrl.playSong();
+      }
+      if (audioCtrl && audioCtrl.updateSongUIs) {
+        audioCtrl.updateSongUIs();
+      }
     } else if (currentStage === 5) {
-      // Grand Finale: initially show glowing candles unless already blown this session
+      // Stage 5 Grand Finale: ensure song is playing and round vinyl disc spins
       if (!window.__candlesBlown) {
         var flameEl = document.getElementById('cakeFlame');
         var smokeEl = document.getElementById('smokePuff');
@@ -588,8 +595,11 @@ function initMahimaApp() {
         }
       }
       fireConfetti(true);
-      if (audioCtrl && audioCtrl.playSong) {
+      if (audioCtrl && audioCtrl.playSong && !audioCtrl.isPlaying()) {
         audioCtrl.playSong();
+      }
+      if (audioCtrl && audioCtrl.updateSongUIs) {
+        audioCtrl.updateSongUIs();
       }
     } else if (currentStage === 6) {
       updateThankYouDeliveryCardVisibility();
@@ -1792,14 +1802,16 @@ function initMahimaApp() {
     });
   }
 
-  // Song controls
-  if (finaleSongBtn) {
-    finaleSongBtn.addEventListener('click', function () {
+  // Song controls (handles Stage 4 and Stage 5 music bars and vinyl discs)
+  document.addEventListener('click', function (e) {
+    var toggleBtn = e.target.closest('.song-toggle-btn');
+    var discClick = e.target.closest('.vinyl-disc');
+    if (toggleBtn || discClick) {
       if (audioCtrl && audioCtrl.toggleSong) {
         audioCtrl.toggleSong();
       }
-    });
-  }
+    }
+  });
 
   if (muteBtn) {
     muteBtn.addEventListener('click', function () {
