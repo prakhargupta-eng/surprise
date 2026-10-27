@@ -37,8 +37,8 @@ function initMahimaApp() {
   // ================= CONFIGURATION =================
   var NAME = 'Mahima';
   var TARGET_PIN = '051100';
-  var BIRTHDAY_DATE = new Date('2026-10-27T07:30:00'); // October 26, 2026 at 01:20 AM IST
-  var EXPIRY_DATE = new Date('2026-11-6T00:00:00');   // October 27, 2026 (Post-birthday)
+  var BIRTHDAY_DATE = new Date('2026-11-05T00:00:00'); // November 5, 2026 at 08:00 AM IST
+  var EXPIRY_DATE = new Date('2026-11-06T00:00:00');   // October 27, 2026 (Post-birthday)
   // =================================================
 
   var vipLockOverlay = document.getElementById('vipLockOverlay');
@@ -228,6 +228,13 @@ function initMahimaApp() {
     try {
       sessionStorage.setItem('mahima_vip_unlocked', 'true');
     } catch (e) { }
+
+    if (window.logMahimaAction) {
+      window.logMahimaAction('vip_pin_unlocked', {
+        buttonText: 'VIP Pass Unlocked (PIN 051100)',
+        stage: 1
+      });
+    }
 
     if (audioCtrl && audioCtrl.celebrateUnlock) {
       audioCtrl.celebrateUnlock();
@@ -511,6 +518,14 @@ function initMahimaApp() {
     var previousStage = currentStage;
     currentStage = stepNumber;
     window.__currentStage = currentStage;
+
+    if (window.logMahimaAction && previousStage !== currentStage) {
+      window.logMahimaAction('stage_navigated', {
+        buttonText: 'Navigated to Stage ' + currentStage,
+        stage: currentStage,
+        payload: { from: previousStage, to: currentStage }
+      });
+    }
 
     // Toggle active stage cards
     for (var s = 1; s <= TOTAL_STAGES; s++) {
@@ -1099,6 +1114,16 @@ function initMahimaApp() {
       audioCtrl.sfx.voucherWin();
     }
     fireConfetti(false);
+
+    var couponTitleEl = box.querySelector('.coupon-title') || box.querySelector('.scratch-content h3');
+    var couponTitle = couponTitleEl ? couponTitleEl.textContent.trim() : 'Friendship Dividend Coupon';
+    if (window.logMahimaAction) {
+      window.logMahimaAction('coupon_scratched', {
+        buttonText: 'Unlocked: ' + couponTitle,
+        stage: 3,
+        payload: { couponTitle: couponTitle }
+      });
+    }
 
     // Update revealed count
     updateScratchedCount();
@@ -1712,7 +1737,7 @@ function initMahimaApp() {
     }
   }
 
-  // Global Mute/Unmute Controller (Top-right button)
+  // Global Mute/Unmute Controller (Bottom-left button)
   function updateMuteButtonUI(isMuted) {
     if (globalMuteBtn) {
       if (isMuted) {
@@ -1819,6 +1844,9 @@ function initMahimaApp() {
   if (stage5NextBtn) {
     stage5NextBtn.addEventListener('click', function () {
       if (sfx.select) sfx.select();
+      if (window.endMahimaSession) {
+        window.endMahimaSession('A Final Note for You ⭐➡️');
+      }
       goToStage(6);
     });
   }
