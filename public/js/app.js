@@ -37,8 +37,8 @@ function initMahimaApp() {
   // ================= CONFIGURATION =================
   var NAME = 'Mahima';
   var TARGET_PIN = '051100';
-  var BIRTHDAY_DATE = new Date('2026-10-27T07:20:00'); // October 26, 2026 at 01:20 AM IST
-  var EXPIRY_DATE = new Date('2026-10-28T00:00:00');   // October 27, 2026 (Post-birthday)
+  var BIRTHDAY_DATE = new Date('2026-10-27T07:30:00'); // October 26, 2026 at 01:20 AM IST
+  var EXPIRY_DATE = new Date('2026-11-6T00:00:00');   // October 27, 2026 (Post-birthday)
   // =================================================
 
   var vipLockOverlay = document.getElementById('vipLockOverlay');
@@ -229,8 +229,13 @@ function initMahimaApp() {
       sessionStorage.setItem('mahima_vip_unlocked', 'true');
     } catch (e) { }
 
-    if (audioCtrl && audioCtrl.marketBell) {
+    if (audioCtrl && audioCtrl.celebrateUnlock) {
+      audioCtrl.celebrateUnlock();
+    } else if (audioCtrl && audioCtrl.marketBell) {
       audioCtrl.marketBell();
+      if (audioCtrl.sfx && audioCtrl.sfx.cheer) {
+        setTimeout(function () { audioCtrl.sfx.cheer(); }, 380);
+      }
     } else if (audioCtrl && audioCtrl.sfx && audioCtrl.sfx.cheer) {
       audioCtrl.sfx.cheer();
     }
@@ -255,6 +260,69 @@ function initMahimaApp() {
       }, 400);
     }
   }
+
+  // ==========================================================
+  // AUTOPLAY POLICY AUDIO UNLOCK PROMPT BANNER
+  // Shows a cute celebratory pill prompt if browser blocked autoplay
+  // Dismisses automatically on any click or tap anywhere
+  // ==========================================================
+  var audioPromptBanner = null;
+
+  function showAudioPromptBanner() {
+    if (audioPromptBanner || document.getElementById('audioUnlockBanner')) return;
+    if (audioCtrl && audioCtrl.isAudioBlocked && !audioCtrl.isAudioBlocked()) return;
+
+    audioPromptBanner = document.createElement('div');
+    audioPromptBanner.className = 'audio-unlock-banner';
+    audioPromptBanner.id = 'audioUnlockBanner';
+    audioPromptBanner.setAttribute('role', 'button');
+    audioPromptBanner.setAttribute('tabindex', '0');
+    audioPromptBanner.innerHTML = '<span class="banner-bell-icon">🔔</span><span>Tap anywhere to Ring Birthday Bell & Enable Audio! 🎵</span>';
+    document.body.appendChild(audioPromptBanner);
+
+    function dismissPrompt() {
+      if (audioPromptBanner) {
+        audioPromptBanner.classList.add('hiding');
+        setTimeout(function () {
+          if (audioPromptBanner && audioPromptBanner.parentNode) {
+            audioPromptBanner.parentNode.removeChild(audioPromptBanner);
+          }
+          audioPromptBanner = null;
+        }, 300);
+      }
+      window.removeEventListener('click', dismissPrompt);
+      window.removeEventListener('touchstart', dismissPrompt);
+    }
+
+    audioPromptBanner.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (audioCtrl && audioCtrl.unlockAudio) {
+        audioCtrl.unlockAudio();
+      }
+      dismissPrompt();
+    });
+
+    setTimeout(function () {
+      window.addEventListener('click', dismissPrompt);
+      window.addEventListener('touchstart', dismissPrompt);
+    }, 150);
+  }
+
+  window.addEventListener('bday:audio-blocked', function () {
+    showAudioPromptBanner();
+  });
+
+  window.addEventListener('bday:audio-unlocked', function () {
+    if (audioPromptBanner) {
+      audioPromptBanner.classList.add('hiding');
+      setTimeout(function () {
+        if (audioPromptBanner && audioPromptBanner.parentNode) {
+          audioPromptBanner.parentNode.removeChild(audioPromptBanner);
+        }
+        audioPromptBanner = null;
+      }, 300);
+    }
+  });
 
   // Check if previously unlocked in this session
   try {

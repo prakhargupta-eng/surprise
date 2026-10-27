@@ -9,17 +9,28 @@
   var muted = false;
   var songAudio = new Audio('happy_birthday.mp3');
   var isSongPlaying = false;
+  var pendingCelebration = false;
 
   songAudio.loop = true;
   songAudio.preload = 'auto';
 
-  function ensureAudio() {
+  function ensureAudio(callback) {
     if (muted) return false;
     try {
-      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
-      if (actx.state === 'suspended') {
-        actx.resume();
+      if (!actx) {
+        var AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) actx = new AudioCtx();
       }
+      if (!actx) return false;
+
+      if (actx.state === 'suspended') {
+        actx.resume().then(function () {
+          if (callback) callback();
+        }).catch(function () {});
+        return false;
+      }
+
+      if (callback) callback();
       return true;
     } catch (e) {
       return false;
@@ -27,45 +38,67 @@
   }
 
   function tone(freq, dur, type, vol, delay) {
-    if (!ensureAudio()) return;
-    var t = actx.currentTime + (delay || 0);
-    var o = actx.createOscillator();
-    var g = actx.createGain();
-    o.type = type || 'sine';
-    o.frequency.value = freq;
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(vol || 0.15, t + 0.01);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    o.connect(g);
-    g.connect(actx.destination);
-    o.start(t);
-    o.stop(t + dur + 0.02);
+    if (muted) return;
+    try {
+      if (!actx) {
+        var AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) actx = new AudioCtx();
+      }
+      if (!actx || actx.state === 'suspended') return;
+
+      var t = actx.currentTime + (delay || 0);
+      var o = actx.createOscillator();
+      var g = actx.createGain();
+      o.type = type || 'sine';
+      o.frequency.value = freq;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(vol || 0.15, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g);
+      g.connect(actx.destination);
+      o.start(t);
+      o.stop(t + dur + 0.02);
+    } catch (e) {}
   }
 
   function noise(dur, vol, hpFreq) {
-    if (!ensureAudio()) return;
-    var len = Math.floor(actx.sampleRate * dur);
-    var buf = actx.createBuffer(1, len, actx.sampleRate);
-    var d = buf.getChannelData(0);
-    for (var i = 0; i < len; i++) {
-      d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2);
-    }
-    var s = actx.createBufferSource();
-    s.buffer = buf;
-    var f = actx.createBiquadFilter();
-    f.type = 'highpass';
-    f.frequency.value = hpFreq || 2000;
-    var g = actx.createGain();
-    g.gain.value = vol || 0.3;
-    s.connect(f);
-    f.connect(g);
-    g.connect(actx.destination);
-    s.start();
+    if (muted) return;
+    try {
+      if (!actx) {
+        var AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) actx = new AudioCtx();
+      }
+      if (!actx || actx.state === 'suspended') return;
+
+      var len = Math.floor(actx.sampleRate * dur);
+      var buf = actx.createBuffer(1, len, actx.sampleRate);
+      var d = buf.getChannelData(0);
+      for (var i = 0; i < len; i++) {
+        d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2);
+      }
+      var s = actx.createBufferSource();
+      s.buffer = buf;
+      var f = actx.createBiquadFilter();
+      f.type = 'highpass';
+      f.frequency.value = hpFreq || 2000;
+      var g = actx.createGain();
+      g.gain.value = vol || 0.3;
+      s.connect(f);
+      f.connect(g);
+      g.connect(actx.destination);
+      s.start();
+    } catch (e) {}
   }
 
   function popSound() {
+    if (muted) return;
     try {
-      if (!ensureAudio()) return;
+      if (!actx) {
+        var AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) actx = new AudioCtx();
+      }
+      if (!actx || actx.state === 'suspended') return;
+
       var t = actx.currentTime;
       var len = Math.floor(actx.sampleRate * 0.35);
       var buf = actx.createBuffer(1, len, actx.sampleRate);
@@ -117,11 +150,93 @@
 
   // Stock Market Opening Bell sound
   function marketBell() {
-    ensureAudio();
-    [880, 1108, 1318, 1760].forEach(function (f, i) {
-      tone(f, 1.4, 'sine', 0.22, i * 0.04);
-      tone(f * 1.5, 0.9, 'triangle', 0.1, i * 0.04);
+    if (muted) return;
+    ensureAudio(function () {
+      [880, 1108, 1318, 1760].forEach(function (f, i) {
+        tone(f, 1.4, 'sine', 0.22, i * 0.04);
+        tone(f * 1.5, 0.9, 'triangle', 0.1, i * 0.04);
+      });
     });
+  }
+
+  function doCelebration() {
+    if (muted) return;
+    marketBell();
+    setTimeout(function () {
+      if (sfx.cheer) sfx.cheer();
+    }, 380);
+    setTimeout(function () {
+      popSound();
+    }, 700);
+  }
+
+  function celebrateUnlock() {
+    if (muted) return;
+    var ctx = actx || (function () {
+      try {
+        var AudioCtx = window.AudioContext || window.webkitAudioContext;
+        return AudioCtx ? (actx = new AudioCtx()) : null;
+      } catch (e) { return null; }
+    })();
+
+    if (ctx && ctx.state === 'running') {
+      doCelebration();
+      return;
+    }
+
+    // Context is suspended or waiting for gesture
+    if (ctx && ctx.state === 'suspended') {
+      ctx.resume().then(function () {
+        if (ctx.state === 'running') {
+          pendingCelebration = false;
+          doCelebration();
+          if (window.dispatchEvent) {
+            window.dispatchEvent(new CustomEvent('bday:audio-unlocked'));
+          }
+        }
+      }).catch(function () {});
+    }
+
+    // Flag as pending so the first user interaction immediately fires it
+    pendingCelebration = true;
+    if (window.dispatchEvent) {
+      window.dispatchEvent(new CustomEvent('bday:audio-blocked'));
+    }
+  }
+
+  function unlockOnGesture() {
+    if (!actx) {
+      try {
+        var AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) actx = new AudioCtx();
+      } catch (e) {}
+    }
+    if (actx && actx.state === 'suspended') {
+      actx.resume().then(function () {
+        if (pendingCelebration) {
+          pendingCelebration = false;
+          doCelebration();
+          if (window.dispatchEvent) {
+            window.dispatchEvent(new CustomEvent('bday:audio-unlocked'));
+          }
+        }
+      }).catch(function () {});
+    } else if (pendingCelebration && actx && actx.state === 'running') {
+      pendingCelebration = false;
+      doCelebration();
+      if (window.dispatchEvent) {
+        window.dispatchEvent(new CustomEvent('bday:audio-unlocked'));
+      }
+    }
+  }
+
+  // Pre-unlock audio on ANY interaction anywhere on the screen
+  ['click', 'touchstart', 'touchend', 'pointerdown', 'keydown'].forEach(function (evt) {
+    window.addEventListener(evt, unlockOnGesture, { passive: true });
+  });
+
+  function isAudioBlocked() {
+    return !actx || actx.state === 'suspended';
   }
 
   var sfx = {
@@ -342,6 +457,12 @@
     tone: tone,
     marketBell: marketBell,
     popSound: popSound,
+    celebrateUnlock: celebrateUnlock,
+    unlockAudio: unlockOnGesture,
+    isAudioBlocked: isAudioBlocked,
+    hasPendingCelebration: function () {
+      return pendingCelebration;
+    },
     playSong: playSong,
     pauseSong: pauseSong,
     toggleSong: toggleSong,
