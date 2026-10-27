@@ -13,7 +13,7 @@ function initMahimaApp() {
   window.__currentStage = 1;
   // =================================================
 
-  
+
   var sfx = (window.BdayAudio && window.BdayAudio.sfx) || window.sfx || {};
   var audioCtrl = window.BdayAudio;
   var fireConfetti = window.fireConfetti || function () { };
@@ -32,6 +32,304 @@ function initMahimaApp() {
       star.style.fontSize = (16 + Math.random() * 16) + 'px';
       ambientBg.appendChild(star);
     }
+  }
+
+  // ================= CONFIGURATION =================
+  var NAME = 'Mahima';
+  var TARGET_PIN = '051100';
+  var BIRTHDAY_DATE = new Date('2026-10-27T07:20:00'); // October 26, 2026 at 01:20 AM IST
+  var EXPIRY_DATE = new Date('2026-10-28T00:00:00');   // October 27, 2026 (Post-birthday)
+  // =================================================
+
+  var vipLockOverlay = document.getElementById('vipLockOverlay');
+  var vipCountdownView = document.getElementById('vipCountdownView');
+  var vipPinView = document.getElementById('vipPinView');
+  var openVipPinBtn = document.getElementById('openVipPinBtn');
+  var backToCountdownBtn = document.getElementById('backToCountdownBtn');
+  var cdHours = document.getElementById('cdHours');
+  var cdMinutes = document.getElementById('cdMinutes');
+  var cdSeconds = document.getElementById('cdSeconds');
+  var cdStatusText = document.getElementById('cdStatusText');
+  var pinBoxes = document.querySelectorAll('.pin-box');
+  var vipPinError = document.getElementById('vipPinError');
+  var vipUnlockBtn = document.getElementById('vipUnlockBtn');
+  var keyBtns = document.querySelectorAll('.key-btn');
+
+  var cdBadge = document.getElementById('cdBadge');
+  var cdTitle = document.getElementById('cdTitle');
+  var cdSubtitle = document.getElementById('cdSubtitle');
+  var cdGrid = document.getElementById('cdGrid');
+  var postBirthdayNotice = document.getElementById('postBirthdayNotice');
+  var cdLiveDot = document.getElementById('cdLiveDot');
+  var cdHeaderText = document.getElementById('cdHeaderText');
+
+  /* ---------- DATE LOGIC & ROUTING (from commit 63cfd92d) ---------- */
+  var urlParams = new URLSearchParams(window.location.search);
+  var now = new Date();
+
+  // URL overrides for easy testing (e.g. ?preview=expired or ?preview=countdown or ?date=2026-10-27)
+  if (urlParams.has('date')) {
+    var parsed = new Date(urlParams.get('date'));
+    if (!isNaN(parsed.getTime())) now = parsed;
+  } else if (urlParams.get('preview') === 'expired' || urlParams.get('preview') === 'post') {
+    now = new Date('2026-10-27T12:00:00');
+  } else if (urlParams.get('preview') === 'countdown') {
+    now = new Date('2026-10-25T12:00:00');
+  } else if (urlParams.get('preview') === 'live' || urlParams.get('preview') === 'birthday') {
+    now = new Date('2026-10-26T12:00:00');
+  }
+
+  var isPostBirthday = (now >= EXPIRY_DATE);
+  var isBeforeBirthday = (now < BIRTHDAY_DATE);
+  var unlockedSession = sessionStorage.getItem('mahima_vip_unlocked') || sessionStorage.getItem('unlocked_bday_preview');
+
+  /* ---------- POST-BIRTHDAY SETUP ---------- */
+  function showPostBirthdayView() {
+    if (cdBadge) {
+      cdBadge.textContent = '🌸 SPECIAL SESSION CONCLUDED · POST-BIRTHDAY MEMO';
+      cdBadge.style.background = 'var(--gold-light)';
+      cdBadge.style.color = '#b45309';
+    }
+    if (cdTitle) {
+      cdTitle.innerHTML = 'Belated Happy Birthday, <span class="highlight">' + NAME + '!</span> 🎂✨';
+    }
+    if (cdSubtitle) {
+      cdSubtitle.textContent = 'The birthday trading bell has rung and the special session for this year has concluded.';
+    }
+    if (cdGrid) cdGrid.style.display = 'none';
+    if (postBirthdayNotice) postBirthdayNotice.style.display = 'block';
+    if (cdLiveDot) {
+      cdLiveDot.style.background = '#f59e0b';
+      cdLiveDot.style.boxShadow = '0 0 8px #f59e0b';
+    }
+    if (cdHeaderText) cdHeaderText.textContent = 'SESSION CONCLUDED FOR THIS YEAR';
+    if (cdStatusText) {
+      cdStatusText.textContent = '✨ Market session closed · Visit next year to celebrate again! 🎊';
+      cdStatusText.style.color = '#b45309';
+    }
+    if (openVipPinBtn) {
+      openVipPinBtn.innerHTML = '👑 VIP Pass Entry (View Birthday Memories) 🔑';
+    }
+  }
+
+  /* ---------- COUNTDOWN TIMER LOGIC ---------- */
+  var countdownFinished = false;
+
+  function updateCountdown() {
+    var curr = new Date();
+    if (urlParams.has('date')) {
+      var p = new Date(urlParams.get('date'));
+      if (!isNaN(p.getTime())) curr = p;
+    } else if (urlParams.get('preview') === 'countdown') {
+      curr = new Date('2026-10-25T12:00:00');
+    }
+    var diff = BIRTHDAY_DATE - curr;
+
+    if (diff <= 0) {
+      if (!countdownFinished) {
+        countdownFinished = true;
+        onCountdownComplete();
+      }
+      return;
+    }
+
+    var totalSecs = Math.floor(diff / 1000);
+    var hrs = Math.floor(totalSecs / 3600);
+    var mins = Math.floor((totalSecs % 3600) / 60);
+    var secs = totalSecs % 60;
+
+    var hrsStr = (hrs < 10 ? '0' : '') + hrs;
+    var minsStr = (mins < 10 ? '0' : '') + mins;
+    var secsStr = (secs < 10 ? '0' : '') + secs;
+
+    if (cdHours) cdHours.textContent = hrsStr;
+    if (cdMinutes) cdMinutes.textContent = minsStr;
+    if (cdSeconds) cdSeconds.textContent = secsStr;
+  }
+
+  function onCountdownComplete() {
+    if (cdHours) cdHours.textContent = '00';
+    if (cdMinutes) cdMinutes.textContent = '00';
+    if (cdSeconds) cdSeconds.textContent = '00';
+    if (cdStatusText) {
+      cdStatusText.textContent = "🎉 IT'S TIME! The Birthday Bell Has Officially Rung! 🔔✨";
+      cdStatusText.style.color = '#10b981';
+    }
+    setTimeout(function () {
+      unlockVipAccess();
+    }, 300);
+  }
+
+  /* ---------- ROUTING EVALUATION ON LOAD (from commit 63cfd92d) ---------- */
+  if (unlockedSession === 'true') {
+    // Unlocked previously in this session
+    if (vipLockOverlay) vipLockOverlay.style.display = 'none';
+  } else if (isPostBirthday) {
+    // Visits on or after October 27th show Post-Birthday Special view
+    showPostBirthdayView();
+  } else if (isBeforeBirthday) {
+    // Visits before October 26th 1:20 AM show Countdown
+    var timerInterval = setInterval(updateCountdown, 1000);
+    updateCountdown();
+  } else {
+    // Visits on Birthday (October 26th): Countdown is zero, auto-unlock!
+    onCountdownComplete();
+  }
+
+  // View Switching (Countdown <-> PIN View)
+  if (openVipPinBtn) {
+    openVipPinBtn.addEventListener('click', function () {
+      if (vipCountdownView) vipCountdownView.style.display = 'none';
+      if (vipPinView) vipPinView.style.display = 'block';
+      if (sfx && sfx.click) sfx.click();
+      if (pinBoxes && pinBoxes.length > 0) {
+        setTimeout(function () { pinBoxes[0].focus(); }, 120);
+      }
+    });
+  }
+
+  if (backToCountdownBtn) {
+    backToCountdownBtn.addEventListener('click', function () {
+      if (vipPinView) vipPinView.style.display = 'none';
+      if (vipCountdownView) vipCountdownView.style.display = 'block';
+      if (sfx && sfx.click) sfx.click();
+      clearPin(false);
+      if (vipPinError) vipPinError.style.display = 'none';
+    });
+  }
+
+  // 2. VIP PIN Unlock Functions
+  function getEnteredPin() {
+    var pin = '';
+    pinBoxes.forEach(function (box) {
+      pin += (box.value || '').trim();
+    });
+    return pin;
+  }
+
+  function clearPin(focusFirst) {
+    pinBoxes.forEach(function (box) {
+      box.value = '';
+      box.classList.remove('has-val');
+      box.classList.remove('error');
+    });
+    if (focusFirst !== false && pinBoxes.length > 0 && vipPinView && vipPinView.style.display !== 'none') {
+      pinBoxes[0].focus();
+    }
+  }
+
+  function unlockVipAccess() {
+    if (vipLockOverlay) {
+      vipLockOverlay.classList.add('unlocked');
+      setTimeout(function () {
+        vipLockOverlay.style.display = 'none';
+      }, 500);
+    }
+    try {
+      sessionStorage.setItem('mahima_vip_unlocked', 'true');
+    } catch (e) { }
+
+    if (audioCtrl && audioCtrl.marketBell) {
+      audioCtrl.marketBell();
+    } else if (audioCtrl && audioCtrl.sfx && audioCtrl.sfx.cheer) {
+      audioCtrl.sfx.cheer();
+    }
+    fireConfetti(true);
+  }
+
+  function validateVipPin() {
+    var entered = getEnteredPin();
+    if (vipPinError) vipPinError.style.display = 'none';
+
+    if (entered === TARGET_PIN) {
+      unlockVipAccess();
+    } else {
+      if (vipPinError) {
+        vipPinError.textContent = '❌ Incorrect VIP Passcode. Access Restricted!';
+        vipPinError.style.display = 'block';
+      }
+      pinBoxes.forEach(function (b) { b.classList.add('error'); });
+      if (sfx.pop) sfx.pop();
+      setTimeout(function () {
+        clearPin();
+      }, 400);
+    }
+  }
+
+  // Check if previously unlocked in this session
+  try {
+    if (sessionStorage.getItem('mahima_vip_unlocked') === 'true') {
+      if (vipLockOverlay) {
+        vipLockOverlay.style.display = 'none';
+      }
+    }
+  } catch (e) { }
+
+  // Keypad clicks
+  keyBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var val = btn.getAttribute('data-key');
+      var action = btn.getAttribute('data-action');
+      if (sfx.click) sfx.click();
+
+      if (action === 'clear') {
+        clearPin();
+        if (vipPinError) vipPinError.style.display = 'none';
+      } else if (action === 'back') {
+        for (var i = pinBoxes.length - 1; i >= 0; i--) {
+          if (pinBoxes[i].value) {
+            pinBoxes[i].value = '';
+            pinBoxes[i].classList.remove('has-val');
+            pinBoxes[i].focus();
+            break;
+          }
+        }
+      } else if (val !== null && val !== undefined) {
+        for (var j = 0; j < pinBoxes.length; j++) {
+          if (!pinBoxes[j].value) {
+            pinBoxes[j].value = val;
+            pinBoxes[j].classList.add('has-val');
+            if (j < pinBoxes.length - 1) {
+              pinBoxes[j + 1].focus();
+            } else {
+              // All 6 filled: auto validate!
+              setTimeout(validateVipPin, 150);
+            }
+            break;
+          }
+        }
+      }
+    });
+  });
+
+  // Keyboard typing inside PIN input boxes
+  pinBoxes.forEach(function (box, idx) {
+    box.addEventListener('input', function () {
+      var val = box.value.replace(/[^0-9]/g, '');
+      box.value = val ? val[val.length - 1] : '';
+      if (box.value) {
+        box.classList.add('has-val');
+        if (idx < pinBoxes.length - 1) {
+          pinBoxes[idx + 1].focus();
+        } else {
+          setTimeout(validateVipPin, 150);
+        }
+      } else {
+        box.classList.remove('has-val');
+      }
+    });
+
+    box.addEventListener('keydown', function (e) {
+      if (e.key === 'Backspace' && !box.value && idx > 0) {
+        pinBoxes[idx - 1].focus();
+      } else if (e.key === 'Enter') {
+        validateVipPin();
+      }
+    });
+  });
+
+  if (vipUnlockBtn) {
+    vipUnlockBtn.addEventListener('click', validateVipPin);
   }
 
   // =================================================
@@ -73,7 +371,7 @@ function initMahimaApp() {
   function isTreatAddressRequiredAndMissing() {
     var formEl = document.getElementById('treatFormContainer');
     var isYesActive = (window.__treatYesChosen === true) || (formEl && formEl.classList.contains('active'));
-    
+
     // If YES was not chosen, address is not mandatory
     if (!isYesActive) {
       return false;
@@ -93,7 +391,7 @@ function initMahimaApp() {
           return false;
         }
       }
-    } catch (e) {}
+    } catch (e) { }
 
     // Otherwise, user picked YES but hasn't filled/ordered their address yet
     return true;
@@ -338,7 +636,7 @@ function initMahimaApp() {
       if (sfx.select) sfx.select();
       treatCards.forEach(function (c) { c.classList.remove('selected'); });
       card.classList.add('selected');
-      
+
       selectedTreatName = card.getAttribute('data-treat') || 'Gourmet Birthday Cake';
       isOtherSelected = card.getAttribute('data-is-other') === 'true';
 
@@ -647,7 +945,7 @@ function initMahimaApp() {
         if (ratio > 0.42) {
           revealCard(box);
         }
-      } catch (err) {}
+      } catch (err) { }
     }
 
     function scratch(e) {
@@ -1315,7 +1613,7 @@ function initMahimaApp() {
     try {
       sessionStorage.setItem('mahima_candles_blown', 'true');
       localStorage.setItem('mahima_candles_blown', 'true');
-    } catch (e) {}
+    } catch (e) { }
   }
 
   function resetCandleCelebration() {
@@ -1339,7 +1637,7 @@ function initMahimaApp() {
     try {
       sessionStorage.removeItem('mahima_candles_blown');
       localStorage.removeItem('mahima_candles_blown');
-    } catch (e) {}
+    } catch (e) { }
 
     if (audioCtrl && audioCtrl.sfx && audioCtrl.sfx.click) {
       audioCtrl.sfx.click();
@@ -1508,7 +1806,7 @@ function initMahimaApp() {
           }
         }
       }
-    } catch (e) {}
+    } catch (e) { }
 
     deliveryCard.style.display = hasOrdered ? 'flex' : 'none';
   }
@@ -1520,7 +1818,7 @@ function initMahimaApp() {
       window.__treatOrderPlaced = false;
       try {
         localStorage.removeItem('bday_treat_order');
-      } catch (e) {}
+      } catch (e) { }
       updateThankYouDeliveryCardVisibility();
       if (sfx.click) sfx.click();
       goToStage(1);
@@ -1842,12 +2140,12 @@ function initMahimaApp() {
     }
   } catch (err) { }
 
-  
+
   // Ensure initial candle state is glowing & active
   try {
     sessionStorage.removeItem('mahima_candles_blown');
     localStorage.removeItem('mahima_candles_blown');
-  } catch (e) {}
+  } catch (e) { }
   if (cakeFlame) cakeFlame.classList.remove('blown-out');
   if (smokePuff) smokePuff.classList.remove('active');
   if (cakeCutBanner) cakeCutBanner.classList.remove('active');

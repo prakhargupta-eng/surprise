@@ -1,0 +1,147 @@
+<!-- ==========================================================
+     START SCREEN: CUTE PASTEL COUNTDOWN & VIP ENTRY
+     First shows ONLY Countdown.
+     PIN screen opens after tapping "VIP Pass Entry" button.
+     Target PIN: 051100 (Discreet 6pt text at the bottom)
+     ========================================================== -->
+<div class="vip-lock-overlay" id="vipLockOverlay">
+  <div class="vip-lock-card">
+    <!-- Festive Bunting Garland -->
+    <div class="bunting-garland">
+      <div class="bunting-flag flag-pink"></div>
+      <div class="bunting-flag flag-yellow"></div>
+      <div class="bunting-flag flag-blue"></div>
+      <div class="bunting-flag flag-green"></div>
+      <div class="bunting-flag flag-purple"></div>
+      <div class="bunting-flag flag-peach"></div>
+    </div>
+
+    <!-- VIEW 1: COUNTDOWN & STATUS VIEW (Shown Initially) -->
+    <div class="vip-view-step" id="vipCountdownView">
+      <div class="welcome-badge" id="cdBadge" style="background: var(--bull-light); color: var(--bull-green); margin-bottom: 12px;">
+        📈 SPECIAL BIRTHDAY MARKET BELL · 100-BAGGER ATH
+      </div>
+
+      <h1 class="welcome-title" id="cdTitle" style="font-size: clamp(24px, 5vw, 32px); margin-bottom: 8px;">
+        Happy Birthday, <span class="highlight">Mahima!</span> 🎂✨
+      </h1>
+      <p id="cdSubtitle" style="color: var(--text-muted); font-size: 14px; margin-bottom: 22px;">
+        The stock market expert special session is preparing to open at All-Time Highs!
+      </p>
+
+      <!-- Live Pastel Countdown Widget -->
+      <div class="pastel-cd-widget" id="cdWidget">
+        <div class="pastel-cd-header" id="cdHeader">
+          <span class="cd-live-dot" id="cdLiveDot"></span>
+          <span id="cdHeaderText">LIVE SESSION COUNTDOWN</span>
+        </div>
+        <div class="pastel-cd-grid" id="cdGrid">
+          <div class="pastel-cd-box">
+            <span class="pastel-cd-num" id="cdHours">00</span>
+            <span class="pastel-cd-lbl">HOURS</span>
+          </div>
+          <span class="pastel-cd-sep">:</span>
+          <div class="pastel-cd-box">
+            <span class="pastel-cd-num" id="cdMinutes">00</span>
+            <span class="pastel-cd-lbl">MINUTES</span>
+          </div>
+          <span class="pastel-cd-sep">:</span>
+          <div class="pastel-cd-box">
+            <span class="pastel-cd-num" id="cdSeconds">00</span>
+            <span class="pastel-cd-lbl">SECONDS</span>
+          </div>
+        </div>
+
+        <!-- Post-Birthday Notice (Shown on/after Oct 27) -->
+        <div class="pastel-post-birthday-notice" id="postBirthdayNotice" style="display: none;">
+          <div style="font-size: 32px; margin-bottom: 8px;">💌🎂🎈</div>
+          <h3 style="font-size: 16px; font-weight: 800; color: var(--pink-primary); margin-bottom: 6px; font-family: var(--font-cute);">
+            The Birthday Session Has Closed For This Year!
+          </h3>
+          <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 10px;">
+            Hope you had a joyful, magical birthday! 💖<br>
+            <strong>Visit next year to celebrate the next All-Time High! 📈✨</strong>
+          </p>
+          <div style="font-size: 12px; color: #b45309; background: var(--gold-light); padding: 6px 12px; border-radius: 99px; display: inline-block; font-weight: 700;">
+            🎉 See you again next year for the 2027 opening bell! 🔔
+          </div>
+        </div>
+
+        <div class="pastel-cd-status" id="cdStatusText">
+          ⏱️ Counting down to Mahima's official birthday bell! 🔔
+        </div>
+      </div>
+
+      <!-- Action Button to Open VIP PIN Screen -->
+      <div style="margin-top: 24px;">
+        <button class="btn-vip-open" id="openVipPinBtn" type="button">
+          👑 VIP Pass Entry (Enter Passcode) 🔑
+        </button>
+      </div>
+
+      <!-- Discreet 6pt PIN Hint at bottom -->
+      <div class="vip-bottom-hint" style="font-size: 6pt; color: #94a3b8; text-align: center; margin-top: 18px; letter-spacing: 0.6px; font-family: monospace;">
+        pin is 051100
+      </div>
+    </div>
+
+    <!-- VIEW 2: PIN SCREEN (Revealed after tapping VIP Entry button) -->
+    <div class="vip-view-step" id="vipPinView" style="display: none;">
+      <button class="btn-back-cd" id="backToCountdownBtn" type="button">
+        ← Back to Countdown
+      </button>
+
+      <div class="welcome-badge" style="background: var(--gold-light); color: #b45309; margin-bottom: 10px;">
+        🔐 VIP ACCESS PASS · EXCLUSIVE ENTRY
+      </div>
+
+      <h2 class="welcome-title" style="font-size: 24px; margin-bottom: 6px;">
+        Enter VIP Passcode 🔑
+      </h2>
+      <p style="color: var(--text-muted); font-size: 13.5px; margin-bottom: 18px;">
+        Enter the 6-digit secret passcode to unlock your birthday surprise!
+      </p>
+
+      <!-- 6 PIN Input Boxes -->
+      <div class="vip-pin-boxes" id="vipPinBoxes">
+        <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-box" data-idx="0" autocomplete="off" />
+        <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-box" data-idx="1" autocomplete="off" />
+        <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-box" data-idx="2" autocomplete="off" />
+        <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-box" data-idx="3" autocomplete="off" />
+        <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-box" data-idx="4" autocomplete="off" />
+        <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-box" data-idx="5" autocomplete="off" />
+      </div>
+
+      <!-- Error Message -->
+      <div class="vip-pin-error" id="vipPinError" style="display: none;">
+        ❌ Incorrect VIP Passcode. Access Restricted!
+      </div>
+
+      <!-- Numeric Keypad -->
+      <div class="vip-keypad">
+        <button type="button" class="key-btn" data-key="1">1</button>
+        <button type="button" class="key-btn" data-key="2">2</button>
+        <button type="button" class="key-btn" data-key="3">3</button>
+        <button type="button" class="key-btn" data-key="4">4</button>
+        <button type="button" class="key-btn" data-key="5">5</button>
+        <button type="button" class="key-btn" data-key="6">6</button>
+        <button type="button" class="key-btn" data-key="7">7</button>
+        <button type="button" class="key-btn" data-key="8">8</button>
+        <button type="button" class="key-btn" data-key="9">9</button>
+        <button type="button" class="key-btn key-action" data-action="clear" title="Clear">C</button>
+        <button type="button" class="key-btn" data-key="0">0</button>
+        <button type="button" class="key-btn key-action" data-action="back" title="Backspace">⌫</button>
+      </div>
+
+      <!-- Unlock Button -->
+      <button type="button" class="vip-unlock-btn" id="vipUnlockBtn">
+        🔓 Unlock Birthday Surprise ✨
+      </button>
+
+      <!-- Discreet 6pt PIN Hint at bottom -->
+      <div class="vip-bottom-hint" style="font-size: 6pt; color: #94a3b8; text-align: center; margin-top: 14px; letter-spacing: 0.6px; font-family: monospace;">
+        pin is 051100
+      </div>
+    </div>
+  </div>
+</div>

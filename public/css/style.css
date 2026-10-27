@@ -336,6 +336,7 @@ html, body {
   padding: 34px 28px;
   position: relative;
   overflow: hidden;
+  scroll-margin-top: 55px;
   animation: stageEnter 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -1801,29 +1802,65 @@ html, body {
   }
 
   
+  /* Mobile Stage 4 Gallery: Clean single-column layout, zero overlap, perfect card containment */
   .gallery-grid {
-    gap: 18px !important;
-    padding: 6px 2px !important;
+    gap: 22px !important;
+    padding: 6px 0 !important;
+    width: 100% !important;
   }
 
-  .gallery-row {
+  .gallery-row,
+  .gallery-row-top,
+  .gallery-row-bottom {
+    display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    gap: 18px !important;
+    gap: 24px !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
-  .polaroid-card {
+  /* Reset all rotations on mobile to prevent rotated corners from overlapping */
+  .polaroid-card,
+  .gallery-row-top .polaroid-card,
+  .gallery-row-bottom .polaroid-card,
+  .gallery-row-top .polaroid-card:nth-child(n),
+  .gallery-row-bottom .polaroid-card:nth-child(n),
+  .polaroid-card:nth-child(n) {
     width: 100% !important;
-    max-width: 320px !important;
+    max-width: 310px !important;
+    min-height: auto !important;
+    height: auto !important;
     transform: none !important;
     margin: 0 auto !important;
   }
 
+  .polaroid-card:hover {
+    transform: none !important;
+  }
 
-  .polaroid-card {
-    width: 100%;
-    max-width: 320px;
-    margin: 0 auto;
+  .polaroid-inner {
+    height: auto !important;
+    min-height: 440px !important;
+  }
+
+  .polaroid-front {
+    height: auto !important;
+    min-height: 440px !important;
+    padding: 12px 12px 16px !important;
+  }
+
+  .polaroid-img-wrap {
+    width: 100% !important;
+    aspect-ratio: 4 / 4.6 !important;
+    max-height: 285px !important;
+    overflow: hidden !important;
+  }
+
+  .polaroid-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
   }
 
   .progress-container {
@@ -1832,6 +1869,28 @@ html, body {
 
   .step-label {
     display: none;
+  }
+}
+
+/* Tablet & Intermediate Viewports (601px - 820px): Prevent card wrapping overlap */
+@media (min-width: 601px) and (max-width: 820px) {
+  .gallery-row,
+  .gallery-row-top,
+  .gallery-row-bottom {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 24px !important;
+    width: 100% !important;
+  }
+
+  .polaroid-card,
+  .gallery-row-top .polaroid-card:nth-child(n),
+  .gallery-row-bottom .polaroid-card:nth-child(n),
+  .polaroid-card:nth-child(n) {
+    width: 100% !important;
+    max-width: 320px !important;
+    transform: none !important;
   }
 }
 
@@ -3619,5 +3678,348 @@ html, body {
   background: rgba(255, 255, 255, 0.2);
   color: #ffffff;
 }
+
+/* ==========================================================
+   START SCREEN: VIP ENTRY & LIVE COUNTDOWN LOCK SCREEN
+   Theme: Cute Pastel Stock Market & Festive Birthday
+   First shows ONLY Countdown. PIN screen opens after VIP button tap.
+   ========================================================== */
+.vip-lock-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 242, 245, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 16px;
+  overflow-y: auto;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.vip-lock-overlay.unlocked {
+  opacity: 0;
+  transform: scale(1.06);
+  pointer-events: none;
+}
+
+.vip-lock-card {
+  background: #ffffff;
+  border: 2.5px solid var(--pink-soft);
+  border-radius: var(--radius-xl);
+  padding: 34px 26px 22px;
+  max-width: 460px;
+  width: 100%;
+  box-shadow: 0 25px 60px rgba(255, 94, 140, 0.18), 0 0 35px rgba(245, 166, 35, 0.12);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  animation: cardEntry 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Festive Bunting Garland */
+.bunting-garland {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.bunting-flag {
+  width: 20px;
+  height: 24px;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  animation: flagSway 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes flagSway {
+  0% { transform: rotate(-5deg); }
+  100% { transform: rotate(5deg); }
+}
+
+.flag-pink { background: #ff5e8c; }
+.flag-yellow { background: #f5a623; animation-delay: 0.2s; }
+.flag-blue { background: #38bdf8; animation-delay: 0.4s; }
+.flag-green { background: #10b981; animation-delay: 0.6s; }
+.flag-purple { background: #a855f7; animation-delay: 0.8s; }
+.flag-peach { background: #fb923c; animation-delay: 1s; }
+
+/* Views switch animation */
+.vip-view-step {
+  animation: fadeIn 0.35s ease;
+}
+
+/* Pastel Countdown Widget */
+.pastel-cd-widget {
+  background: linear-gradient(145deg, #fff9fb, #fff0f5);
+  border: 2px dashed #ffb6c1;
+  border-radius: 20px;
+  padding: 16px 14px;
+  margin-bottom: 18px;
+  box-shadow: inset 0 2px 6px rgba(255, 94, 140, 0.05);
+}
+
+.pastel-cd-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-family: var(--font-cute);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--pink-primary);
+  letter-spacing: 0.8px;
+  margin-bottom: 12px;
+}
+
+.cd-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--pink-primary);
+  box-shadow: 0 0 8px var(--pink-primary);
+  animation: pulseDot 1.4s infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.8); }
+}
+
+.pastel-cd-grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.pastel-cd-box {
+  background: #ffffff;
+  border: 1.5px solid #ffd1dc;
+  border-radius: 14px;
+  padding: 8px 12px;
+  min-width: 68px;
+  box-shadow: 0 4px 12px rgba(255, 94, 140, 0.08);
+}
+
+.pastel-cd-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-main);
+  display: block;
+  line-height: 1.1;
+}
+
+.pastel-cd-lbl {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--pink-primary);
+  letter-spacing: 0.6px;
+  margin-top: 3px;
+  display: block;
+}
+
+.pastel-cd-sep {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--pink-primary);
+}
+
+.pastel-cd-status {
+  font-family: var(--font-cute);
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+/* Post-Birthday Notice Container */
+.pastel-post-birthday-notice {
+  background: #ffffff;
+  border: 1.5px solid #ffd1dc;
+  border-radius: 18px;
+  padding: 16px 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 14px rgba(255, 94, 140, 0.08);
+  animation: fadeIn 0.4s ease;
+}
+
+/* Open VIP PIN Button */
+.btn-vip-open {
+  width: 100%;
+  background: linear-gradient(135deg, #ff5e8c 0%, #f5a623 100%);
+  color: #ffffff;
+  border: none;
+  padding: 14px 22px;
+  border-radius: 99px;
+  font-family: var(--font-cute);
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(255, 94, 140, 0.35);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-vip-open:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 28px rgba(255, 94, 140, 0.45);
+}
+
+.btn-vip-open:active {
+  transform: scale(0.97);
+}
+
+/* Back to Countdown Button */
+.btn-back-cd {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-cute);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 14px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.btn-back-cd:hover {
+  color: var(--pink-primary);
+  background: var(--pink-soft);
+}
+
+/* PIN Boxes */
+.vip-pin-boxes {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.pin-box {
+  width: 44px;
+  height: 50px;
+  background: #fff9fb;
+  border: 2px solid #ffccd5;
+  border-radius: 14px;
+  color: var(--text-main);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 22px;
+  font-weight: 800;
+  text-align: center;
+  outline: none;
+  box-shadow: inset 0 2px 4px rgba(255, 94, 140, 0.04);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pin-box:focus,
+.pin-box.has-val {
+  border-color: var(--pink-primary);
+  background: #ffffff;
+  box-shadow: 0 0 12px rgba(255, 94, 140, 0.35);
+  transform: translateY(-2px);
+}
+
+.pin-box.error {
+  border-color: #ef4444;
+  background: #fef2f2;
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.35);
+  animation: shake 0.4s ease-in-out;
+}
+
+.vip-pin-error {
+  font-family: var(--font-cute);
+  color: #ef4444;
+  font-size: 12.5px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  animation: shake 0.4s ease-in-out;
+}
+
+/* Numeric Keypad */
+.vip-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  max-width: 250px;
+  margin: 0 auto 16px;
+}
+
+.key-btn {
+  background: #fff5f8;
+  border: 1.5px solid #ffe0e9;
+  border-radius: 14px;
+  color: var(--text-main);
+  font-family: var(--font-cute);
+  font-size: 19px;
+  font-weight: 700;
+  padding: 10px 0;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(255, 94, 140, 0.06);
+  transition: all 0.15s ease;
+}
+
+.key-btn:hover {
+  background: #ffe4ec;
+  border-color: var(--pink-primary);
+  color: var(--pink-primary);
+  transform: translateY(-1px);
+}
+
+.key-btn:active {
+  transform: scale(0.95);
+}
+
+.key-action {
+  color: #b45309;
+  background: var(--gold-light);
+  border-color: #fde68a;
+}
+
+/* Unlock Button */
+.vip-unlock-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--bull-green) 0%, #059669 100%);
+  color: #ffffff;
+  border: none;
+  padding: 14px 20px;
+  border-radius: 99px;
+  font-family: var(--font-cute);
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.vip-unlock-btn:hover {
+  transform: scale(1.02) translateY(-2px);
+  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.5);
+}
+
+.vip-unlock-btn:active {
+  transform: scale(0.97);
+}
+
+/* Discreet 6pt Bottom Hint */
+.vip-bottom-hint {
+  font-size: 6pt !important;
+  color: #94a3b8 !important;
+  text-align: center;
+  margin-top: 14px;
+  letter-spacing: 0.6px;
+  font-family: monospace;
+}
+
 
 
