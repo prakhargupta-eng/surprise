@@ -34,7 +34,7 @@
      START SCREEN: CUTE PASTEL COUNTDOWN & VIP ENTRY
      First shows ONLY Countdown.
      PIN screen opens after tapping "VIP Pass Entry" button.
-     Target PIN: 051100 (Discreet 6pt text at the bottom)
+     Target PIN: 051100 (Discreet 6pt hint text at bottom: pin is 05 11**)
      ========================================================== -->
 <div class="vip-lock-overlay" id="vipLockOverlay">
   <div class="vip-lock-card">
@@ -113,7 +113,7 @@
 
       <!-- Discreet 6pt PIN Hint at bottom -->
       <div class="vip-bottom-hint" style="font-size: 6pt; color: #94a3b8; text-align: center; margin-top: 18px; letter-spacing: 0.6px; font-family: monospace;">
-        pin is 051100
+        pin is 05 11**
       </div>
     </div>
 
@@ -136,12 +136,12 @@
 
       <!-- 6 PIN Input Boxes -->
       <div class="vip-pin-boxes" id="vipPinBoxes">
-        <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-box" data-idx="0" autocomplete="off" />
-        <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-box" data-idx="1" autocomplete="off" />
-        <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-box" data-idx="2" autocomplete="off" />
-        <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-box" data-idx="3" autocomplete="off" />
-        <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-box" data-idx="4" autocomplete="off" />
-        <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-box" data-idx="5" autocomplete="off" />
+        <input type="password" inputmode="none" readonly class="pin-box active-box" data-idx="0" autocomplete="off" tabindex="-1" />
+        <input type="password" inputmode="none" readonly class="pin-box" data-idx="1" autocomplete="off" tabindex="-1" />
+        <input type="password" inputmode="none" readonly class="pin-box" data-idx="2" autocomplete="off" tabindex="-1" />
+        <input type="password" inputmode="none" readonly class="pin-box" data-idx="3" autocomplete="off" tabindex="-1" />
+        <input type="password" inputmode="none" readonly class="pin-box" data-idx="4" autocomplete="off" tabindex="-1" />
+        <input type="password" inputmode="none" readonly class="pin-box" data-idx="5" autocomplete="off" tabindex="-1" />
       </div>
 
       <!-- Error Message -->
@@ -172,7 +172,7 @@
 
       <!-- Discreet 6pt PIN Hint at bottom -->
       <div class="vip-bottom-hint" style="font-size: 6pt; color: #94a3b8; text-align: center; margin-top: 14px; letter-spacing: 0.6px; font-family: monospace;">
-        pin is 051100
+        pin is 05 11**
       </div>
     </div>
   </div>

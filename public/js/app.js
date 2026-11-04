@@ -182,9 +182,7 @@ function initMahimaApp() {
       if (vipCountdownView) vipCountdownView.style.display = 'none';
       if (vipPinView) vipPinView.style.display = 'block';
       if (sfx && sfx.click) sfx.click();
-      if (pinBoxes && pinBoxes.length > 0) {
-        setTimeout(function () { pinBoxes[0].focus(); }, 120);
-      }
+      clearPin();
     });
   }
 
@@ -193,12 +191,30 @@ function initMahimaApp() {
       if (vipPinView) vipPinView.style.display = 'none';
       if (vipCountdownView) vipCountdownView.style.display = 'block';
       if (sfx && sfx.click) sfx.click();
-      clearPin(false);
+      clearPin();
       if (vipPinError) vipPinError.style.display = 'none';
     });
   }
 
   // 2. VIP PIN Unlock Functions
+  function updatePinBoxesHighlight() {
+    var nextEmptyIdx = -1;
+    pinBoxes.forEach(function (box, idx) {
+      box.classList.remove('active-box');
+      if (box.value) {
+        box.classList.add('has-val');
+      } else {
+        box.classList.remove('has-val');
+        if (nextEmptyIdx === -1) {
+          nextEmptyIdx = idx;
+        }
+      }
+    });
+    if (nextEmptyIdx !== -1 && pinBoxes[nextEmptyIdx]) {
+      pinBoxes[nextEmptyIdx].classList.add('active-box');
+    }
+  }
+
   function getEnteredPin() {
     var pin = '';
     pinBoxes.forEach(function (box) {
@@ -207,15 +223,14 @@ function initMahimaApp() {
     return pin;
   }
 
-  function clearPin(focusFirst) {
+  function clearPin() {
     pinBoxes.forEach(function (box) {
       box.value = '';
       box.classList.remove('has-val');
       box.classList.remove('error');
+      box.classList.remove('active-box');
     });
-    if (focusFirst !== false && pinBoxes.length > 0 && vipPinView && vipPinView.style.display !== 'none') {
-      pinBoxes[0].focus();
-    }
+    updatePinBoxesHighlight();
   }
 
   function unlockVipAccess() {
@@ -340,9 +355,10 @@ function initMahimaApp() {
     }
   } catch (e) { }
 
-  // Keypad clicks
+  // Keypad clicks (on-screen pastel keypad)
   keyBtns.forEach(function (btn) {
-    btn.addEventListener('click', function () {
+    btn.addEventListener('click', function (e) {
+      if (e && e.preventDefault) e.preventDefault();
       var val = btn.getAttribute('data-key');
       var action = btn.getAttribute('data-action');
       if (sfx.click) sfx.click();
@@ -355,52 +371,70 @@ function initMahimaApp() {
           if (pinBoxes[i].value) {
             pinBoxes[i].value = '';
             pinBoxes[i].classList.remove('has-val');
-            pinBoxes[i].focus();
             break;
           }
         }
+        updatePinBoxesHighlight();
+        if (vipPinError) vipPinError.style.display = 'none';
       } else if (val !== null && val !== undefined) {
+        if (vipPinError) vipPinError.style.display = 'none';
         for (var j = 0; j < pinBoxes.length; j++) {
           if (!pinBoxes[j].value) {
             pinBoxes[j].value = val;
             pinBoxes[j].classList.add('has-val');
-            if (j < pinBoxes.length - 1) {
-              pinBoxes[j + 1].focus();
-            } else {
+            if (j === pinBoxes.length - 1) {
               // All 6 filled: auto validate!
               setTimeout(validateVipPin, 150);
             }
             break;
           }
         }
+        updatePinBoxesHighlight();
       }
     });
   });
 
-  // Keyboard typing inside PIN input boxes
-  pinBoxes.forEach(function (box, idx) {
-    box.addEventListener('input', function () {
-      var val = box.value.replace(/[^0-9]/g, '');
-      box.value = val ? val[val.length - 1] : '';
-      if (box.value) {
-        box.classList.add('has-val');
-        if (idx < pinBoxes.length - 1) {
-          pinBoxes[idx + 1].focus();
-        } else {
-          setTimeout(validateVipPin, 150);
-        }
-      } else {
-        box.classList.remove('has-val');
-      }
-    });
+  // Physical Keyboard support (for Desktop users typing without opening mobile virtual keyboard)
+  window.addEventListener('keydown', function (e) {
+    if (!vipPinView || vipPinView.style.display === 'none') return;
+    if (vipLockOverlay && vipLockOverlay.style.display === 'none') return;
 
-    box.addEventListener('keydown', function (e) {
-      if (e.key === 'Backspace' && !box.value && idx > 0) {
-        pinBoxes[idx - 1].focus();
-      } else if (e.key === 'Enter') {
-        validateVipPin();
+    if (/^[0-9]$/.test(e.key)) {
+      e.preventDefault();
+      if (sfx.click) sfx.click();
+      if (vipPinError) vipPinError.style.display = 'none';
+      for (var j = 0; j < pinBoxes.length; j++) {
+        if (!pinBoxes[j].value) {
+          pinBoxes[j].value = e.key;
+          pinBoxes[j].classList.add('has-val');
+          if (j === pinBoxes.length - 1) {
+            setTimeout(validateVipPin, 150);
+          }
+          break;
+        }
       }
-    });
+      updatePinBoxesHighlight();
+    } else if (e.key === 'Backspace') {
+      e.preventDefault();
+      if (sfx.click) sfx.click();
+      if (vipPinError) vipPinError.style.display = 'none';
+      for (var i = pinBoxes.length - 1; i >= 0; i--) {
+        if (pinBoxes[i].value) {
+          pinBoxes[i].value = '';
+          pinBoxes[i].classList.remove('has-val');
+          break;
+        }
+      }
+      updatePinBoxesHighlight();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      validateVipPin();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      if (backToCountdownBtn) {
+        backToCountdownBtn.click();
+      }
+    }
   });
 
   if (vipUnlockBtn) {
